@@ -333,18 +333,16 @@
         let allActivities = [];
         let currentFilter = null;
 
-        // Realtime Listener
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-            renderApp(); // Refresh UI
+            renderApp(); 
             document.getElementById('globalLoader').style.display = 'none';
         });
 
-        // Main Render Function
         function renderApp() {
             const grid = document.getElementById('activitiesGrid');
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
@@ -441,9 +439,46 @@
         window.renderApp = renderApp;
         document.getElementById('searchBox').addEventListener('input', renderApp);
 
+        // --- IMAGE COMPRESSION FUNCTION ---
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1024; // Max width for compression
+                        const scaleSize = MAX_WIDTH / img.width;
+                        // If image is smaller than 1024, keep original size, else resize
+                        if (img.width > MAX_WIDTH) {
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleSize;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Convert to blob (JPEG, 70% quality)
+                        canvas.toBlob((blob) => {
+                            resolve(blob); 
+                        }, 'image/jpeg', 0.7); 
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
         async function uploadImage(file) {
+            // Compress before uploading
+            const compressedBlob = await compressImage(file);
             const storageRef = ref(storage, 'images/' + Date.now() + '-' + file.name);
-            await uploadBytes(storageRef, file);
+            await uploadBytes(storageRef, compressedBlob);
             return await getDownloadURL(storageRef);
         }
 
@@ -460,7 +495,7 @@
 
                 let imageUrls = [];
                 for(let i=0; i<imageFiles.length; i++) {
-                    statusDiv.textContent = `بارکردنی وێنەی ${i+1}...`;
+                    statusDiv.textContent = `بارکردنی وێنەی ${i+1} (دەپەستێورێتەوە)...`;
                     const url = await uploadImage(imageFiles[i]);
                     imageUrls.push(url);
                 }
