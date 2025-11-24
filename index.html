@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
+    <style>
+        /* دیزاینەکە وەک خۆی ماوەتەوە چونکە جوان بوو */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; margin-bottom: 30px;
+        }
+        h1 { color: #667eea; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { color: #666; font-size: 1.2em; }
+        .controls {
+            background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .search-box {
+            width: 100%; padding: 15px; border: 2px solid #667eea; border-radius: 10px;
+            font-size: 16px; margin-bottom: 15px;
+        }
+        .add-btn {
+            background: #667eea; color: white; border: none; padding: 15px 30px;
+            border-radius: 10px; font-size: 16px; cursor: pointer; width: 100%; transition: all 0.3s;
+        }
+        .add-btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .activities-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-top: 20px;
+        }
+        .activity-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: all 0.3s;
+        }
+        .activity-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .activity-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; padding: 20px;
+        }
+        .activity-title { font-size: 1.5em; margin-bottom: 10px; }
+        .activity-teacher { font-size: 1.1em; opacity: 0.9; }
+        .activity-date { font-size: 0.9em; opacity: 0.8; margin-top: 5px; }
+        .images-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 10px;
+        }
+        .activity-image {
+            width: 100%; height: 150px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform 0.3s;
+        }
+        .activity-image:hover { transform: scale(1.05); }
+        .activity-notes { padding: 15px 20px; border-top: 2px solid #f0f0f0; color: #555; line-height: 1.6; }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; border-radius: 20px; padding: 30px; max-width: 600px; width: 100%;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .close-btn {
+            background: #f44336; color: white; border: none; width: 35px; height: 35px;
+            border-radius: 50%; cursor: pointer; font-size: 20px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px;
+        }
+        .file-input-label {
+            display: block; padding: 12px; background: #f0f0f0; border: 2px dashed #667eea;
+            border-radius: 8px; text-align: center; cursor: pointer;
+        }
+        .image-preview { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .preview-item { position: relative; }
+        .preview-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .remove-img-btn {
+            position: absolute; top: 5px; right: 5px; background: #f44336; color: white;
+            border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;
+        }
+        .save-btn {
+            background: #4CAF50; color: white; border: none; padding: 15px; border-radius: 10px;
+            font-size: 16px; cursor: pointer; width: 100%;
+        }
+        .delete-btn {
+            background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            cursor: pointer; margin: 10px; width: calc(100% - 20px);
+        }
+        .image-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .image-modal.active { display: flex; }
+        .image-modal img { max-width: 90%; max-height: 90vh; border-radius: 10px; }
+        .no-activities { text-align: center; padding: 60px 20px; background: white; border-radius: 15px; color: #666; grid-column: 1 / -1; }
+        
+        @media (max-width: 768px) {
+            .activities-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏫 قوتابخانەی گزنگ</h1>
+            <p class="subtitle">ئەرشیفی چالاکیەکان</p>
+        </header>
+
+        <div class="controls">
+            <input type="text" class="search-box" id="searchBox" placeholder="گەڕان لە چالاکیەکان (ناو، مامۆستا، تێبینی)...">
+            <button class="add-btn" onclick="openAddModal()">➕ زیادکردنی چالاکی نوێ</button>
+        </div>
+
+        <div class="activities-grid" id="activitiesGrid"></div>
+    </div>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">زیادکردنی چالاکی نوێ</h2>
+                <button class="close-btn" onclick="closeAddModal()">✕</button>
+            </div>
+            <form id="activityForm">
+                <div class="form-group">
+                    <label>ناوی چالاکیەکە *</label>
+                    <input type="text" id="activityName" required>
+                </div>
+                <div class="form-group">
+                    <label>ناوی مامۆستاکە *</label>
+                    <input type="text" id="teacherName" required>
+                </div>
+                <div class="form-group">
+                    <label>بەرواری چالاکیەکە *</label>
+                    <input type="date" id="activityDate" required>
+                </div>
+                <div class="form-group">
+                    <label>وێنەکان (هەتا ٤ وێنە)</label>
+                    <div class="file-input-wrapper">
+                        <label for="imageInput" class="file-input-label">
+                            📷 کرتە بکە بۆ هەڵبژاردنی وێنەکان
+                        </label>
+                        <input type="file" id="imageInput" style="display:none" accept="image/*" multiple>
+                    </div>
+                    <div class="image-preview" id="imagePreview"></div>
+                    <small style="color:red; display:block; margin-top:5px;">تێبینی: وێنەکان بە شێوەی ئۆتۆماتیکی بچووک دەکرێنەوە بۆ ئەوەی شوێن نەگرن.</small>
+                </div>
+                <div class="form-group">
+                    <label>تێبینیەکان</label>
+                    <textarea id="activityNotes" placeholder="تێبینیەکانی چالاکیەکە..."></textarea>
+                </div>
+                <button type="submit" class="save-btn" id="saveBtn">💾 پاشەکەوتکردن</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <img id="modalImage" src="" alt="">
+    </div>
+
+    <script>
+        // سەرەکیترین بەش: گۆڕینی سیستەمی کۆگا بۆ LocalStorage
+        const STORAGE_KEY = 'gazgng_archive_data_v1';
+        let activities = [];
+        let selectedImages = [];
+
+        // ١. خوێندنەوەی داتاکان لە کاتی کردنەوەی سایتەکە
+        function loadActivities() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    activities = JSON.parse(stored);
+                    // ڕیزکردن بەپێی بەروار (نوێترین لەپێشەوە)
+                    activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+            } catch (e) {
+                console.error("Error loading data", e);
+                activities = [];
+            }
+            renderActivities();
+        }
+
+        // ٢. پیشاندانی داتاکان لەسەر شاشە
+        function renderActivities() {
+            const grid = document.getElementById('activitiesGrid');
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            const filtered = activities.filter(activity => 
+                activity.name.toLowerCase().includes(searchTerm) ||
+                activity.teacher.toLowerCase().includes(searchTerm) ||
+                (activity.notes && activity.notes.toLowerCase().includes(searchTerm))
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-activities">
+                        <h2>هیچ چالاکیەک نەدۆزرایەوە</h2>
+                        <p>کرتە لە دوگمەی "زیادکردنی چالاکی نوێ" بکە بۆ دەستپێکردن</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(activity => `
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3 class="activity-title">${activity.name}</h3>
+                        <p class="activity-teacher">مامۆستا: ${activity.teacher}</p>
+                        <p class="activity-date">بەروار: ${activity.date}</p>
+                    </div>
+                    ${activity.images && activity.images.length > 0 ? `
+                        <div class="images-container">
+                            ${activity.images.map(img => `
+                                <img src="${img}" alt="وێنەی چالاکی" class="activity-image" onclick="openImage('${img}')">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    ${activity.notes ? `<div class="activity-notes">${activity.notes}</div>` : ''}
+                    <button class="delete-btn" onclick="deleteActivity('${activity.id}')">🗑️ سڕینەوە</button>
+                </div>
+            `).join('');
+        }
+
+        // ٣. کردەوەکانی مۆداڵ (پەنجەرەی زیادکردن)
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+            document.getElementById('activityDate').valueAsDate = new Date();
+            selectedImages = [];
+            updateImagePreview();
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('activityForm').reset();
+            selectedImages = [];
+            updateImagePreview();
+        }
+
+        // ٤. سڕینەوەی چالاکی
+        function deleteActivity(id) {
+            if (confirm('دڵنیایت لە سڕینەوەی ئەم چالاکیە؟')) {
+                activities = activities.filter(a => a.id !== id);
+                saveToStorage();
+                renderActivities();
+            }
+        }
+
+        // ٥. زۆر گرنگ: فەنکشن بۆ بچووککردنەوەی وێنەکان
+        // ئەم فەنکشنە وێنەکە دەکاتە Canvas و قەبارەکەی کەم دەکاتەوە بۆ ٨٠٠ پێکسڵ
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const elem = document.createElement('canvas');
+                        // دیاریکردنی قەبارەی نوێ (مەکسیمەم ٨٠٠)
+                        const scaleFactor = 800 / Math.max(img.width, img.height, 800);
+                        elem.width = img.width * scaleFactor;
+                        elem.height = img.height * scaleFactor;
+                        
+                        const ctx = elem.getContext('2d');
+                        ctx.drawImage(img, 0, 0, elem.width, elem.height);
+                        
+                        // گۆڕین بۆ JPEG بە کوالیتی 0.7 (قەبارە زۆر بچووک دەکاتەوە)
+                        resolve(elem.toDataURL('image/jpeg', 0.7));
+                    };
+                };
+            });
+        }
+
+        // ٦. هەڵبژاردنی وێنەکان
+        document.getElementById('imageInput').addEventListener('change', async function(e) {
+            const files = Array.from(e.target.files);
+            
+            if (selectedImages.length + files.length > 4) {
+                alert('تەنها دەتوانیت ٤ وێنە هەڵبژێریت');
+                return;
+            }
+
+            const loadingText = document.createElement('div');
+            loadingText.id = 'imgLoading';
+            loadingText.textContent = 'تکایە چاوەڕێبە، وێنەکان بچووک دەکرێنەوە...';
+            loadingText.style.color = 'blue';
+            document.getElementById('imagePreview').before(loadingText);
+
+            for (let file of files) {
+                // تەنها وێنەکان وەردەگرین
+                if (file.type.startsWith('image/')) {
+                    try {
+                        const compressedImg = await compressImage(file);
+                        selectedImages.push(compressedImg);
+                    } catch (err) {
+                        console.error("Error compressing image", err);
+                    }
+                }
+            }
+            
+            if(document.getElementById('imgLoading')) document.getElementById('imgLoading').remove();
+            e.target.value = ''; // Reset input
+            updateImagePreview();
+        });
+
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = selectedImages.map((img, index) => `
+                <div class="preview-item">
+                    <img src="${img}" class="preview-img" alt="پێشبینی">
+                    <button type="button" class="remove-img-btn" onclick="removeImage(${index})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(index) {
+            selectedImages.splice(index, 1);
+            updateImagePreview();
+        }
+
+        // ٧. پاشەکەوتکردنی کۆتایی (Save)
+        document.getElementById('activityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ پاشەکەوت دەکرێت...';
+
+            // دروستکردنی ئۆبجێکتی چالاکیەکە
+            const newActivity = {
+                id: Date.now().toString(),
+                name: document.getElementById('activityName').value,
+                teacher: document.getElementById('teacherName').value,
+                date: document.getElementById('activityDate').value,
+                images: selectedImages,
+                notes: document.getElementById('activityNotes').value
+            };
+
+            activities.unshift(newActivity); // دانان لە سەرەتا
+
+            // هەوڵدان بۆ سەیڤکردن
+            try {
+                saveToStorage();
+                closeAddModal();
+                renderActivities();
+            } catch (error) {
+                // ئەگەر ستۆریج پڕ بوو (Error 22 or QuotaExceeded)
+                alert('ببورە، مێمۆری پڕ بووە! تکایە چەند چالاکییەکی کۆن بسڕەوە یان وێنەی کەمتر بەکاربهێنە.');
+                activities.shift(); // لابردنی ئەو چالاکییەی زیاد کرا
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 پاشەکەوتکردن';
+            }
+        });
+
+        // فەنکشنی یارمەتیدەر بۆ سەیڤکردن
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(activities));
+        }
+
+        // گەڕان
+        document.getElementById('searchBox').addEventListener('input', renderActivities);
+
+        // کردنەوەی وێنە بە گەورەیی
+        function openImage(src) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('imageModal').classList.add('active');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        // دەستپێکردن
+        loadActivities();
+    </script>
+</body>
+</html>
