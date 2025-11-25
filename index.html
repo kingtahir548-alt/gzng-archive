@@ -123,10 +123,7 @@
         /* IMAGE GRID STYLES */
         .rep-images { display: grid; gap: 10px; margin-top: 20px; grid-template-columns: 1fr 1fr; }
         
-        /* Rigid Height for Landscape (Pan) */
         .layout-landscape .img-slot { height: 180px; width: 100%; }
-        
-        /* Rigid Height for Portrait (Drezh) */
         .layout-portrait .img-slot { height: 280px; width: 100%; }
 
         .img-slot { 
@@ -135,25 +132,50 @@
             border-radius: 10px; 
             overflow: hidden; 
             position: relative; 
-            cursor: pointer; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             transition: 0.2s; 
         }
-        .img-slot:hover { background: #e2e8f0; border-color: var(--primary); }
         
         .img-slot img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; 
+            object-fit: cover; /* Default behavior */
             display: none; 
             border-radius: 8px;
+            transform-origin: center;
+            transition: transform 0.1s linear;
         }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
+
+        /* --- Image Editing Controls --- */
+        .img-controls {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            right: 5px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            background: rgba(0,0,0,0.6);
+            padding: 5px;
+            border-radius: 20px;
+            opacity: 0;
+            transition: 0.2s;
+            z-index: 10;
+        }
+        .img-slot:hover .img-controls { opacity: 1; }
         
+        .ctrl-btn {
+            background: white; border: none; width: 25px; height: 25px; border-radius: 50%;
+            cursor: pointer; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+        }
+        .ctrl-btn:hover { background: var(--primary); color: white; }
+
+        /* Notes & Footer */
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
         .rep-notes textarea:disabled { background: #fff; border:none; }
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
@@ -177,61 +199,20 @@
             .paper-wrapper { padding: 10px 0; padding-bottom: 100px; }
             .layout-landscape .img-slot { height: 120px; }
             .layout-portrait .img-slot { height: 200px; }
+            .img-controls { opacity: 1; } /* Always show controls on mobile */
         }
 
-        /* --- FIXED PRINT STYLES --- */
+        /* --- PRINT STYLES --- */
         @media print {
-            /* شاردنەوەی هەموو بەشە زیادەکان بە تاک بە تاک نەک بە شێوەی گشتی */
-            .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal {
+            .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal, .img-controls {
                 display: none !important;
             }
-            
-            /* دڵنیابوونەوە لەوەی بۆدی ڕێگە بە پرێنت دەدات */
-            body, html {
-                background: white !important;
-                height: auto !important;
-                overflow: visible !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-
-            /* پیشاندانی مۆداڵی ڕاپۆرت بە تەواوی */
-            .editor-modal {
-                display: block !important;
-                position: relative !important; /* لابردنی Fixed */
-                width: 100% !important;
-                height: auto !important;
-                overflow: visible !important;
-                background: white !important;
-                z-index: 1 !important;
-            }
-
-            /* ڕێکخستنی لاپەڕەی A4 */
-            .paper-wrapper {
-                padding: 0 !important;
-                margin: 0 !important;
-                display: block !important;
-            }
-            .a4-paper {
-                box-shadow: none !important;
-                margin: 0 !important;
-                width: 100% !important;
-                border: none !important;
-                min-height: auto !important;
-                page-break-after: always;
-            }
-            
-            /* زۆر گرنگ: هێزی دەرکەوتنی وێنەکان */
-            img {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-            
-            .img-slot img {
-                display: block !important;
-                visibility: visible !important;
-            }
+            body, html { background: white !important; height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+            .editor-modal { display: block !important; position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; background: white !important; z-index: 1 !important; }
+            .paper-wrapper { padding: 0 !important; margin: 0 !important; display: block !important; }
+            .a4-paper { box-shadow: none !important; margin: 0 !important; width: 100% !important; border: none !important; min-height: auto !important; page-break-after: always; }
+            img { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .img-slot img { display: block !important; visibility: visible !important; }
         }
     </style>
 </head>
@@ -373,10 +354,54 @@
                 </div>
 
                 <div class="rep-images layout-landscape" id="imgContainer">
-                    <div class="img-slot" onclick="triggerFile(0)"><img id="img0"><div class="placeholder-text">وێنەی ١<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(1)"><img id="img1"><div class="placeholder-text">وێنەی ٢<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(2)"><img id="img2"><div class="placeholder-text">وێنەی ٣<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(3)"><img id="img3"><div class="placeholder-text">وێنەی ٤<br>📸</div></div>
+                    <div class="img-slot" id="slot0" onclick="triggerFile(0)">
+                        <img id="img0">
+                        <div class="placeholder-text">وێنەی ١<br>📸</div>
+                        <div class="img-controls" onclick="event.stopPropagation()">
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'zoomIn')">➕</button>
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'zoomOut')">➖</button>
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'up')">⬆️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'down')">⬇️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'left')">⬅️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(0, 'right')">➡️</button>
+                        </div>
+                    </div>
+                    <div class="img-slot" id="slot1" onclick="triggerFile(1)">
+                        <img id="img1">
+                        <div class="placeholder-text">وێنەی ٢<br>📸</div>
+                        <div class="img-controls" onclick="event.stopPropagation()">
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'zoomIn')">➕</button>
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'zoomOut')">➖</button>
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'up')">⬆️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'down')">⬇️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'left')">⬅️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(1, 'right')">➡️</button>
+                        </div>
+                    </div>
+                    <div class="img-slot" id="slot2" onclick="triggerFile(2)">
+                        <img id="img2">
+                        <div class="placeholder-text">وێنەی ٣<br>📸</div>
+                        <div class="img-controls" onclick="event.stopPropagation()">
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'zoomIn')">➕</button>
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'zoomOut')">➖</button>
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'up')">⬆️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'down')">⬇️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'left')">⬅️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(2, 'right')">➡️</button>
+                        </div>
+                    </div>
+                    <div class="img-slot" id="slot3" onclick="triggerFile(3)">
+                        <img id="img3">
+                        <div class="placeholder-text">وێنەی ٤<br>📸</div>
+                        <div class="img-controls" onclick="event.stopPropagation()">
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'zoomIn')">➕</button>
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'zoomOut')">➖</button>
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'up')">⬆️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'down')">⬇️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'left')">⬅️</button>
+                            <button class="ctrl-btn" onclick="adjustImg(3, 'right')">➡️</button>
+                        </div>
+                    </div>
                 </div>
                 
                 <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
@@ -430,6 +455,14 @@
         window.currentSlot = 0;
         let teacherPhotoTarget = null;
         let currentFilter = null;
+
+        // Image State for Transforms
+        window.imgState = {
+            0: { s: 1, x: 0, y: 0 },
+            1: { s: 1, x: 0, y: 0 },
+            2: { s: 1, x: 0, y: 0 },
+            3: { s: 1, x: 0, y: 0 }
+        };
 
         // Load Data
         onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
@@ -678,10 +711,17 @@
             document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('inpNotes').value = '';
             window.localFiles = [null, null, null, null];
+            
+            // Reset Images and Transforms
             for(let i=0; i<4; i++) {
-                document.getElementById('img'+i).src = '';
-                document.getElementById('img'+i).parentElement.classList.remove('has-img');
+                const img = document.getElementById('img'+i);
+                img.src = '';
+                img.parentElement.classList.remove('has-img');
+                // Reset State
+                window.imgState[i] = { s: 1, x: 0, y: 0 };
+                img.style.transform = `scale(1) translate(0px, 0px)`;
             }
+            
             updateTeacherDropdown(); 
             
             enableEditorInputs(true);
@@ -714,7 +754,25 @@
             e.target.value = '';
         });
 
-        // Set Layout Explicitly
+        // --- New Function: Image Adjustment ---
+        window.adjustImg = (index, action) => {
+            const state = window.imgState[index];
+            const step = 20; // Pixel step for moving
+            const scaleStep = 0.1;
+
+            if (action === 'zoomIn') state.s += scaleStep;
+            if (action === 'zoomOut') state.s = Math.max(0.1, state.s - scaleStep);
+            if (action === 'up') state.y -= step;
+            if (action === 'down') state.y += step;
+            if (action === 'left') state.x -= step;
+            if (action === 'right') state.x += step;
+
+            const img = document.getElementById('img' + index);
+            // We use transform directly. This overrides object-fit behavior effectively for visual purposes
+            // Because object-fit: cover is centered, transform acts on that.
+            img.style.transform = `scale(${state.s}) translate(${state.x}px, ${state.y}px)`;
+        }
+
         window.setLayout = (type) => {
             const c = document.getElementById('imgContainer');
             c.classList.remove('layout-landscape', 'layout-portrait');
@@ -727,6 +785,9 @@
                 document.getElementById(id).disabled = !enable;
             });
             document.getElementById('imgContainer').style.cursor = enable ? 'pointer' : 'default';
+            // Show/Hide controls based on mode
+            const controls = document.querySelectorAll('.img-controls');
+            controls.forEach(c => c.style.display = enable ? 'flex' : 'none');
         }
 
         window.viewSavedReport = (id) => {
@@ -749,8 +810,12 @@
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             
+            // Reset State for viewing
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
+                window.imgState[i] = { s: 1, x: 0, y: 0 };
+                imgEl.style.transform = `scale(1) translate(0px, 0px)`;
+
                 if(act.images && act.images[i]) { 
                     imgEl.src = act.images[i]; 
                     imgEl.parentElement.classList.add('has-img'); 
@@ -886,19 +951,38 @@
 
         // --- Download as Image Function ---
         window.downloadAsImage = () => {
+            // Hide Controls before capture
+            document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'none');
+            
             const element = document.getElementById('reportPaper');
             document.getElementById('loader').style.display = 'flex';
             document.getElementById('loaderText').innerText = "وێنەکە ئامادە دەکرێت...";
 
-            html2canvas(element, { scale: 2, useCORS: true, scrollY: -window.scrollY }).then(canvas => {
+            // Use html2canvas with specific settings to capture transforms correctly
+            html2canvas(element, { 
+                scale: 2, 
+                useCORS: true, 
+                scrollY: -window.scrollY,
+                allowTaint: true
+            }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'Gzng-Report-' + new Date().getTime() + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                
+                // Restore Controls
+                if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
+                     document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
+                }
+                
                 document.getElementById('loader').style.display = 'none';
             }).catch(err => {
                 alert("هەڵە لە دابەزاندن: " + err);
                 document.getElementById('loader').style.display = 'none';
+                // Restore Controls
+                if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
+                     document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
+                }
             });
         };
     </script>
