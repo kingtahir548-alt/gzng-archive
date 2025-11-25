@@ -27,6 +27,15 @@
         .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
         .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
         
+        /* دوگمەی زیادکردن بۆ هەمووان */
+        .add-btn { 
+            width: 100%; border: none; padding: 15px; border-radius: 10px; 
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
+            color: white; font-family: 'Noto Sans Arabic'; font-size: 1.1em;
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
         .card-header { padding: 15px; border-bottom: 1px solid #eee; }
@@ -38,7 +47,7 @@
         .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; }
         .btn-view { background: #e0e7ff; color: var(--primary); }
 
-        /* --- Teacher Cards (Public) --- */
+        /* --- Teacher Cards --- */
         .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
         .teacher-card { 
             background: white; border-radius: 20px; padding: 20px; text-align: center; 
@@ -52,7 +61,7 @@
         .teacher-name { font-size: 1.1em; font-weight: 800; margin-bottom: 5px; color: var(--text-dark); }
         .teacher-stats { font-size: 0.85em; color: var(--text-gray); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; display: inline-block; }
 
-        /* --- Admin Dashboard Styles --- */
+        /* --- Admin Dashboard --- */
         .admin-dashboard { display: none; background: #f1f5f9; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; }
         .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
         .admin-sidebar h2 { margin-bottom: 20px; color: var(--admin-accent); }
@@ -77,7 +86,6 @@
         .btn-edit-blue { background: #dbeafe; color: #2563eb; }
         .btn-logout { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
 
-        /* Teacher Grid in Admin */
         .admin-teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .admin-teacher-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; position: relative; }
         
@@ -100,9 +108,10 @@
         .form-item label { display: block; font-size: 0.8em; color: #64748b; margin-bottom: 3px; }
         
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
-        select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; }
+        /* Dropdown Style */
+        select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; padding: 5px; border-radius: 5px; border: 1px solid #e2e8f0; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
-        .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; }
+        .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; border:none; -webkit-appearance: none; }
         
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
         .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
@@ -179,6 +188,7 @@
 
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
+            <button onclick="openEditor()" class="add-btn">➕ زیادکردنی چالاکی نوێ</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
@@ -212,7 +222,6 @@
             <div id="adminActivitiesView" class="admin-table-container">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h3>📋 لیستی هەموو چالاکییەکان</h3>
-                    <button onclick="openEditor()" class="tool-btn primary">➕ زیادکردنی چالاکی</button>
                 </div>
                 <table class="admin-table">
                     <thead>
@@ -259,7 +268,7 @@
                     <div class="form-item"><label>لیژنە</label><input type="text" class="form-input" id="inpComm" placeholder="بنووسە..."></div>
                     <div class="form-item">
                         <label>مامۆستا / سەرپەرشتیار</label>
-                        <select class="form-input" id="inpTeacher" style="background:white;">
+                        <select class="form-input" id="inpTeacher">
                             <option value="">ناوی مامۆستا هەڵبژێرە...</option>
                         </select>
                     </div>
@@ -335,13 +344,14 @@
 
         onSnapshot(teachersRef, (snapshot) => {
             allTeachers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            updateTeacherDropdown();
             renderApp();
             if (document.getElementById('adminDashboard').style.display === 'block') {
                 renderAdminDashboard();
             }
-            updateTeacherDropdown();
         });
 
+        // ئەم فەنکشنە زۆر گرنگە: لیستەکە پڕ دەکاتەوە
         function updateTeacherDropdown() {
             const select = document.getElementById('inpTeacher');
             const currentVal = select.value;
@@ -355,7 +365,6 @@
             if(currentVal) select.value = currentVal;
         }
 
-        // --- PUBLIC APP LOGIC ---
         function renderApp() {
             if(currentFilter) {
                 renderFilteredView();
@@ -410,7 +419,7 @@
 
         window.filterByTeacher = (tName) => {
             currentFilter = tName;
-            switchView('archive'); // Go to archive tab but filtered
+            switchView('archive'); 
         };
 
         function renderFilteredView() {
@@ -524,11 +533,11 @@
         window.saveToArchive = async () => {
             const name = document.getElementById('inpName').value;
             const teacher = document.getElementById('inpTeacher').value.trim(); 
-            if(!name || !teacher) { alert("تکایە ناو و مامۆستا پڕ بکەرەوە!"); return; }
+            if(!name || !teacher) { alert("تکایە ناو و مامۆستا هەڵبژێرە!"); return; }
 
-            // Validation: Ensure teacher exists in the list
+            // Validation: Ensure teacher exists in the list (Security check)
             if (!allTeachers.find(t => t.name === teacher)) {
-                alert("مامۆستا نادۆزرایەوە! تکایە داوا لە ئەدمین بکە ناوی زیاد بکات.");
+                alert("تکایە ناوێک هەڵبژێرە لە لیستەکەدا بێت!");
                 return;
             }
 
@@ -564,9 +573,9 @@
             }
         };
 
-        // --- Helper Functions ---
+        // --- Editor Logic ---
         
-        // This function opens the editor for ADDING new content (Admin Only Context)
+        // This function opens the editor for ADDING new content (Public)
         window.openEditor = () => {
             // Reset fields
             document.getElementById('inpName').value = '';
@@ -581,7 +590,7 @@
             }
             updateTeacherDropdown(); 
             
-            // Enable Inputs & Show Buttons since this is "Add New" mode (triggered by Admin)
+            // Enable Inputs & Show Buttons for NEW entries
             enableEditorInputs(true);
             document.getElementById('btnSaveArchive').style.display = 'inline-block';
             document.getElementById('btnLayoutChange').style.display = 'inline-block';
@@ -594,7 +603,6 @@
         window.triggerFile = (index) => { 
             // Prevent file trigger if inputs are disabled (Read Only Mode)
             if(document.getElementById('inpName').disabled) return;
-            
             window.currentSlot = index; 
             document.getElementById('hiddenFileInput').click(); 
         };
@@ -620,13 +628,11 @@
             else { c.classList.remove('layout-portrait'); c.classList.add('layout-landscape'); }
         };
 
-        // Function to toggle Read-Only vs Editable state
         function enableEditorInputs(enable) {
             const ids = ['inpName', 'inpComm', 'inpTeacher', 'inpDate', 'inpNotes'];
             ids.forEach(id => {
                 document.getElementById(id).disabled = !enable;
             });
-            // Visual cue for images
             document.getElementById('imgContainer').style.cursor = enable ? 'pointer' : 'default';
         }
 
@@ -634,13 +640,13 @@
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
             
-            // Open Modal
             document.getElementById('editorModal').classList.add('active');
 
-            // Fill Data
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
             const select = document.getElementById('inpTeacher');
+            
+            // Ensure option exists (even if deleted later) for display purposes
             if (![...select.options].some(o => o.value === act.teacher)) {
                 const opt = document.createElement('option');
                 opt.value = act.teacher;
@@ -662,16 +668,14 @@
                 }
             }
 
-            // CHECK ADMIN STATUS
+            // Read Only for View Mode (unless Admin)
             const isAdmin = document.getElementById('adminDashboard').style.display === 'block';
 
             if(isAdmin) {
-                // Admin can edit/change layout
                 enableEditorInputs(true);
-                document.getElementById('btnSaveArchive').style.display = 'inline-block'; // Or hide if you don't want update logic
+                document.getElementById('btnSaveArchive').style.display = 'inline-block'; 
                 document.getElementById('btnLayoutChange').style.display = 'inline-block';
             } else {
-                // Public is Read-Only
                 enableEditorInputs(false);
                 document.getElementById('btnSaveArchive').style.display = 'none';
                 document.getElementById('btnLayoutChange').style.display = 'none';
@@ -702,16 +706,13 @@
             if(newName && newName !== oldName) {
                 document.getElementById('loader').style.display = 'flex';
                 document.getElementById('loaderText').innerText = "ناو دەگۆڕدرێت...";
-                
                 try {
                     const batch = writeBatch(db);
                     const teacherRef = doc(db, "teachers", id);
                     batch.update(teacherRef, { name: newName });
-
                     const q = query(activitiesRef, where("teacher", "==", oldName));
                     const querySnapshot = await getDocs(q);
                     querySnapshot.forEach((doc) => { batch.update(doc.ref, { teacher: newName }); });
-
                     await batch.commit();
                     alert("ناو نوێکرایەوە!");
                 } catch(e) { alert("هەڵە: " + e.message); } 
@@ -743,7 +744,6 @@
             finally { document.getElementById('loader').style.display = 'none'; input.value = ''; }
         };
 
-        // Navigation
         window.switchView = (v) => {
             document.getElementById('activitiesGrid').style.display = v==='archive'?'grid':'none';
             document.getElementById('archiveControls').style.display = v==='archive'?'flex':'none';
