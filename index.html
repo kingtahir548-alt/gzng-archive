@@ -13,10 +13,24 @@
             --admin-primary: #0f172a; --admin-accent: #38bdf8;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 10px; color: var(--text-dark); }
+        
+        body { 
+            font-family: 'Noto Sans Arabic', sans-serif; 
+            background-color: var(--bg-color); 
+            min-height: 100vh; 
+            padding: 10px; 
+            color: var(--text-dark);
+            overflow-x: hidden; /* ڕێگری لە جوڵەی لاوەکی */
+            overflow-y: auto;   /* دڵنیابوون لە سکڕۆڵ */
+        }
         
         /* --- Public View Styles --- */
-        .container { max-width: 1200px; margin: 0 auto; padding-bottom: 80px; display: none; }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding-bottom: 120px; /* زیادکردنی بۆشایی خوارەوە */
+            display: none; 
+        }
         header { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; position: relative; }
         h1 { font-size: 1.5em; margin-bottom: 5px; font-weight: 900; color: var(--primary); }
         
@@ -27,7 +41,6 @@
         .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
         .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
         
-        /* دوگمەی زیادکردن بۆ هەمووان */
         .add-btn { 
             width: 100%; border: none; padding: 15px; border-radius: 10px; 
             font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
@@ -62,10 +75,26 @@
         .teacher-stats { font-size: 0.85em; color: var(--text-gray); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; display: inline-block; }
 
         /* --- Admin Dashboard --- */
-        .admin-dashboard { display: none; background: #f1f5f9; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; }
+        .admin-dashboard { 
+            display: none; 
+            background: #f1f5f9; 
+            height: 100vh; /* بەرزی تەواوی شاشە */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 500; 
+            overflow-y: auto; /* ڕێگەدان بە سکڕۆڵ */
+            -webkit-overflow-scrolling: touch;
+        }
         .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
         .admin-sidebar h2 { margin-bottom: 20px; color: var(--admin-accent); }
-        .admin-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .admin-content { 
+            padding: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding-bottom: 120px; /* بۆشایی خوارەوە بۆ ئەوەی ناوەڕۆک نەشاردرێتەوە */
+        }
         
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--admin-accent); }
@@ -73,7 +102,7 @@
         .stat-label { color: #64748b; font-size: 0.9em; }
 
         .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; }
-        .admin-tab-btn { padding: 10px 20px; border: none; background: none; font-weight: bold; color: #64748b; cursor: pointer; font-family: inherit; border-bottom: 3px solid transparent; transition: 0.3s; font-size: 1em; }
+        .admin-tab-btn { padding: 10px 20px; border: none; background: none; font-weight: bold; color: #64748b; cursor: pointer; font-family: inherit; border-bottom: 3px solid transparent; transition: 0.3s; font-size: 1em; white-space: nowrap;}
         .admin-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(79, 70, 229, 0.05); border-radius: 10px 10px 0 0; }
 
         .admin-table-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; min-height: 400px; }
@@ -89,8 +118,19 @@
         .admin-teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .admin-teacher-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; position: relative; }
         
-        /* Editor Modal */
-        .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 2000; overflow-y: auto; }
+        /* Editor Modal - Fixed Scrolling */
+        .editor-modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100vh; /* بەرزی تەواو */
+            background: #f8fafc; 
+            z-index: 2000; 
+            overflow-y: auto; /* ڕێگەدان بە سکڕۆڵ */
+            -webkit-overflow-scrolling: touch;
+        }
         .editor-modal.active { display: block; }
         .editor-header { background: white; padding: 15px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .editor-tools { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
@@ -99,7 +139,7 @@
         .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
 
         /* Paper & Report */
-        .paper-wrapper { padding: 20px; display: flex; justify-content: center; }
+        .paper-wrapper { padding: 20px; display: flex; justify-content: center; padding-bottom: 100px; }
         .a4-paper { width: 210mm; min-height: 297mm; background: white; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; }
         
         .rep-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
@@ -108,7 +148,6 @@
         .form-item label { display: block; font-size: 0.8em; color: #64748b; margin-bottom: 3px; }
         
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
-        /* Dropdown Style */
         select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; padding: 5px; border-radius: 5px; border: 1px solid #e2e8f0; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
         .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; border:none; -webkit-appearance: none; }
@@ -142,7 +181,7 @@
         @media (max-width: 600px) {
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
-            .paper-wrapper { padding: 10px 0; }
+            .paper-wrapper { padding: 10px 0; padding-bottom: 100px; }
         }
     </style>
 </head>
@@ -351,7 +390,6 @@
             }
         });
 
-        // ئەم فەنکشنە زۆر گرنگە: لیستەکە پڕ دەکاتەوە
         function updateTeacherDropdown() {
             const select = document.getElementById('inpTeacher');
             const currentVal = select.value;
@@ -535,7 +573,6 @@
             const teacher = document.getElementById('inpTeacher').value.trim(); 
             if(!name || !teacher) { alert("تکایە ناو و مامۆستا هەڵبژێرە!"); return; }
 
-            // Validation: Ensure teacher exists in the list (Security check)
             if (!allTeachers.find(t => t.name === teacher)) {
                 alert("تکایە ناوێک هەڵبژێرە لە لیستەکەدا بێت!");
                 return;
@@ -575,9 +612,7 @@
 
         // --- Editor Logic ---
         
-        // This function opens the editor for ADDING new content (Public)
         window.openEditor = () => {
-            // Reset fields
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
@@ -590,7 +625,6 @@
             }
             updateTeacherDropdown(); 
             
-            // Enable Inputs & Show Buttons for NEW entries
             enableEditorInputs(true);
             document.getElementById('btnSaveArchive').style.display = 'inline-block';
             document.getElementById('btnLayoutChange').style.display = 'inline-block';
@@ -601,7 +635,6 @@
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
         
         window.triggerFile = (index) => { 
-            // Prevent file trigger if inputs are disabled (Read Only Mode)
             if(document.getElementById('inpName').disabled) return;
             window.currentSlot = index; 
             document.getElementById('hiddenFileInput').click(); 
@@ -646,7 +679,6 @@
             document.getElementById('inpComm').value = act.committee || '';
             const select = document.getElementById('inpTeacher');
             
-            // Ensure option exists (even if deleted later) for display purposes
             if (![...select.options].some(o => o.value === act.teacher)) {
                 const opt = document.createElement('option');
                 opt.value = act.teacher;
@@ -668,7 +700,6 @@
                 }
             }
 
-            // Read Only for View Mode (unless Admin)
             const isAdmin = document.getElementById('adminDashboard').style.display === 'block';
 
             if(isAdmin) {
@@ -700,6 +731,7 @@
             alert("مامۆستا زیاد کرا.");
         };
 
+        // Edit Function Logic
         window.editTeacherName = async (oldName, id) => {
             if(!id) return;
             const newName = prompt("ناوی نوێ بنووسە:", oldName);
