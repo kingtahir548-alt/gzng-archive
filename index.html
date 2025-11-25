@@ -386,17 +386,3 @@
     </script>
 </body>
 </html>
-```
-
-### زۆر گرنگ بۆ چارەسەری کێشەی ئاپلۆد (Firebase Rules)
-تکایە دڵنیابەرەوە لەناو سایتی Firebase، لە بەشی **Storage** پاشان **Rules**، ئەم کۆدەت نووسیوە:
-
-```text
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if true;
-    }
-  }
-}
