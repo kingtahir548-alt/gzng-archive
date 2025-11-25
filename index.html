@@ -46,6 +46,20 @@
         .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; }
         .btn-view { background: #e0e7ff; color: var(--primary); }
 
+        /* --- Teacher Cards (Public) --- */
+        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .teacher-card { 
+            background: white; border-radius: 20px; padding: 20px; text-align: center; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 2px solid transparent; 
+            cursor: pointer; 
+        }
+        .teacher-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        .teacher-img-wrapper { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 15px; overflow: hidden; border: 3px solid #e0e7ff; position: relative; background: #f8fafc; }
+        .teacher-img { width: 100%; height: 100%; object-fit: cover; }
+        .teacher-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); }
+        .teacher-name { font-size: 1.1em; font-weight: 800; margin-bottom: 5px; color: var(--text-dark); }
+        .teacher-stats { font-size: 0.85em; color: var(--text-gray); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; display: inline-block; }
+
         /* --- Admin Dashboard Styles --- */
         .admin-dashboard { display: none; background: #f1f5f9; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; }
         .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
@@ -116,18 +130,17 @@
         .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold; text-align: center;}
 
+        /* Filter Header */
+        .filter-header { display: none; margin-bottom: 20px; align-items: center; justify-content: space-between; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .filter-info { display: flex; align-items: center; gap: 15px; }
+        .filter-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        .filter-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #e0e7ff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
         @media (max-width: 600px) {
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; }
         }
-        
-        /* Teacher Grid Public */
-        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .teacher-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
-        .teacher-img-wrapper { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; overflow: hidden; background: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--primary); }
-        .teacher-img { width: 100%; height: 100%; object-fit: cover; }
-        .teacher-name { font-weight: bold; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -159,6 +172,18 @@
         <div class="nav-tabs">
             <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">ئەرشیف</button>
             <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
+        </div>
+
+        <!-- Filter Header (Hidden by default) -->
+        <div id="filterHeader" class="filter-header">
+            <div class="filter-info">
+                <div id="filterAvatarContainer"></div>
+                <div>
+                    <div style="font-size: 0.9em; color: #666;">ئەرشیفی مامۆستا:</div>
+                    <h2 id="filterName" style="margin: 0; font-size: 1.2em;">...</h2>
+                </div>
+            </div>
+            <button onclick="clearFilter()" style="background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">❌ گەڕانەوە</button>
         </div>
 
         <div class="controls" id="archiveControls">
@@ -213,7 +238,7 @@
                 </table>
             </div>
 
-            <!-- Teachers Manager -->
+            <!-- Teachers Manager (Admin Only) -->
             <div id="adminTeachersView" class="admin-table-container" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h3>👨‍🏫 لیستی مامۆستایان</h3>
@@ -247,6 +272,7 @@
                     <div class="form-item"><label>لیژنە</label><input type="text" class="form-input" id="inpComm" placeholder="بنووسە..."></div>
                     <div class="form-item">
                         <label>مامۆستا / سەرپەرشتیار</label>
+                        <!-- Only Select allowed -->
                         <select class="form-input" id="inpTeacher" style="background:white;">
                             <option value="">ناوی مامۆستا هەڵبژێرە...</option>
                         </select>
@@ -312,6 +338,7 @@
         window.localFiles = [null, null, null, null]; 
         window.currentSlot = 0;
         let teacherPhotoTarget = null;
+        let currentFilter = null;
 
         // Load Data
         onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
@@ -328,10 +355,10 @@
             if (document.getElementById('adminDashboard').style.display === 'block') {
                 renderAdminDashboard();
             }
-            updateTeacherDatalist();
+            updateTeacherDropdown();
         });
 
-        function updateTeacherDatalist() {
+        function updateTeacherDropdown() {
             const select = document.getElementById('inpTeacher');
             const currentVal = select.value;
             select.innerHTML = '<option value="">ناوی مامۆستا هەڵبژێرە...</option>';
@@ -346,6 +373,11 @@
 
         // --- PUBLIC APP LOGIC ---
         function renderApp() {
+            if(currentFilter) {
+                renderFilteredView();
+                return;
+            }
+
             const grid = document.getElementById('activitiesGrid');
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
             const displayList = allActivities.filter(a => 
@@ -382,7 +414,7 @@
                 const meta = allTeachers.find(t => t.name === tName);
                 const photoUrl = meta && meta.photo ? meta.photo : null;
                 return `
-                <div class="teacher-card">
+                <div class="teacher-card" onclick="filterByTeacher('${tName}')">
                     <div class="teacher-img-wrapper">
                         ${photoUrl ? `<img src="${photoUrl}" class="teacher-img">` : `<div class="teacher-placeholder">👤</div>`}
                     </div>
@@ -391,6 +423,50 @@
                 </div>
             `}).join('');
         }
+
+        window.filterByTeacher = (tName) => {
+            currentFilter = tName;
+            switchView('archive'); // Go to archive tab but filtered
+        };
+
+        function renderFilteredView() {
+            const grid = document.getElementById('activitiesGrid');
+            document.getElementById('archiveControls').style.display = 'none';
+            document.getElementById('filterHeader').style.display = 'flex';
+            document.getElementById('filterName').innerText = currentFilter;
+            
+            const meta = allTeachers.find(t => t.name === currentFilter);
+            const photoUrl = meta && meta.photo ? meta.photo : null;
+            document.getElementById('filterAvatarContainer').innerHTML = photoUrl ? 
+                `<img src="${photoUrl}" class="filter-avatar">` : 
+                `<div class="filter-placeholder">👤</div>`;
+
+            const filteredList = allActivities.filter(a => a.teacher === currentFilter);
+            
+            grid.innerHTML = filteredList.map(act => `
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>${act.name}</h3>
+                        <div class="card-meta"><span>📅 ${act.date}</span></div>
+                    </div>
+                    <div class="card-imgs">
+                        ${act.images ? act.images.slice(0,4).map(url => `<img src="${url}">`).join('') : ''}
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 ڕاپۆرت</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            if(filteredList.length === 0) grid.innerHTML = '<p style="text-align:center; grid-column:1/-1; margin-top:50px;">هیچ چالاکییەک نییە.</p>';
+        }
+
+        window.clearFilter = () => {
+            currentFilter = null;
+            document.getElementById('filterHeader').style.display = 'none';
+            document.getElementById('archiveControls').style.display = 'flex';
+            renderApp();
+        };
 
         // --- ADMIN DASHBOARD LOGIC ---
         window.renderAdminDashboard = () => {
@@ -421,7 +497,6 @@
             adminTGrid.innerHTML = allTeacherNames.map(tName => {
                 const meta = allTeachers.find(t => t.name === tName);
                 const photoUrl = meta && meta.photo ? meta.photo : null;
-                // Pass the ID if available, otherwise name
                 const teacherId = meta ? meta.id : '';
                 return `
                 <div class="admin-teacher-card">
@@ -464,7 +539,7 @@
 
         window.saveToArchive = async () => {
             const name = document.getElementById('inpName').value;
-            const teacher = document.getElementById('inpTeacher').value.trim(); // Get teacher name from select
+            const teacher = document.getElementById('inpTeacher').value.trim(); 
             if(!name || !teacher) { alert("تکایە ناو و مامۆستا پڕ بکەرەوە!"); return; }
 
             // Validation: Ensure teacher exists in the list
@@ -517,7 +592,7 @@
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
             }
-            updateTeacherDatalist(); // Populate select
+            updateTeacherDropdown(); // Ensure fresh list
             document.getElementById('editorModal').classList.add('active');
         };
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
@@ -551,7 +626,7 @@
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
             
-            // Manually adding the option if it doesn't exist in current list (for old data)
+            // Set Select Value
             const select = document.getElementById('inpTeacher');
             if (![...select.options].some(o => o.value === act.teacher)) {
                 const opt = document.createElement('option');
@@ -578,7 +653,6 @@
         window.saveNewTeacher = async () => {
             const name = document.getElementById('newTeacherName').value.trim();
             if(!name) return;
-            // Check duplicate
             if(allTeachers.some(t => t.name === name)) { alert("ئەم ناوە هەیە!"); return; }
             
             await addDoc(teachersRef, { name: name, photo: "" });
@@ -586,9 +660,8 @@
             alert("مامۆستا زیاد کرا.");
         };
 
-        // Edit Teacher Name Function
         window.editTeacherName = async (oldName, id) => {
-            if(!id) { alert("هەڵە لە دۆزینەوەی ناسنامە!"); return; }
+            if(!id) return;
             const newName = prompt("ناوی نوێ بنووسە:", oldName);
             if(newName && newName !== oldName) {
                 document.getElementById('loader').style.display = 'flex';
@@ -596,26 +669,17 @@
                 
                 try {
                     const batch = writeBatch(db);
-                    
-                    // 1. Update Teacher Profile
                     const teacherRef = doc(db, "teachers", id);
                     batch.update(teacherRef, { name: newName });
 
-                    // 2. Find all activities with old name
                     const q = query(activitiesRef, where("teacher", "==", oldName));
                     const querySnapshot = await getDocs(q);
-                    
-                    querySnapshot.forEach((doc) => {
-                        batch.update(doc.ref, { teacher: newName });
-                    });
+                    querySnapshot.forEach((doc) => { batch.update(doc.ref, { teacher: newName }); });
 
                     await batch.commit();
                     alert("ناو نوێکرایەوە!");
-                } catch(e) {
-                    alert("هەڵە: " + e.message);
-                } finally {
-                    document.getElementById('loader').style.display = 'none';
-                }
+                } catch(e) { alert("هەڵە: " + e.message); } 
+                finally { document.getElementById('loader').style.display = 'none'; }
             }
         };
 
@@ -650,6 +714,12 @@
             document.getElementById('teachersGrid').style.display = v==='teachers'?'grid':'none';
             document.getElementById('btn-archive').classList.toggle('active', v==='archive');
             document.getElementById('btn-teachers').classList.toggle('active', v==='teachers');
+            
+            if (v === 'archive') {
+                currentFilter = null;
+                document.getElementById('filterHeader').style.display = 'none';
+                renderApp();
+            }
         };
         document.getElementById('searchBox').addEventListener('input', renderApp);
         
