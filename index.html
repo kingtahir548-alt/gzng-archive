@@ -22,7 +22,7 @@
             color: var(--text-dark);
             overflow-x: hidden;
             overflow-y: auto;
-            user-select: none; /* Prevent text selection while dragging */
+            user-select: none;
         }
         
         /* --- Public View Styles --- */
@@ -137,22 +137,23 @@
             align-items: center; 
             justify-content: center; 
             transition: 0.2s; 
-            cursor: pointer; /* Default cursor */
+            cursor: pointer; 
         }
         
-        /* Cursors for states */
         .img-slot.has-img { cursor: grab; }
         .img-slot.has-img:active { cursor: grabbing; }
 
+        /* --- KEY CHANGE FOR IMAGES --- */
         .img-slot img { 
+            /* Use CONTAIN to show full image by default */
             width: 100%; 
             height: 100%; 
-            object-fit: cover; 
+            object-fit: contain; 
+            
             display: none; 
             border-radius: 8px;
             transform-origin: center;
-            /* Important: We rely on JS transform, object-fit is backup */
-            pointer-events: none; /* Let clicks pass to the slot */
+            pointer-events: none; 
         }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
@@ -208,7 +209,7 @@
             .paper-wrapper { padding: 10px 0; padding-bottom: 100px; }
             .layout-landscape .img-slot { height: 120px; }
             .layout-portrait .img-slot { height: 200px; }
-            .img-controls { opacity: 1; } /* Always show controls on mobile */
+            .img-controls { opacity: 1; } 
         }
 
         /* --- PRINT STYLES --- */
@@ -731,7 +732,6 @@
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
         
         window.triggerFile = (index) => { 
-            // Only trigger file if we are enabled
             if(document.getElementById('inpName').disabled) return;
             window.currentSlot = index; 
             document.getElementById('hiddenFileInput').click(); 
@@ -761,15 +761,12 @@
         let initialY = 0;
 
         window.startDrag = (e, index) => {
-            // Check if there is an image
             if(!document.getElementById('img'+index).src) return; 
-            // Allow dragging only if enabled
             if(document.getElementById('inpName').disabled) return;
             
             isDragging = true;
             activeSlotIndex = index;
             
-            // Get coordinates
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
             const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
             
@@ -792,7 +789,6 @@
         
         window.addEventListener('touchmove', (e) => {
             if(!isDragging) return;
-            // e.preventDefault(); // Optional: prevents scrolling while dragging
             const dx = e.touches[0].clientX - dragStartX;
             const dy = e.touches[0].clientY - dragStartY;
             updateDrag(dx, dy);
@@ -825,9 +821,6 @@
         function applyTransform(index) {
             const state = window.imgState[index];
             const img = document.getElementById('img' + index);
-            // Translate is applied *after* scaling logic visually in CSS if order is right, 
-            // but standard 'transform' order matters. 
-            // We want to move the zoomed image.
             img.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.s})`;
         }
 
@@ -842,12 +835,10 @@
             ids.forEach(id => {
                 document.getElementById(id).disabled = !enable;
             });
-            document.getElementById('imgContainer').style.cursor = enable ? 'default' : 'default'; // Cursor managed by img slots
-            // Show/Hide controls based on mode
+            document.getElementById('imgContainer').style.cursor = enable ? 'default' : 'default'; 
             const controls = document.querySelectorAll('.img-controls');
             controls.forEach(c => c.style.display = enable ? 'flex' : 'none');
             
-            // Placeholder text logic
              const placeholders = document.querySelectorAll('.placeholder-text');
              placeholders.forEach(p => p.style.pointerEvents = enable ? 'auto' : 'none');
         }
@@ -872,7 +863,6 @@
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             
-            // Reset State for viewing
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
                 window.imgState[i] = { s: 1, x: 0, y: 0 };
