@@ -22,6 +22,7 @@
             color: var(--text-dark);
             overflow-x: hidden;
             overflow-y: auto;
+            user-select: none; /* Prevent text selection while dragging */
         }
         
         /* --- Public View Styles --- */
@@ -136,22 +137,28 @@
             align-items: center; 
             justify-content: center; 
             transition: 0.2s; 
+            cursor: pointer; /* Default cursor */
         }
         
+        /* Cursors for states */
+        .img-slot.has-img { cursor: grab; }
+        .img-slot.has-img:active { cursor: grabbing; }
+
         .img-slot img { 
             width: 100%; 
             height: 100%; 
-            object-fit: cover; /* Default behavior */
+            object-fit: cover; 
             display: none; 
             border-radius: 8px;
             transform-origin: center;
-            transition: transform 0.1s linear;
+            /* Important: We rely on JS transform, object-fit is backup */
+            pointer-events: none; /* Let clicks pass to the slot */
         }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
 
-        /* --- Image Editing Controls --- */
+        /* --- Simplified Image Controls --- */
         .img-controls {
             position: absolute;
             bottom: 5px;
@@ -159,7 +166,7 @@
             right: 5px;
             display: flex;
             justify-content: center;
-            gap: 5px;
+            gap: 10px;
             background: rgba(0,0,0,0.6);
             padding: 5px;
             border-radius: 20px;
@@ -170,10 +177,12 @@
         .img-slot:hover .img-controls { opacity: 1; }
         
         .ctrl-btn {
-            background: white; border: none; width: 25px; height: 25px; border-radius: 50%;
-            cursor: pointer; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            background: white; border: none; width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
         .ctrl-btn:hover { background: var(--primary); color: white; }
+        .ctrl-btn.file-btn { background: #fbbf24; color: white; }
 
         /* Notes & Footer */
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
@@ -354,52 +363,40 @@
                 </div>
 
                 <div class="rep-images layout-landscape" id="imgContainer">
-                    <div class="img-slot" id="slot0" onclick="triggerFile(0)">
+                    <div class="img-slot" id="slot0" onmousedown="startDrag(event, 0)" ontouchstart="startDrag(event, 0)">
                         <img id="img0">
-                        <div class="placeholder-text">وێنەی ١<br>📸</div>
+                        <div class="placeholder-text" onclick="triggerFile(0)">وێنەی ١<br>📸<br><span style="font-size:12px">کلیک بکە بۆ دانان</span></div>
                         <div class="img-controls" onclick="event.stopPropagation()">
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'zoomIn')">➕</button>
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'zoomOut')">➖</button>
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'up')">⬆️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'down')">⬇️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'left')">⬅️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(0, 'right')">➡️</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(0, 0.1)">+</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(0, -0.1)">-</button>
+                            <button class="ctrl-btn file-btn" onclick="triggerFile(0)">📂</button>
                         </div>
                     </div>
-                    <div class="img-slot" id="slot1" onclick="triggerFile(1)">
+                    <div class="img-slot" id="slot1" onmousedown="startDrag(event, 1)" ontouchstart="startDrag(event, 1)">
                         <img id="img1">
-                        <div class="placeholder-text">وێنەی ٢<br>📸</div>
+                        <div class="placeholder-text" onclick="triggerFile(1)">وێنەی ٢<br>📸<br><span style="font-size:12px">کلیک بکە بۆ دانان</span></div>
                         <div class="img-controls" onclick="event.stopPropagation()">
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'zoomIn')">➕</button>
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'zoomOut')">➖</button>
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'up')">⬆️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'down')">⬇️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'left')">⬅️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(1, 'right')">➡️</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(1, 0.1)">+</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(1, -0.1)">-</button>
+                            <button class="ctrl-btn file-btn" onclick="triggerFile(1)">📂</button>
                         </div>
                     </div>
-                    <div class="img-slot" id="slot2" onclick="triggerFile(2)">
+                    <div class="img-slot" id="slot2" onmousedown="startDrag(event, 2)" ontouchstart="startDrag(event, 2)">
                         <img id="img2">
-                        <div class="placeholder-text">وێنەی ٣<br>📸</div>
+                        <div class="placeholder-text" onclick="triggerFile(2)">وێنەی ٣<br>📸<br><span style="font-size:12px">کلیک بکە بۆ دانان</span></div>
                         <div class="img-controls" onclick="event.stopPropagation()">
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'zoomIn')">➕</button>
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'zoomOut')">➖</button>
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'up')">⬆️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'down')">⬇️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'left')">⬅️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(2, 'right')">➡️</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(2, 0.1)">+</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(2, -0.1)">-</button>
+                            <button class="ctrl-btn file-btn" onclick="triggerFile(2)">📂</button>
                         </div>
                     </div>
-                    <div class="img-slot" id="slot3" onclick="triggerFile(3)">
+                    <div class="img-slot" id="slot3" onmousedown="startDrag(event, 3)" ontouchstart="startDrag(event, 3)">
                         <img id="img3">
-                        <div class="placeholder-text">وێنەی ٤<br>📸</div>
+                        <div class="placeholder-text" onclick="triggerFile(3)">وێنەی ٤<br>📸<br><span style="font-size:12px">کلیک بکە بۆ دانان</span></div>
                         <div class="img-controls" onclick="event.stopPropagation()">
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'zoomIn')">➕</button>
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'zoomOut')">➖</button>
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'up')">⬆️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'down')">⬇️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'left')">⬅️</button>
-                            <button class="ctrl-btn" onclick="adjustImg(3, 'right')">➡️</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(3, 0.1)">+</button>
+                            <button class="ctrl-btn" onclick="adjustZoom(3, -0.1)">-</button>
+                            <button class="ctrl-btn file-btn" onclick="triggerFile(3)">📂</button>
                         </div>
                     </div>
                 </div>
@@ -734,6 +731,7 @@
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
         
         window.triggerFile = (index) => { 
+            // Only trigger file if we are enabled
             if(document.getElementById('inpName').disabled) return;
             window.currentSlot = index; 
             document.getElementById('hiddenFileInput').click(); 
@@ -754,23 +752,83 @@
             e.target.value = '';
         });
 
-        // --- New Function: Image Adjustment ---
-        window.adjustImg = (index, action) => {
+        // --- DRAG & ZOOM LOGIC ---
+        let isDragging = false;
+        let activeSlotIndex = null;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let initialX = 0;
+        let initialY = 0;
+
+        window.startDrag = (e, index) => {
+            // Check if there is an image
+            if(!document.getElementById('img'+index).src) return; 
+            // Allow dragging only if enabled
+            if(document.getElementById('inpName').disabled) return;
+            
+            isDragging = true;
+            activeSlotIndex = index;
+            
+            // Get coordinates
+            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+            
+            dragStartX = clientX;
+            dragStartY = clientY;
+            
+            initialX = window.imgState[index].x;
+            initialY = window.imgState[index].y;
+            
+            document.getElementById('slot'+index).style.cursor = 'grabbing';
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            if(!isDragging) return;
+            e.preventDefault();
+            const dx = e.clientX - dragStartX;
+            const dy = e.clientY - dragStartY;
+            updateDrag(dx, dy);
+        });
+        
+        window.addEventListener('touchmove', (e) => {
+            if(!isDragging) return;
+            // e.preventDefault(); // Optional: prevents scrolling while dragging
+            const dx = e.touches[0].clientX - dragStartX;
+            const dy = e.touches[0].clientY - dragStartY;
+            updateDrag(dx, dy);
+        }, { passive: false });
+
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('touchend', endDrag);
+
+        function updateDrag(dx, dy) {
+            const state = window.imgState[activeSlotIndex];
+            state.x = initialX + dx;
+            state.y = initialY + dy;
+            applyTransform(activeSlotIndex);
+        }
+
+        function endDrag() {
+            if(isDragging) {
+                document.getElementById('slot'+activeSlotIndex).style.cursor = 'grab';
+                isDragging = false;
+                activeSlotIndex = null;
+            }
+        }
+
+        window.adjustZoom = (index, delta) => {
             const state = window.imgState[index];
-            const step = 20; // Pixel step for moving
-            const scaleStep = 0.1;
+            state.s = Math.max(0.1, state.s + delta);
+            applyTransform(index);
+        };
 
-            if (action === 'zoomIn') state.s += scaleStep;
-            if (action === 'zoomOut') state.s = Math.max(0.1, state.s - scaleStep);
-            if (action === 'up') state.y -= step;
-            if (action === 'down') state.y += step;
-            if (action === 'left') state.x -= step;
-            if (action === 'right') state.x += step;
-
+        function applyTransform(index) {
+            const state = window.imgState[index];
             const img = document.getElementById('img' + index);
-            // We use transform directly. This overrides object-fit behavior effectively for visual purposes
-            // Because object-fit: cover is centered, transform acts on that.
-            img.style.transform = `scale(${state.s}) translate(${state.x}px, ${state.y}px)`;
+            // Translate is applied *after* scaling logic visually in CSS if order is right, 
+            // but standard 'transform' order matters. 
+            // We want to move the zoomed image.
+            img.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.s})`;
         }
 
         window.setLayout = (type) => {
@@ -784,10 +842,14 @@
             ids.forEach(id => {
                 document.getElementById(id).disabled = !enable;
             });
-            document.getElementById('imgContainer').style.cursor = enable ? 'pointer' : 'default';
+            document.getElementById('imgContainer').style.cursor = enable ? 'default' : 'default'; // Cursor managed by img slots
             // Show/Hide controls based on mode
             const controls = document.querySelectorAll('.img-controls');
             controls.forEach(c => c.style.display = enable ? 'flex' : 'none');
+            
+            // Placeholder text logic
+             const placeholders = document.querySelectorAll('.placeholder-text');
+             placeholders.forEach(p => p.style.pointerEvents = enable ? 'auto' : 'none');
         }
 
         window.viewSavedReport = (id) => {
@@ -814,7 +876,7 @@
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
                 window.imgState[i] = { s: 1, x: 0, y: 0 };
-                imgEl.style.transform = `scale(1) translate(0px, 0px)`;
+                imgEl.style.transform = `translate(0px, 0px) scale(1)`;
 
                 if(act.images && act.images[i]) { 
                     imgEl.src = act.images[i]; 
@@ -951,14 +1013,12 @@
 
         // --- Download as Image Function ---
         window.downloadAsImage = () => {
-            // Hide Controls before capture
             document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'none');
             
             const element = document.getElementById('reportPaper');
             document.getElementById('loader').style.display = 'flex';
             document.getElementById('loaderText').innerText = "وێنەکە ئامادە دەکرێت...";
 
-            // Use html2canvas with specific settings to capture transforms correctly
             html2canvas(element, { 
                 scale: 2, 
                 useCORS: true, 
@@ -970,7 +1030,6 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 
-                // Restore Controls
                 if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
                      document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
                 }
@@ -979,7 +1038,6 @@
             }).catch(err => {
                 alert("هەڵە لە دابەزاندن: " + err);
                 document.getElementById('loader').style.display = 'none';
-                // Restore Controls
                 if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
                      document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
                 }
