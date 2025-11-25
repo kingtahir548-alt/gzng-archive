@@ -10,10 +10,12 @@
         :root {
             --primary: #4f46e5; --bg-color: #f3f4f6; --card-bg: #ffffff;
             --text-dark: #1e293b; --text-gray: #64748b;
+            --admin-primary: #0f172a; --admin-accent: #38bdf8; /* ڕەنگی تایبەتی ئەدمین */
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 10px; color: var(--text-dark); }
         
+        /* --- Public View Styles --- */
         .container { max-width: 1200px; margin: 0 auto; padding-bottom: 80px; display: none; }
         header { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; position: relative; }
         h1 { font-size: 1.5em; margin-bottom: 5px; font-weight: 900; color: var(--primary); }
@@ -25,19 +27,16 @@
         .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
         .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
         
-        .buttons-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        
         .add-btn { 
-            flex: 1; border: none; padding: 12px 20px; border-radius: 10px; 
+            width: 100%; border: none; padding: 15px; border-radius: 10px; 
             font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
-            color: white; font-family: 'Noto Sans Arabic'; font-size: 0.95em;
+            color: white; font-family: 'Noto Sans Arabic'; font-size: 1.1em;
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
-        .btn-upload { background: linear-gradient(135deg, var(--primary), #4338ca); }
-        .btn-link { background: linear-gradient(135deg, #059669, #047857); }
 
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
-        .activity-card:hover { transform: translateY(-5px); }
         .card-header { padding: 15px; border-bottom: 1px solid #eee; }
         .card-header h3 { font-size: 1.1em; margin-bottom: 5px; }
         .card-meta { font-size: 0.85em; color: var(--text-gray); display: flex; justify-content: space-between; }
@@ -46,59 +45,45 @@
         .card-actions { padding: 10px; display: flex; gap: 10px; background: #fafafa; }
         .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; }
         .btn-view { background: #e0e7ff; color: var(--primary); }
-        .btn-del { background: #fee2e2; color: #ef4444; display: none; }
 
-        /* Teacher Cards */
-        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .teacher-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; overflow: hidden; transition: 0.3s; border: 2px solid transparent; cursor: pointer; }
-        .teacher-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        .teacher-img-wrapper { width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; overflow: hidden; border: 3px solid #e0e7ff; position: relative; }
-        .teacher-img { width: 100%; height: 100%; object-fit: cover; }
-        .teacher-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e0e7ff; font-size: 40px; color: var(--primary); }
-        .teacher-name { font-size: 1.2em; font-weight: 900; margin-bottom: 5px; }
-        .teacher-stats { font-size: 0.9em; color: var(--text-gray); background: #f1f5f9; padding: 5px 10px; border-radius: 20px; display: inline-block; }
+        /* --- Admin Dashboard Styles (New & Different) --- */
+        .admin-dashboard { display: none; background: #f1f5f9; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; }
+        .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
+        .admin-sidebar h2 { margin-bottom: 20px; color: var(--admin-accent); }
+        .admin-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
         
-        .teacher-admin-controls { 
-            display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; 
-            gap: 10px; justify-content: center;
-        }
-        .btn-icon { width: 35px; height: 35px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: 0.2s; }
-        .btn-edit-photo { background: #dbeafe; color: #2563eb; }
-        .btn-delete-teacher { background: #fee2e2; color: #ef4444; }
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--admin-accent); }
+        .stat-number { font-size: 2em; font-weight: 900; color: var(--admin-primary); }
+        .stat-label { color: #64748b; font-size: 0.9em; }
 
-        /* Modals */
+        .admin-table-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; }
+        .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .admin-table th { text-align: right; padding: 15px; border-bottom: 2px solid #e2e8f0; color: var(--text-gray); }
+        .admin-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        
+        .btn-admin-action { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
+        .btn-delete-red { background: #fee2e2; color: #ef4444; }
+        .btn-logout { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
+
+        /* Teacher Grid in Admin */
+        .admin-teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .admin-teacher-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; position: relative; }
+        .delete-badge { position: absolute; top: 5px; left: 5px; background: red; color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; }
+
+        /* Editor Modal */
         .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 2000; overflow-y: auto; }
         .editor-modal.active { display: block; }
-        
-        .simple-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2500; justify-content: center; align-items: center; padding: 20px; }
-        .simple-modal.active { display: flex; }
-        .simple-modal-content { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
-
         .editor-header { background: white; padding: 15px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .editor-tools { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
         .tool-btn { padding: 8px 15px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-family: inherit; font-weight: bold; font-size: 0.9em; white-space: nowrap; }
         .tool-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
         .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
-        .tool-btn.active-mode { background: #dcfce7; border-color: #22c55e; color: #15803d; }
 
+        /* Paper & Report */
         .paper-wrapper { padding: 20px; display: flex; justify-content: center; }
-        .a4-paper { 
-            width: 210mm; min-height: 297mm; background: white; padding: 15mm; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; 
-            color: black; direction: rtl; text-align: right; 
-            display: flex; flex-direction: column;
-        }
+        .a4-paper { width: 210mm; min-height: 297mm; background: white; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; }
         
-        @media print {
-            body * { visibility: hidden; }
-            .editor-modal, .editor-modal * { visibility: visible; }
-            .editor-header, .editor-tools, .link-inputs-container { display: none !important; }
-            .paper-wrapper { padding: 0; margin: 0; }
-            .a4-paper { box-shadow: none; width: 100%; height: 100%; margin: 0; padding: 15mm; page-break-after: always; }
-            .img-placeholder span { display: none; }
-        }
-
-        /* Report styles */
         .rep-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .rep-logo { width: 70px; height: 70px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #ddd; }
         .rep-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
@@ -106,46 +91,41 @@
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
-        .layout-landscape { grid-template-columns: 1fr 1fr; }
-        .layout-landscape .img-slot { aspect-ratio: 16/9; }
-        .layout-portrait { grid-template-columns: 1fr 1fr; }
-        .layout-portrait .img-slot { aspect-ratio: 3/4; }
+        .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
+        .layout-portrait { grid-template-columns: 1fr 1fr; } .layout-portrait .img-slot { aspect-ratio: 3/4; }
         .img-slot { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .img-slot:hover, .img-slot.drag-over { background: #e2e8f0; border-color: var(--primary); }
+        .img-slot:hover { background: #e2e8f0; border-color: var(--primary); }
         .img-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
-        .rep-notes { margin-top: 10px; flex-grow: 1; }
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
         .school-name-footer { font-size: 14px; font-weight: bold; color: #64748b; }
-        .link-inputs-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #fff7ed; padding: 15px; border-radius: 10px; border: 1px solid #ffedd5; }
-        .link-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; direction: ltr; font-size: 12px; }
 
+        /* Auth & Loader */
         #securityOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
-
-        /* Filter Header */
-        .filter-header { display: none; margin-bottom: 20px; align-items: center; justify-content: space-between; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .filter-info { display: flex; align-items: center; gap: 15px; }
-        .filter-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
-        .filter-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #e0e7ff; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold; text-align: center;}
 
         @media (max-width: 600px) {
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; }
-            .link-inputs-container { grid-template-columns: 1fr; }
-            .buttons-row { flex-direction: column; }
         }
         
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold;}
+        /* Teacher Grid Public */
+        .teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .teacher-card { background: white; border-radius: 20px; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; cursor: pointer; }
+        .teacher-img-wrapper { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; overflow: hidden; background: #e0e7ff; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--primary); }
+        .teacher-img { width: 100%; height: 100%; object-fit: cover; }
+        .teacher-name { font-weight: bold; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
+    <!-- Security Screen -->
     <div id="securityOverlay">
         <div class="auth-box">
             <h2>🔒 پارێزراو</h2>
@@ -157,10 +137,11 @@
     </div>
 
     <div id="loader">
-        <div style="font-size:20px; margin-bottom:10px">⏳</div>
-        <span id="loaderText">داتا دەنێردرێت... تکایە چاوەڕێبە</span>
+        <div style="font-size:30px; margin-bottom:15px">⏳</div>
+        <span id="loaderText">خەریکی ئاپلۆدکردن و سەیڤکردنە...<br>تکایە دایمەخە!</span>
     </div>
 
+    <!-- Public Content -->
     <div class="container" id="mainContent">
         <header>
             <button onclick="toggleAdmin()" class="admin-btn" id="adminBtn">🔑 ئەدمین</button>
@@ -173,64 +154,74 @@
             <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
         </div>
 
-        <!-- بەشی فلتەری مامۆستا -->
-        <div id="filterHeader" class="filter-header">
-            <div class="filter-info">
-                <div id="filterAvatarContainer"></div>
-                <div>
-                    <div style="font-size: 0.9em; color: #666;">ئەرشیفی مامۆستا:</div>
-                    <h2 id="filterName" style="margin: 0; font-size: 1.2em;">...</h2>
-                </div>
-            </div>
-            <button onclick="clearFilter()" style="background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer;">❌ گەڕانەوە</button>
-        </div>
-
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            
-            <div class="buttons-row">
-                <button class="add-btn btn-upload" onclick="openEditor('file')">📝 زیادکردن (Upload)</button>
-                <button class="add-btn btn-link" onclick="openEditor('link')">🔗 زیادکردن (Link)</button>
-            </div>
-        </div>
-
-        <div class="controls" id="teachersControls" style="display:none;">
-            <div class="buttons-row" style="width:100%;">
-                <button class="add-btn btn-upload" onclick="openAddTeacherModal()">➕ زیادکردنی مامۆستای نوێ</button>
-            </div>
+            <button class="add-btn" onclick="openEditor()">📝 زیادکردنی چالاکی نوێ</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
         <div class="teachers-grid" id="teachersGrid" style="display:none;"></div>
     </div>
 
-    <!-- Teacher Modal -->
-    <div class="simple-modal" id="teacherModal">
-        <div class="simple-modal-content">
-            <h3>زیادکردنی مامۆستا</h3>
-            <input type="text" id="newTeacherName" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ddd; border-radius:8px;" placeholder="ناوی سیانی مامۆستا...">
-            <button onclick="saveNewTeacher()" class="tool-btn primary" style="width:100%;">سەیڤکردن</button>
-            <button onclick="document.getElementById('teacherModal').classList.remove('active')" class="tool-btn danger" style="width:100%; margin-top:10px;">داخستن</button>
+    <!-- Admin Dashboard (Separate View) -->
+    <div id="adminDashboard" class="admin-dashboard">
+        <div class="admin-sidebar">
+            <h2>⚙️ داشبۆردی بەڕێوەبردن</h2>
+            <p>بەخێربێیت بەڕێوەبەر</p>
+            <button onclick="exitAdmin()" class="btn-logout">چوونە دەرەوە</button>
+        </div>
+        
+        <div class="admin-content">
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number" id="statActivities">0</div>
+                    <div class="stat-label">چالاکی</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statTeachers">0</div>
+                    <div class="stat-label">مامۆستا</div>
+                </div>
+            </div>
+
+            <!-- Tools Tab -->
+            <div style="margin-bottom: 20px; display:flex; gap:10px;">
+                <button onclick="switchAdminTab('activities')" class="tool-btn primary">بەڕێوەبردنی چالاکییەکان</button>
+                <button onclick="switchAdminTab('teachers')" class="tool-btn">بەڕێوەبردنی مامۆستایان</button>
+            </div>
+
+            <!-- Activities Manager -->
+            <div id="adminActivitiesView" class="admin-table-container">
+                <h3>📋 لیستی هەموو چالاکییەکان</h3>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>چالاکی</th>
+                            <th>مامۆستا</th>
+                            <th>بەروار</th>
+                            <th>کردار</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminActivitiesTable"></tbody>
+                </table>
+            </div>
+
+            <!-- Teachers Manager -->
+            <div id="adminTeachersView" class="admin-table-container" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>👨‍🏫 لیستی مامۆستایان</h3>
+                    <button onclick="openAddTeacherModal()" class="tool-btn primary">➕ زیادکردنی مامۆستا</button>
+                </div>
+                <div class="admin-teachers-grid" id="adminTeachersGrid"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Photo Upload Modal for Teacher -->
-    <div class="simple-modal" id="photoModal">
-        <div class="simple-modal-content">
-            <h3>گۆڕینی وێنەی مامۆستا</h3>
-            <p id="photoTeacherName" style="color:#666; margin-bottom:15px;">...</p>
-            <input type="file" id="teacherPhotoInput" accept="image/*" style="display:none" onchange="handleTeacherPhotoSelect(this)">
-            <button onclick="document.getElementById('teacherPhotoInput').click()" class="tool-btn" style="width:100%; margin-bottom:10px;">📂 هەڵبژاردنی وێنە</button>
-            <button onclick="document.getElementById('photoModal').classList.remove('active')" class="tool-btn danger" style="width:100%;">داخستن</button>
-        </div>
-    </div>
-
-    <!-- Report Editor -->
+    <!-- Report Editor Modal -->
     <div class="editor-modal" id="editorModal">
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
-                <button onclick="toggleImageMode()" id="btnImgMode" class="tool-btn">گۆڕینی مۆد</button>
                 <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە</button>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
                 <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
@@ -250,17 +241,11 @@
                     <div class="form-item"><label>مامۆستا / سەرپەرشتیار</label><input type="text" class="form-input" id="inpTeacher" placeholder="بنووسە..."></div>
                     <div class="form-item"><label>بەروار</label><input type="date" class="form-input" id="inpDate" style="text-align:right;"></div>
                 </div>
-                <div class="link-inputs-container" id="linkInputsArea">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ١..." oninput="updateLinkPreview(0, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٢..." oninput="updateLinkPreview(1, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٣..." oninput="updateLinkPreview(2, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٤..." oninput="updateLinkPreview(3, this.value)">
-                </div>
                 <div class="rep-images layout-landscape" id="imgContainer">
-                    <div class="img-slot" onclick="triggerFile(0)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 0)"><img id="img0"><div class="placeholder-text">وێنەی ١<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(1)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 1)"><img id="img1"><div class="placeholder-text">وێنەی ٢<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(2)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 2)"><img id="img2"><div class="placeholder-text">وێنەی ٣<br>📸</div></div>
-                    <div class="img-slot" onclick="triggerFile(3)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 3)"><img id="img3"><div class="placeholder-text">وێنەی ٤<br>📸</div></div>
+                    <div class="img-slot" onclick="triggerFile(0)"><img id="img0"><div class="placeholder-text">وێنەی ١<br>📸</div></div>
+                    <div class="img-slot" onclick="triggerFile(1)"><img id="img1"><div class="placeholder-text">وێنەی ٢<br>📸</div></div>
+                    <div class="img-slot" onclick="triggerFile(2)"><img id="img2"><div class="placeholder-text">وێنەی ٣<br>📸</div></div>
+                    <div class="img-slot" onclick="triggerFile(3)"><img id="img3"><div class="placeholder-text">وێنەی ٤<br>📸</div></div>
                 </div>
                 <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
                 <div class="rep-notes"><label style="font-size:0.9em; font-weight:bold;">تێبینی و وردەکاری:</label><textarea id="inpNotes" placeholder="لێرە بنووسە..."></textarea></div>
@@ -269,10 +254,31 @@
         </div>
     </div>
 
+    <!-- Admin Teacher Modal -->
+    <div class="simple-modal" id="teacherModal">
+        <div class="simple-modal-content">
+            <h3>زیادکردنی مامۆستا</h3>
+            <input type="text" id="newTeacherName" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ddd; border-radius:8px;" placeholder="ناوی سیانی مامۆستا...">
+            <button onclick="saveNewTeacher()" class="tool-btn primary" style="width:100%;">سەیڤکردن</button>
+            <button onclick="document.getElementById('teacherModal').classList.remove('active')" class="tool-btn danger" style="width:100%; margin-top:10px;">داخستن</button>
+        </div>
+    </div>
+
+    <!-- Photo Upload Modal -->
+    <div class="simple-modal" id="photoModal">
+        <div class="simple-modal-content">
+            <h3>گۆڕینی وێنەی مامۆستا</h3>
+            <input type="file" id="teacherPhotoInput" accept="image/*" style="display:none" onchange="handleTeacherPhotoSelect(this)">
+            <button onclick="document.getElementById('teacherPhotoInput').click()" class="tool-btn" style="width:100%; margin-bottom:10px;">📂 هەڵبژاردنی وێنە</button>
+            <button onclick="document.getElementById('photoModal').classList.remove('active')" class="tool-btn danger" style="width:100%;">داخستن</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, setDoc, getDocs, where, deleteField, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
+        // ImgBB API Key
         const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
         const firebaseConfig = {
@@ -292,39 +298,29 @@
 
         let allActivities = [];
         let allTeachers = [];
-        window.isAdmin = false;
         window.localFiles = [null, null, null, null]; 
-        window.linkUrls = ["", "", "", ""];
         window.currentSlot = 0;
-        window.useLinks = false; 
-        let currentFilter = null;
         let teacherPhotoTarget = null;
 
-        // Load Activities
-        const q = query(activitiesRef, orderBy("date", "desc"));
-        onSnapshot(q, (snapshot) => {
+        // Load Data
+        onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
+            renderAdminDashboard(); // Update admin if open
         });
 
-        // Load Teachers Metadata (Photos)
         onSnapshot(teachersRef, (snapshot) => {
             allTeachers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
+            renderAdminDashboard();
         });
 
+        // --- PUBLIC APP LOGIC ---
         function renderApp() {
-            if(currentFilter) {
-                renderFilteredView();
-                return;
-            }
-
             const grid = document.getElementById('activitiesGrid');
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
             const displayList = allActivities.filter(a => 
-                a.name.toLowerCase().includes(searchTerm) || 
-                a.teacher.toLowerCase().includes(searchTerm)
+                a.name.toLowerCase().includes(searchTerm) || a.teacher.toLowerCase().includes(searchTerm)
             );
 
             grid.innerHTML = displayList.map(act => `
@@ -337,8 +333,7 @@
                         ${act.images ? act.images.slice(0,4).map(url => `<img src="${url}">`).join('') : ''}
                     </div>
                     <div class="card-actions">
-                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 ڕاپۆرت</button>
-                        ${window.isAdmin ? `<button class="action-btn btn-del" style="display:block" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>` : ''}
+                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 کردنەوەی ڕاپۆرت</button>
                     </div>
                 </div>
             `).join('');
@@ -349,238 +344,86 @@
         function renderTeachersList() {
             const tGrid = document.getElementById('teachersGrid');
             const tMap = {};
-            
-            // 1. Get teachers from activities
-            allActivities.forEach(a => { 
-                const t = a.teacher.trim(); 
-                tMap[t] = (tMap[t] || 0) + 1; 
-            });
-
-            // 2. Get manual teachers (even with 0 activities)
-            allTeachers.forEach(t => {
-                if (!tMap[t.name]) tMap[t.name] = 0;
-            });
+            allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
+            allTeachers.forEach(t => { if (!tMap[t.name]) tMap[t.name] = 0; }); // Add manual teachers
 
             const sortedTeachers = Object.keys(tMap).sort((a, b) => tMap[b] - tMap[a]);
 
             tGrid.innerHTML = sortedTeachers.map(tName => {
                 const meta = allTeachers.find(t => t.name === tName);
                 const photoUrl = meta && meta.photo ? meta.photo : null;
-                
                 return `
-                <div class="teacher-card" onclick="filterByTeacher('${tName}')">
+                <div class="teacher-card">
                     <div class="teacher-img-wrapper">
                         ${photoUrl ? `<img src="${photoUrl}" class="teacher-img">` : `<div class="teacher-placeholder">👤</div>`}
                     </div>
                     <div class="teacher-name">${tName}</div>
                     <div class="teacher-stats">📊 ${tMap[tName]} چالاکی</div>
-                    
-                    ${window.isAdmin ? `
-                    <div class="teacher-admin-controls" onclick="event.stopPropagation()">
-                        <button class="btn-icon btn-edit-photo" title="گۆڕینی وێنە" onclick="openPhotoModal('${tName}')">📷</button>
-                        <button class="btn-icon btn-delete-teacher" title="سڕینەوەی پرۆفایل" onclick="deleteTeacherProfile('${tName}')">🗑️</button>
-                    </div>` : ''}
                 </div>
             `}).join('');
-            
-            // Show Admin controls on cards if Admin
-            const adminControls = document.querySelectorAll('.teacher-admin-controls');
-            adminControls.forEach(el => el.style.display = window.isAdmin ? 'flex' : 'none');
         }
 
-        window.filterByTeacher = (tName) => {
-            currentFilter = tName;
-            switchView('archive'); // Go to archive tab but filtered
-        };
+        // --- ADMIN DASHBOARD LOGIC ---
+        window.renderAdminDashboard = () => {
+            // Update Stats
+            document.getElementById('statActivities').innerText = allActivities.length;
+            const uniqueTeachers = new Set(allActivities.map(a => a.teacher.trim()));
+            document.getElementById('statTeachers').innerText = Math.max(uniqueTeachers.size, allTeachers.length);
 
-        function renderFilteredView() {
-            const grid = document.getElementById('activitiesGrid');
-            document.getElementById('archiveControls').style.display = 'none';
-            document.getElementById('filterHeader').style.display = 'flex';
-            document.getElementById('filterName').innerText = currentFilter;
-            
-            // Show Avatar in header
-            const meta = allTeachers.find(t => t.name === currentFilter);
-            const photoUrl = meta && meta.photo ? meta.photo : null;
-            document.getElementById('filterAvatarContainer').innerHTML = photoUrl ? 
-                `<img src="${photoUrl}" class="filter-avatar">` : 
-                `<div class="filter-placeholder">👤</div>`;
+            // Render Activities Table
+            const tableBody = document.getElementById('adminActivitiesTable');
+            tableBody.innerHTML = allActivities.map(act => `
+                <tr>
+                    <td>${act.name}</td>
+                    <td>${act.teacher}</td>
+                    <td>${act.date}</td>
+                    <td>
+                        <button class="btn-admin-action btn-view" onclick="viewSavedReport('${act.id}')">📄</button>
+                        <button class="btn-admin-action btn-delete-red" onclick="deleteItem('${act.id}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
 
-            const filteredList = allActivities.filter(a => a.teacher === currentFilter);
+            // Render Teachers Management Grid
+            const adminTGrid = document.getElementById('adminTeachersGrid');
+            const tMap = {};
+            allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
+            allTeachers.forEach(t => { if (!tMap[t.name]) tMap[t.name] = 0; });
             
-            grid.innerHTML = filteredList.map(act => `
-                <div class="activity-card">
-                    <div class="card-header">
-                        <h3>${act.name}</h3>
-                        <div class="card-meta"><span>📅 ${act.date}</span></div>
+            const allTeacherNames = Object.keys(tMap);
+            
+            adminTGrid.innerHTML = allTeacherNames.map(tName => {
+                const meta = allTeachers.find(t => t.name === tName);
+                const photoUrl = meta && meta.photo ? meta.photo : null;
+                return `
+                <div class="admin-teacher-card">
+                    <div class="teacher-img-wrapper" style="width:60px; height:60px; font-size:24px;">
+                        ${photoUrl ? `<img src="${photoUrl}" class="teacher-img">` : `<div class="teacher-placeholder">👤</div>`}
                     </div>
-                    <div class="card-imgs">
-                        ${act.images ? act.images.slice(0,4).map(url => `<img src="${url}">`).join('') : ''}
-                    </div>
-                    <div class="card-actions">
-                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 ڕاپۆرت</button>
-                        ${window.isAdmin ? `<button class="action-btn btn-del" style="display:block" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>` : ''}
+                    <div style="font-weight:bold;">${tName}</div>
+                    <div style="font-size:0.8em; color:#666;">${tMap[tName]} چالاکی</div>
+                    <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+                        <button class="btn-admin-action" style="background:#dbeafe; color:#2563eb;" onclick="openPhotoModal('${tName}')">وێنە</button>
+                        <button class="btn-admin-action btn-delete-red" onclick="deleteTeacherProfile('${tName}')">سڕینەوە</button>
                     </div>
                 </div>
-            `).join('');
-            
-            if(filteredList.length === 0) grid.innerHTML = '<p style="text-align:center; grid-column:1/-1; margin-top:50px;">هیچ چالاکییەک نییە.</p>';
+            `}).join('');
         }
 
-        window.clearFilter = () => {
-            currentFilter = null;
-            document.getElementById('filterHeader').style.display = 'none';
-            document.getElementById('archiveControls').style.display = 'flex'; // Show controls again
-            renderApp();
-        };
-
-        // --- Admin Teacher Functions ---
-        window.openAddTeacherModal = () => {
-            document.getElementById('newTeacherName').value = '';
-            document.getElementById('teacherModal').classList.add('active');
-        };
-
-        window.saveNewTeacher = async () => {
-            const name = document.getElementById('newTeacherName').value.trim();
-            if(!name) return;
-            
-            // Check if exists
-            const exists = allTeachers.find(t => t.name === name);
-            if(exists) { alert("ئەم مامۆستایە هەیە!"); return; }
-
-            await addDoc(teachersRef, { name: name, photo: "" });
-            document.getElementById('teacherModal').classList.remove('active');
-            alert("مامۆستا زیاد کرا.");
-        };
-
-        window.deleteTeacherProfile = async (tName) => {
-            if(!confirm(`دڵنیایت لە سڕینەوەی پرۆفایلی "${tName}"؟ \nتێبینی: ئەمە چالاکییەکانی ناسڕێتەوە، تەنها پرۆفایلەکەی.`)) return;
-            
-            // Delete from 'teachers' collection
-            const meta = allTeachers.find(t => t.name === tName);
-            if(meta) {
-                await deleteDoc(doc(db, "teachers", meta.id));
-            }
-            alert("پرۆفایل سڕایەوە.");
-        };
-
-        // --- Photo Upload ---
-        window.openPhotoModal = (tName) => {
-            teacherPhotoTarget = tName;
-            document.getElementById('photoTeacherName').innerText = tName;
-            document.getElementById('photoModal').classList.add('active');
-        };
-
-        window.handleTeacherPhotoSelect = async (input) => {
-            const file = input.files[0];
-            if(!file) return;
-            
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('loaderText').innerText = "وێنە ئاپلۆد دەکرێت...";
-            document.getElementById('photoModal').classList.remove('active');
-
-            try {
-                const url = await uploadToImgBB(file);
-                
-                // Save url to 'teachers' collection
-                const meta = allTeachers.find(t => t.name === teacherPhotoTarget);
-                if(meta) {
-                    // Update existing
-                    await updateDoc(doc(db, "teachers", meta.id), { photo: url });
-                } else {
-                    // Create new entry if not exists
-                    await addDoc(teachersRef, { name: teacherPhotoTarget, photo: url });
-                }
-                alert("وێنەکە گۆڕدرا!");
-            } catch(e) {
-                alert("کێشە: " + e.message);
-            } finally {
-                document.getElementById('loader').style.display = 'none';
-                input.value = '';
-            }
-        };
-
-        // --- Standard Functions ---
-        window.openEditor = (mode) => {
-            document.getElementById('inpName').value = '';
-            document.getElementById('inpComm').value = '';
-            document.getElementById('inpTeacher').value = '';
-            document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
-            document.getElementById('inpNotes').value = '';
-            window.localFiles = [null, null, null, null];
-            window.linkUrls = ["", "", "", ""];
-            if (mode === 'link') window.useLinks = true; else window.useLinks = false;
-            updateImageModeUI();
-            for(let i=0; i<4; i++) {
-                document.getElementById('img'+i).src = '';
-                document.getElementById('img'+i).parentElement.classList.remove('has-img');
-                document.querySelectorAll('.link-input')[i].value = '';
-            }
-            document.getElementById('editorModal').classList.add('active');
-        };
-
-        window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
-        window.toggleImageMode = () => { window.useLinks = !window.useLinks; updateImageModeUI(); };
-
-        function updateImageModeUI() {
-            const btn = document.getElementById('btnImgMode');
-            const inputs = document.getElementById('linkInputsArea');
-            if (window.useLinks) {
-                btn.classList.add('active-mode');
-                btn.innerText = "📂 گۆڕین بۆ فایل (Upload)";
-                inputs.style.display = 'grid';
+        window.switchAdminTab = (tab) => {
+            if(tab === 'activities') {
+                document.getElementById('adminActivitiesView').style.display = 'block';
+                document.getElementById('adminTeachersView').style.display = 'none';
             } else {
-                btn.classList.remove('active-mode');
-                btn.innerText = "🔗 گۆڕین بۆ لینک (ImgBB)";
-                inputs.style.display = 'none';
+                document.getElementById('adminActivitiesView').style.display = 'none';
+                document.getElementById('adminTeachersView').style.display = 'block';
             }
-        }
-
-        window.updateLinkPreview = (index, url) => {
-            window.linkUrls[index] = url;
-            const imgEl = document.getElementById('img' + index);
-            if (url) { imgEl.src = url; imgEl.parentElement.classList.add('has-img'); } 
-            else { imgEl.src = ''; imgEl.parentElement.classList.remove('has-img'); }
         };
 
-        window.toggleLayout = () => {
-            const c = document.getElementById('imgContainer');
-            if(c.classList.contains('layout-landscape')) { c.classList.remove('layout-landscape'); c.classList.add('layout-portrait'); } 
-            else { c.classList.remove('layout-portrait'); c.classList.add('layout-landscape'); }
-        };
-
-        window.triggerFile = (index) => { if (window.useLinks) return; window.currentSlot = index; document.getElementById('hiddenFileInput').click(); };
-        window.allowDrop = (e) => { if (window.useLinks) return; e.preventDefault(); e.currentTarget.classList.add('drag-over'); };
-        window.leaveDrop = (e) => { e.currentTarget.classList.remove('drag-over'); }
-        window.handleDrop = (e, index) => { if (window.useLinks) return; e.preventDefault(); e.currentTarget.classList.remove('drag-over'); const file = e.dataTransfer.files[0]; if(file && file.type.startsWith('image/')) processFile(file, index); };
-
-        function processFile(file, index) {
-            window.localFiles[index] = file;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const imgEl = document.getElementById('img' + index);
-                imgEl.src = ev.target.result;
-                imgEl.parentElement.classList.add('has-img');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if(file) processFile(file, window.currentSlot);
-            e.target.value = '';
-        });
-
-        window.printReport = () => window.print();
-        window.downloadAsImage = () => {
-            const el = document.querySelector(".a4-paper");
-            html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
-                const a = document.createElement('a'); a.download = 'Gzng_Report.jpg'; a.href = canvas.toDataURL('image/jpeg', 0.9); a.click();
-            }).catch(e => alert("هەڵە: " + e));
-        };
-
+        // --- ImgBB Auto Upload Logic ---
         async function uploadToImgBB(file) {
-            const formData = new FormData(); formData.append("image", file);
+            const formData = new FormData();
+            formData.append("image", file);
             const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: "POST", body: formData });
             const result = await response.json();
             if (result.success) return result.data.url; else throw new Error("ImgBB Upload Failed");
@@ -597,21 +440,70 @@
 
             try {
                 let imageUrls = [];
-                if (window.useLinks) { imageUrls = window.linkUrls.filter(url => url.trim() !== ""); } 
-                else {
-                    for(let i=0; i<4; i++) {
-                        const file = window.localFiles[i];
-                        if(file) {
-                            loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت...`;
-                            const url = await uploadToImgBB(file);
-                            imageUrls.push(url);
-                        }
+                // Loop through files, upload to ImgBB automatically
+                for(let i=0; i<4; i++) {
+                    const file = window.localFiles[i];
+                    if(file) {
+                        loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت بۆ ImgBB...`;
+                        const url = await uploadToImgBB(file);
+                        imageUrls.push(url);
                     }
                 }
+
                 loaderText.innerText = "تۆمارکردن...";
-                await addDoc(activitiesRef, { name: name, committee: document.getElementById('inpComm').value, teacher: teacher, date: document.getElementById('inpDate').value, notes: document.getElementById('inpNotes').value, images: imageUrls, createdAt: new Date() });
-                loader.style.display = 'none'; alert("✅ سەیڤ کرا!"); closeEditor();
-            } catch(err) { loader.style.display = 'none'; alert("هەڵە: " + err.message); }
+                await addDoc(activitiesRef, { 
+                    name: name, committee: document.getElementById('inpComm').value, 
+                    teacher: teacher, date: document.getElementById('inpDate').value, 
+                    notes: document.getElementById('inpNotes').value, 
+                    images: imageUrls, createdAt: new Date() 
+                });
+
+                loader.style.display = 'none'; 
+                alert("✅ سەیڤ کرا!"); 
+                closeEditor();
+            } catch(err) { 
+                loader.style.display = 'none'; 
+                alert("هەڵە: " + err.message); 
+            }
+        };
+
+        // --- Helper Functions ---
+        window.openEditor = () => {
+            // Reset fields
+            document.getElementById('inpName').value = '';
+            document.getElementById('inpComm').value = '';
+            document.getElementById('inpTeacher').value = '';
+            document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('inpNotes').value = '';
+            window.localFiles = [null, null, null, null];
+            for(let i=0; i<4; i++) {
+                document.getElementById('img'+i).src = '';
+                document.getElementById('img'+i).parentElement.classList.remove('has-img');
+            }
+            document.getElementById('editorModal').classList.add('active');
+        };
+        window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
+        
+        window.triggerFile = (index) => { window.currentSlot = index; document.getElementById('hiddenFileInput').click(); };
+        document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                window.localFiles[window.currentSlot] = file; // Store file
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const imgEl = document.getElementById('img' + window.currentSlot);
+                    imgEl.src = ev.target.result; // Show preview locally
+                    imgEl.parentElement.classList.add('has-img');
+                };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = '';
+        });
+
+        window.toggleLayout = () => {
+            const c = document.getElementById('imgContainer');
+            if(c.classList.contains('layout-landscape')) { c.classList.remove('layout-landscape'); c.classList.add('layout-portrait'); } 
+            else { c.classList.remove('layout-portrait'); c.classList.add('layout-landscape'); }
         };
 
         window.viewSavedReport = (id) => {
@@ -630,21 +522,53 @@
             document.querySelector('.tool-btn.primary').style.display = 'none';
         };
 
+        window.deleteItem = async (id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); };
+        
+        // Admin Teacher Logic
+        window.openAddTeacherModal = () => { document.getElementById('newTeacherName').value = ''; document.getElementById('teacherModal').classList.add('active'); };
+        window.saveNewTeacher = async () => {
+            const name = document.getElementById('newTeacherName').value.trim();
+            if(!name) return;
+            await addDoc(teachersRef, { name: name, photo: "" });
+            document.getElementById('teacherModal').classList.remove('active');
+        };
+        window.deleteTeacherProfile = async (tName) => {
+            if(!confirm(`دڵنیایت؟`)) return;
+            const meta = allTeachers.find(t => t.name === tName);
+            if(meta) await deleteDoc(doc(db, "teachers", meta.id));
+        };
+        window.openPhotoModal = (tName) => {
+            teacherPhotoTarget = tName;
+            document.getElementById('photoModal').classList.add('active');
+        };
+        window.handleTeacherPhotoSelect = async (input) => {
+            const file = input.files[0];
+            if(!file) return;
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('photoModal').classList.remove('active');
+            try {
+                const url = await uploadToImgBB(file);
+                const meta = allTeachers.find(t => t.name === teacherPhotoTarget);
+                if(meta) await updateDoc(doc(db, "teachers", meta.id), { photo: url });
+                else await addDoc(teachersRef, { name: teacherPhotoTarget, photo: url });
+                alert("وێنەکە گۆڕدرا!");
+            } catch(e) { alert("کێشە: " + e.message); }
+            finally { document.getElementById('loader').style.display = 'none'; input.value = ''; }
+        };
+
+        // Navigation
         window.switchView = (v) => {
             document.getElementById('activitiesGrid').style.display = v==='archive'?'grid':'none';
             document.getElementById('archiveControls').style.display = v==='archive'?'flex':'none';
             document.getElementById('teachersGrid').style.display = v==='teachers'?'grid':'none';
-            document.getElementById('teachersControls').style.display = v==='teachers' && window.isAdmin ? 'flex' : 'none';
             document.getElementById('btn-archive').classList.toggle('active', v==='archive');
             document.getElementById('btn-teachers').classList.toggle('active', v==='teachers');
-            if(v==='teachers') renderTeachersList(); // Force refresh
         };
-        window.deleteItem = async (id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); };
-        
-        // 🟢 گرنگ: ئەمە زیاد کرا بۆ ئەوەی toggleAdmin بتوانێت بەکاری بهێنێت
-        window.renderApp = renderApp;
-        
         document.getElementById('searchBox').addEventListener('input', renderApp);
+        
+        // Export for external scripts
+        window.renderApp = renderApp;
+        window.renderAdminDashboard = renderAdminDashboard;
     </script>
 
     <script>
@@ -654,22 +578,22 @@
                 document.getElementById('mainContent').style.display = 'block';
             } else { document.getElementById('errorMsg').style.display = 'block'; }
         }
+        
         function toggleAdmin() {
-            if(window.isAdmin) {
-                window.isAdmin = false; document.getElementById('adminBtn').style.background="#eee";
-                window.renderApp();
-                document.getElementById('teachersControls').style.display = 'none';
-                alert("دەرچوویت.");
+            if(document.getElementById('adminDashboard').style.display === 'block') {
+                exitAdmin();
             } else {
                 if(prompt("پاسۆردی ئەدمین:") === "2324") {
-                    window.isAdmin = true; document.getElementById('adminBtn').style.background="#86efac";
-                    window.renderApp();
-                    // Show add button if on teachers tab
-                    const isTeachersTab = document.getElementById('btn-teachers').classList.contains('active');
-                    if(isTeachersTab) document.getElementById('teachersControls').style.display = 'flex';
-                    alert("بەخێربێیت ئەدمین.");
+                    document.getElementById('mainContent').style.display = 'none';
+                    document.getElementById('adminDashboard').style.display = 'block';
+                    window.renderAdminDashboard(); // Load admin data
                 } else alert("هەڵەیە!");
             }
+        }
+
+        function exitAdmin() {
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
         }
     </script>
 </body>
