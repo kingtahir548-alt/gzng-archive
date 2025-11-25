@@ -106,7 +106,7 @@
         .tool-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
         .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
 
-        /* Paper & Report */
+        /* Paper & Report Styles */
         .paper-wrapper { padding: 20px; display: flex; justify-content: center; padding-bottom: 100px; }
         .a4-paper { width: 210mm; min-height: 297mm; background: white; padding: 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; }
         
@@ -120,15 +120,40 @@
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
         .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; border:none; -webkit-appearance: none; }
         
-        .rep-images { display: grid; gap: 10px; margin-top: 20px; }
-        .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
-        .layout-portrait { grid-template-columns: 1fr 1fr; } .layout-portrait .img-slot { aspect-ratio: 3/4; }
-        .img-slot { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        /* IMAGE GRID STYLES */
+        .rep-images { display: grid; gap: 10px; margin-top: 20px; grid-template-columns: 1fr 1fr; }
+        
+        /* Rigid Height for Landscape (Pan) */
+        .layout-landscape .img-slot { height: 180px; width: 100%; }
+        
+        /* Rigid Height for Portrait (Drezh) */
+        .layout-portrait .img-slot { height: 280px; width: 100%; }
+
+        .img-slot { 
+            background: #f1f5f9; 
+            border: 2px dashed #cbd5e1; 
+            border-radius: 10px; 
+            overflow: hidden; 
+            position: relative; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: 0.2s; 
+        }
         .img-slot:hover { background: #e2e8f0; border-color: var(--primary); }
-        .img-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        
+        .img-slot img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            display: none; 
+            border-radius: 8px;
+        }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
+        
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
         .rep-notes textarea:disabled { background: #fff; border:none; }
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
@@ -150,16 +175,63 @@
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; padding-bottom: 100px; }
+            .layout-landscape .img-slot { height: 120px; }
+            .layout-portrait .img-slot { height: 200px; }
         }
 
-        /* --- PRINT STYLES --- */
+        /* --- FIXED PRINT STYLES --- */
         @media print {
-            body * { visibility: hidden; }
-            #editorModal, #editorModal * { visibility: visible; }
-            #editorModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; overflow: visible; background: white; }
-            .editor-header, .editor-tools, .tool-btn { display: none !important; }
-            .paper-wrapper { padding: 0; }
-            .a4-paper { box-shadow: none; margin: 0; width: 100%; border: none; }
+            /* شاردنەوەی هەموو بەشە زیادەکان بە تاک بە تاک نەک بە شێوەی گشتی */
+            .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal {
+                display: none !important;
+            }
+            
+            /* دڵنیابوونەوە لەوەی بۆدی ڕێگە بە پرێنت دەدات */
+            body, html {
+                background: white !important;
+                height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* پیشاندانی مۆداڵی ڕاپۆرت بە تەواوی */
+            .editor-modal {
+                display: block !important;
+                position: relative !important; /* لابردنی Fixed */
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: white !important;
+                z-index: 1 !important;
+            }
+
+            /* ڕێکخستنی لاپەڕەی A4 */
+            .paper-wrapper {
+                padding: 0 !important;
+                margin: 0 !important;
+                display: block !important;
+            }
+            .a4-paper {
+                box-shadow: none !important;
+                margin: 0 !important;
+                width: 100% !important;
+                border: none !important;
+                min-height: auto !important;
+                page-break-after: always;
+            }
+            
+            /* زۆر گرنگ: هێزی دەرکەوتنی وێنەکان */
+            img {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            .img-slot img {
+                display: block !important;
+                visibility: visible !important;
+            }
         }
     </style>
 </head>
@@ -267,7 +339,10 @@
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
-                <button onclick="toggleLayout()" id="btnLayoutChange" class="tool-btn">🔄 گۆڕینی وێنە</button>
+                <div id="layoutControls" style="display:flex; gap:5px;">
+                    <button onclick="setLayout('landscape')" class="tool-btn">وێنەی پان ▭</button>
+                    <button onclick="setLayout('portrait')" class="tool-btn">وێنەی درێژ ▯</button>
+                </div>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
                 <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
                 <button onclick="saveToArchive()" id="btnSaveArchive" class="tool-btn primary">💾 سەیڤکردن</button>
@@ -611,7 +686,7 @@
             
             enableEditorInputs(true);
             document.getElementById('btnSaveArchive').style.display = 'inline-block';
-            document.getElementById('btnLayoutChange').style.display = 'inline-block';
+            document.getElementById('layoutControls').style.display = 'flex';
             
             document.getElementById('editorModal').classList.add('active');
         };
@@ -639,10 +714,11 @@
             e.target.value = '';
         });
 
-        window.toggleLayout = () => {
+        // Set Layout Explicitly
+        window.setLayout = (type) => {
             const c = document.getElementById('imgContainer');
-            if(c.classList.contains('layout-landscape')) { c.classList.remove('layout-landscape'); c.classList.add('layout-portrait'); } 
-            else { c.classList.remove('layout-portrait'); c.classList.add('layout-landscape'); }
+            c.classList.remove('layout-landscape', 'layout-portrait');
+            c.classList.add('layout-' + type);
         };
 
         function enableEditorInputs(enable) {
@@ -689,11 +765,11 @@
             if(isAdmin) {
                 enableEditorInputs(true);
                 document.getElementById('btnSaveArchive').style.display = 'inline-block'; 
-                document.getElementById('btnLayoutChange').style.display = 'inline-block';
+                document.getElementById('layoutControls').style.display = 'flex';
             } else {
                 enableEditorInputs(false);
                 document.getElementById('btnSaveArchive').style.display = 'none';
-                document.getElementById('btnLayoutChange').style.display = 'none';
+                document.getElementById('layoutControls').style.display = 'none';
             }
         };
 
@@ -803,18 +879,18 @@
             document.getElementById('mainContent').style.display = 'block';
         }
 
-        // --- NEW: Print Function ---
+        // --- Print Function ---
         window.printReport = () => {
             window.print();
         };
 
-        // --- NEW: Download as Image Function ---
+        // --- Download as Image Function ---
         window.downloadAsImage = () => {
             const element = document.getElementById('reportPaper');
             document.getElementById('loader').style.display = 'flex';
             document.getElementById('loaderText').innerText = "وێنەکە ئامادە دەکرێت...";
 
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(element, { scale: 2, useCORS: true, scrollY: -window.scrollY }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'Gzng-Report-' + new Date().getTime() + '.png';
                 link.href = canvas.toDataURL('image/png');
