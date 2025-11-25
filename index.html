@@ -25,15 +25,13 @@
         .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
         .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
         
-        .buttons-row { display: flex; gap: 10px; flex-wrap: wrap; }
-        
         .add-btn { 
-            flex: 1; border: none; padding: 12px 20px; border-radius: 10px; 
+            width: 100%; border: none; padding: 15px; border-radius: 10px; 
             font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
-            color: white; font-family: 'Noto Sans Arabic'; font-size: 0.95em;
+            color: white; font-family: 'Noto Sans Arabic'; font-size: 1.1em;
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
         }
-        .btn-upload { background: linear-gradient(135deg, var(--primary), #4338ca); }
-        .btn-link { background: linear-gradient(135deg, #059669, #047857); }
 
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
@@ -56,7 +54,6 @@
         .tool-btn { padding: 8px 15px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-family: inherit; font-weight: bold; font-size: 0.9em; white-space: nowrap; }
         .tool-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
         .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
-        .tool-btn.active-mode { background: #dcfce7; border-color: #22c55e; color: #15803d; }
 
         .paper-wrapper { padding: 20px; display: flex; justify-content: center; }
         .a4-paper { 
@@ -69,7 +66,7 @@
         @media print {
             body * { visibility: hidden; }
             .editor-modal, .editor-modal * { visibility: visible; }
-            .editor-header, .editor-tools, .link-inputs-container { display: none !important; }
+            .editor-header, .editor-tools { display: none !important; }
             .paper-wrapper { padding: 0; margin: 0; }
             .a4-paper { box-shadow: none; width: 100%; height: 100%; margin: 0; padding: 15mm; page-break-after: always; }
             .img-placeholder span { display: none; }
@@ -106,9 +103,6 @@
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
         .school-name-footer { font-size: 14px; font-weight: bold; color: #64748b; }
 
-        .link-inputs-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #fff7ed; padding: 15px; border-radius: 10px; border: 1px solid #ffedd5; }
-        .link-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; direction: ltr; font-size: 12px; }
-
         #securityOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
@@ -117,8 +111,6 @@
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; }
-            .link-inputs-container { grid-template-columns: 1fr; }
-            .buttons-row { flex-direction: column; }
         }
         
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold;}
@@ -153,21 +145,9 @@
             <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
         </div>
 
-        <!-- بەشی نوێی دوگمەکان -->
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            
-            <div class="buttons-row">
-                <!-- دوگمەی زیادکردن بە فایل (Upload) -->
-                <button class="add-btn btn-upload" onclick="openEditor('file')">
-                    📝 زیادکردن + ڕاپۆرت (Upload)
-                </button>
-                
-                <!-- دوگمەی زیادکردن بە لینک (Link) -->
-                <button class="add-btn btn-link" onclick="openEditor('link')">
-                    🔗 زیادکردن + ڕاپۆرت (Link)
-                </button>
-            </div>
+            <button class="add-btn" onclick="openEditor()">📝 زیادکردنی چالاکی نوێ</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
@@ -179,8 +159,6 @@
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
-                <!-- دوگمەی گۆڕینی مۆد لێرە ماوەتەوە بۆ هەموو حاڵەتێک، بەڵام دوگمە سەرەکییەکان بڕیار دەدەن -->
-                <button onclick="toggleImageMode()" id="btnImgMode" class="tool-btn">گۆڕینی مۆد</button>
                 <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە</button>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
                 <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
@@ -216,14 +194,6 @@
                         <label>بەروار</label>
                         <input type="date" class="form-input" id="inpDate" style="text-align:right;">
                     </div>
-                </div>
-
-                <!-- بەشی لینکەکان -->
-                <div class="link-inputs-container" id="linkInputsArea">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ١ (ImgBB URL)..." oninput="updateLinkPreview(0, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٢ (ImgBB URL)..." oninput="updateLinkPreview(1, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٣ (ImgBB URL)..." oninput="updateLinkPreview(2, this.value)">
-                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٤ (ImgBB URL)..." oninput="updateLinkPreview(3, this.value)">
                 </div>
 
                 <!-- وێنەکان -->
@@ -263,10 +233,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
         
-        // لێرە ImgBB Key دابنێ (خوارەوە ڕوون کراوەتەوە)
-        const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; // <-- لێرە کۆدی ImgBB دابنێ
+        const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyAr_JHCa5BbM5RJ9KCp0IBom1rdAgVX4CM",
@@ -280,15 +248,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const storage = getStorage(app);
         const activitiesRef = collection(db, "activities");
 
         let allActivities = [];
         window.isAdmin = false;
         window.localFiles = [null, null, null, null]; 
-        window.linkUrls = ["", "", "", ""];
         window.currentSlot = 0;
-        window.useLinks = false; // Toggle between File and Link mode
 
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
@@ -333,8 +298,7 @@
             `).join('');
         }
 
-        // Updated openEditor to handle different modes
-        window.openEditor = (mode) => {
+        window.openEditor = () => {
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
@@ -343,58 +307,14 @@
             
             // Reset images
             window.localFiles = [null, null, null, null];
-            window.linkUrls = ["", "", "", ""];
-            
-            // Set mode based on button clicked
-            if (mode === 'link') {
-                window.useLinks = true;
-            } else {
-                window.useLinks = false;
-            }
-            
-            updateImageModeUI();
-            
             for(let i=0; i<4; i++) {
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
-                document.querySelectorAll('.link-input')[i].value = '';
             }
             document.getElementById('editorModal').classList.add('active');
         };
 
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
-
-        window.toggleImageMode = () => {
-            window.useLinks = !window.useLinks;
-            updateImageModeUI();
-        };
-
-        function updateImageModeUI() {
-            const btn = document.getElementById('btnImgMode');
-            const inputs = document.getElementById('linkInputsArea');
-            
-            if (window.useLinks) {
-                btn.classList.add('active-mode');
-                btn.innerText = "📂 گۆڕین بۆ فایل (Upload)";
-                inputs.style.display = 'grid';
-            } else {
-                btn.classList.remove('active-mode');
-                btn.innerText = "🔗 گۆڕین بۆ لینک (ImgBB)";
-                inputs.style.display = 'none';
-            }
-        }
-
-        window.updateLinkPreview = (index, url) => {
-            window.linkUrls[index] = url;
-            const imgEl = document.getElementById('img' + index);
-            if (url) {
-                imgEl.src = url;
-                imgEl.parentElement.classList.add('has-img');
-            } else {
-                imgEl.src = '';
-                imgEl.parentElement.classList.remove('has-img');
-            }
-        };
 
         window.toggleLayout = () => {
             const c = document.getElementById('imgContainer');
@@ -408,13 +328,11 @@
         };
 
         window.triggerFile = (index) => {
-            if (window.useLinks) return; 
             window.currentSlot = index;
             document.getElementById('hiddenFileInput').click();
         };
 
         window.allowDrop = (e) => {
-            if (window.useLinks) return;
             e.preventDefault();
             e.currentTarget.classList.add('drag-over');
         };
@@ -424,7 +342,6 @@
         }
 
         window.handleDrop = (e, index) => {
-            if (window.useLinks) return;
             e.preventDefault();
             e.currentTarget.classList.remove('drag-over');
             const file = e.dataTransfer.files[0];
@@ -462,11 +379,8 @@
             }).catch(e => alert("هەڵە: " + e));
         };
 
-        // --- ImgBB Upload Function ---
+        // --- ImgBB Auto Upload Function ---
         async function uploadToImgBB(file) {
-            if(!IMGBB_API_KEY) {
-                throw new Error("تکایە سەرەتا ImgBB API Key دابنێ لە کۆدەکەدا.");
-            }
             const formData = new FormData();
             formData.append("image", file);
             
@@ -495,24 +409,13 @@
             try {
                 let imageUrls = [];
                 
-                if (window.useLinks) {
-                    // ImgBB Auto Upload (هەم لە دوگمەی Upload و هەم لە Link ئەمە بەکاردێت بە جیاواز)
-                    // بۆ ئەو بەشەی کە تەنها لینکە، ڕاستەوخۆ لینکەکان وەردەگرین
-                    // بەڵام ئێمە دەمانەوێت هەردووکی بکەین.
-                    // ئەگەر فایل بوو -> uploadToImgBB -> لینک.
-                    // ئەگەر لینک بوو -> ڕاستەوخۆ لینک.
-                    
-                    // لێرەدا کە وتی "Link" مەبەستی ئەوەیە خۆی لینکەکەی هێناوە
-                    imageUrls = window.linkUrls.filter(url => url.trim() !== "");
-                } else {
-                    // Upload files to ImgBB automatically
-                    for(let i=0; i<4; i++) {
-                        const file = window.localFiles[i];
-                        if(file) {
-                            loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت بۆ ImgBB...`;
-                            const url = await uploadToImgBB(file);
-                            imageUrls.push(url);
-                        }
+                // Auto Upload to ImgBB
+                for(let i=0; i<4; i++) {
+                    const file = window.localFiles[i];
+                    if(file) {
+                        loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت بۆ ImgBB...`;
+                        const url = await uploadToImgBB(file);
+                        imageUrls.push(url);
                     }
                 }
 
