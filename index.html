@@ -3,185 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
+    <title>سیستەمی ڕاپۆرت و ئەرشیفی گزنگ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #4f46e5; --bg-color: #f3f4f6; --card-bg: #ffffff;
-            --text-dark: #1e293b; --text-gray: #64748b; --shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
+            --text-dark: #1e293b; --text-gray: #64748b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 15px; color: var(--text-dark); padding-bottom: 40px; }
-        .container { max-width: 1200px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        header { background: var(--card-bg); padding: 25px 15px; border-radius: 20px; box-shadow: var(--shadow); text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
-        header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--primary), #ec4899); }
-        h1 { font-size: 1.8em; margin-bottom: 5px; font-weight: 900; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 10px; color: var(--text-dark); }
         
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; background: white; padding: 6px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .tab-btn { background: transparent; color: var(--text-gray); border: none; padding: 10px 20px; border-radius: 40px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Noto Sans Arabic'; }
-        .tab-btn.active { background: var(--primary); color: white; }
-
-        .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .search-box { flex: 1; padding: 14px 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; font-family: 'Noto Sans Arabic'; background: #f8fafc; min-width: 200px; }
-        .add-btn { background: linear-gradient(135deg, var(--primary), #4338ca); color: white; border: none; padding: 14px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Noto Sans Arabic'; font-size: 16px; flex-grow: 1; }
-
-        .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); transition: 0.3s; display: flex; flex-direction: column; position: relative; border: 1px solid #f1f5f9; }
-        .activity-header { padding: 15px; background: white; border-bottom: 1px solid #f1f5f9; }
-        .activity-header h3 { font-size: 1.2em; margin-bottom: 5px; color: var(--text-dark); }
-        .committee-tag { background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; display: inline-block; margin-bottom: 5px; }
+        /* Container & Header */
+        .container { max-width: 1200px; margin: 0 auto; padding-bottom: 80px; display: none; }
+        header { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; position: relative; }
+        h1 { font-size: 1.5em; margin-bottom: 5px; font-weight: 900; color: var(--primary); }
         
-        .images-preview { height: 220px; overflow: hidden; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: #f1f5f9; }
-        .images-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-        .card-actions { padding: 15px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; background: #f8fafc; }
-        .action-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 0.95em; transition: 0.2s; }
-        .btn-report { background: #dbeafe; color: #2563eb; }
-        .btn-delete { background: #fee2e2; color: #ef4444; display: none; } 
-
-        /* Modal styles optimized for mobile */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; overflow-y: auto; backdrop-filter: blur(5px); }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 20px; padding: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; margin: auto; }
+        /* Tabs & Controls */
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: white; border: 1px solid #ddd; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: inherit; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9em; color: #475569; }
-        .form-group input, .form-group textarea { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Noto Sans Arabic'; background: #f8fafc; font-size: 16px; }
-        .save-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic'; font-size: 16px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-box { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; }
+        .add-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
-        /* Report A4 Styling */
-        .report-container { background: white; width: 210mm; min-width: 210mm; margin: 0 auto; padding: 0; overflow: hidden; display: block; }
-        .a4-paper { background: white; width: 100%; min-height: 297mm; padding: 20mm; position: relative; color: black; direction: rtl; text-align: right; box-sizing: border-box; }
-        .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e293b; padding-bottom: 20px; margin-bottom: 30px; }
-        .report-title h1 { font-size: 24px; font-weight: 900; margin: 0; color: #1e293b; }
-        .report-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
-        .report-images { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .report-img-box { aspect-ratio: 4/3; background: #eee; border-radius: 10px; overflow: hidden; border: 2px solid #e2e8f0; }
-        .report-img-box img { width: 100%; height: 100%; object-fit: cover; }
-        .report-notes { background: #fffbeb; border: 1px solid #fcd34d; padding: 20px; border-radius: 10px; margin-bottom: 40px; min-height: 100px; }
-        .report-footer { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; border-top: 2px solid #e2e8f0; }
-        
-        .admin-btn-top { position: absolute; top: 20px; left: 20px; background: #e2e8f0; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 13px; font-weight: bold; }
-        
-        #globalLoader { position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--primary); font-weight: bold; }
+        /* Grid */
+        .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
+        .activity-card:hover { transform: translateY(-5px); }
+        .card-header { padding: 15px; border-bottom: 1px solid #eee; }
+        .card-header h3 { font-size: 1.1em; margin-bottom: 5px; }
+        .card-meta { font-size: 0.85em; color: var(--text-gray); display: flex; justify-content: space-between; }
+        .card-imgs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; height: 180px; overflow: hidden; background: #eee; }
+        .card-imgs img { width: 100%; height: 100%; object-fit: cover; }
+        .card-actions { padding: 10px; display: flex; gap: 10px; background: #fafafa; }
+        .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; }
+        .btn-view { background: #e0e7ff; color: var(--primary); }
+        .btn-del { background: #fee2e2; color: #ef4444; display: none; }
 
-        /* Mobile Specific Fixes */
-        @media (max-width: 600px) {
-            .nav-tabs { width: 100%; padding: 5px; }
-            .tab-btn { flex: 1; padding: 12px; font-size: 14px; }
-            .controls { flex-direction: column; }
-            .search-box, .add-btn { width: 100%; }
-            .activity-card { margin-bottom: 10px; }
-            /* Make report scrollable on mobile */
-            #reportWrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
+        /* --- REPORT GENERATOR (Full Screen Modal) --- */
+        .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 2000; overflow-y: auto; }
+        .editor-modal.active { display: block; }
+        
+        .editor-header { background: white; padding: 15px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .editor-tools { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .tool-btn { padding: 8px 15px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-family: inherit; font-weight: bold; font-size: 0.9em; white-space: nowrap; }
+        .tool-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+        .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
+
+        /* A4 Paper Styling */
+        .paper-wrapper { padding: 20px; display: flex; justify-content: center; }
+        .a4-paper { 
+            width: 210mm; min-height: 297mm; background: white; padding: 15mm; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; 
+            color: black; direction: rtl; text-align: right; 
         }
+        /* Print specific */
+        @media print {
+            body * { visibility: hidden; }
+            .editor-modal, .editor-modal * { visibility: visible; }
+            .editor-header, .editor-tools { display: none !important; }
+            .paper-wrapper { padding: 0; margin: 0; }
+            .a4-paper { box-shadow: none; width: 100%; height: 100%; margin: 0; padding: 15mm; page-break-after: always; }
+            .img-placeholder span { display: none; } /* Hide upload text when printing */
+        }
+
+        /* Report Content Layout */
+        .rep-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+        .rep-logo { width: 70px; height: 70px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #ddd; }
+        
+        .rep-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .form-item label { display: block; font-size: 0.8em; color: #64748b; margin-bottom: 3px; }
+        .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
+        .form-input:focus { outline: none; border-bottom-color: var(--primary); }
+
+        /* Image Slots */
+        .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
+        /* Layouts */
+        .layout-landscape { grid-template-columns: 1fr 1fr; } /* 2 columns */
+        .layout-landscape .img-slot { aspect-ratio: 16/9; }
+        
+        .layout-portrait { grid-template-columns: 1fr 1fr; }
+        .layout-portrait .img-slot { aspect-ratio: 3/4; }
+
+        .img-slot { 
+            background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 10px; 
+            overflow: hidden; position: relative; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .img-slot:hover { background: #e2e8f0; border-color: var(--primary); }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .img-slot.has-img img { display: block; }
+        .img-slot.has-img .placeholder-text { display: none; }
+        .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
+
+        .rep-notes { margin-top: 10px; }
+        .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 80px; background: #fffbeb; }
+
+        .rep-footer { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 2px solid #eee; }
+        .signature { text-align: center; width: 120px; }
+        .signature p { font-size: 0.9em; font-weight: bold; margin-bottom: 30px; }
+        .sign-line { height: 1px; background: #333; width: 100%; }
+
+        /* Admin & Auth */
+        #securityOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
+        .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
+
+        /* Mobile Optimization for Editor */
+        @media (max-width: 600px) {
+            .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
+            .editor-header { position: sticky; top: 0; }
+            .paper-wrapper { padding: 10px 0; }
+        }
+        
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold;}
     </style>
 </head>
 <body>
 
-    <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e293b; z-index:10000; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 20px;">
-        <div style="background:white; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:350px;">
+    <!-- پاراستن -->
+    <div id="securityOverlay">
+        <div class="auth-box">
             <h2>🔒 پارێزراو</h2>
-            <p style="color:#64748b; margin-bottom:15px;">تکایە وشەی نهێنی بنووسە</p>
-            <input type="password" id="sitePassword" style="width:100%; padding:14px; margin:10px 0 20px; text-align:center; font-size:18px; border:2px solid #e2e8f0; border-radius:10px; outline:none;" placeholder="••••••">
-            <button onclick="checkPassword()" style="width:100%; padding:14px; background:#4f46e5; color:white; border:none; border-radius:10px; font-weight:bold; font-size:16px; cursor:pointer;">چوونەژوورەوە</button>
+            <p style="color:#64748b; margin:10px 0;">تکایە وشەی نهێنی بنووسە</p>
+            <input type="password" id="sitePassword" style="width:100%; padding:10px; text-align:center; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;" placeholder="••••••">
+            <button onclick="checkPassword()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">چوونەژوورەوە</button>
             <p id="errorMsg" style="color:red; margin-top:10px; display:none;">هەڵەیە!</p>
         </div>
     </div>
 
-    <div id="globalLoader">جاری دەکرێت...</div>
+    <div id="loader">داتا دەنێردرێت... تکایە چاوەڕێبە</div>
 
+    <!-- ناوەڕۆکی سەرەکی -->
     <div class="container" id="mainContent">
         <header>
-            <button onclick="toggleAdmin()" class="admin-btn-top" id="adminBtn">🔑 ئەدمین</button>
+            <button onclick="toggleAdmin()" class="admin-btn" id="adminBtn">🔑 ئەدمین</button>
             <h1>🏫 قوتابخانەی گزنگ</h1>
-            <p class="subtitle">ئەرشیفی چالاکیەکان</p>
+            <p style="color:#64748b">ئەرشیفی چالاکیەکان</p>
         </header>
 
         <div class="nav-tabs">
-            <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">🏠 ئەرشیف</button>
-            <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">👨‍🏫 مامۆستایان</button>
+            <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">ئەرشیف</button>
+            <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
         </div>
 
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            <button class="add-btn" onclick="openAddModal()">➕ زیادکردن</button>
+            <button class="add-btn" onclick="openEditor()">📝 زیادکردن + ڕاپۆرت</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
-        <div class="teachers-grid" id="teachersGrid" style="display:none; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
+        <div class="activities-grid" id="teachersGrid" style="display:none;"></div>
     </div>
 
-    <!-- Add Modal -->
-    <div class="modal" id="addModal">
-        <div class="modal-content">
-            <h2 style="text-align:center; margin-bottom:20px;">زیادکردنی چالاکی نوێ</h2>
-            <form id="activityForm">
-                <div class="form-group"><label>ناوی چالاکی</label><input type="text" id="activityName" required placeholder="نموونە: سیمینار"></div>
-                <div class="form-group"><label>لیژنە</label><input type="text" id="committeeName" required placeholder="نموونە: لیژنەی ڕۆشنبیری"></div>
-                <div class="form-group"><label>ناوی مامۆستا</label><input type="text" id="teacherName" required placeholder="ناوی سیانی..."></div>
-                <div class="form-group"><label>بەروار</label><input type="date" id="activityDate" required></div>
-                <div class="form-group">
-                    <label>وێنەکان (ماکس ٤)</label>
-                    <input type="file" id="imageInput" accept="image/*" multiple style="width:100%; padding:10px; background:#f1f5f9; border-radius:10px;">
-                    <div id="uploadStatus" style="color: blue; margin-top:5px; font-size:0.8em;"></div>
-                </div>
-                <div class="form-group"><label>تێبینی</label><textarea id="activityNotes" rows="3"></textarea></div>
-                <button type="submit" class="save-btn" id="saveBtn">💾 پاشەکەوتکردن</button>
-                <button type="button" onclick="closeAddModal()" style="width:100%; padding:15px; background:none; border:none; color:#64748b; cursor:pointer; margin-top:5px; font-weight:bold;">داخستن</button>
-            </form>
+    <!-- پەڕەی دروستکردنی ڕاپۆرت (Editor Modal) -->
+    <div class="editor-modal" id="editorModal">
+        <div class="editor-header">
+            <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
+            <div class="editor-tools">
+                <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە (پان/درێژ)</button>
+                <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
+                <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن (Wêne)</button>
+                <button onclick="saveToArchive()" class="tool-btn primary">💾 سەیڤکردن بۆ ئەرشیف</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Report Modal (Mobile Optimized Scroll) -->
-    <div class="modal" id="reportModal" style="align-items: flex-start; padding-top: 20px;">
-        <div style="width: 100%; max-width: 220mm;">
-            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-                <button onclick="downloadReport()" style="background: #f97316; color: white; padding: 12px 25px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);">⬇️ دابەزاندن (JPG)</button>
-                <button onclick="document.getElementById('reportModal').classList.remove('active')" style="background: white; color: #64748b; padding: 12px 25px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">داخستن</button>
-            </div>
-            
-            <div style="background: #333; padding: 10px; border-radius: 10px; color: white; font-size: 12px; text-align: center; margin-bottom: 10px; display: none;" id="mobileHint">
-                ↔️ دەتوانیت ڕاپۆرتەکە بە لای ڕاست و چەپدا ببەیت
-            </div>
+        <div class="paper-wrapper">
+            <!-- ئەمە وەرەقەی A4ـەکەیە -->
+            <div class="a4-paper" id="reportPaper">
+                
+                <!-- سەردێڕ -->
+                <div class="rep-header">
+                    <div>
+                        <h1 style="font-size:22px; margin:0; color:black;">قوتابخانەی گزنگ</h1>
+                        <p style="margin:5px 0 0 0; font-size:14px; color:#555;">فۆرمی ڕاپۆرتی چالاکی</p>
+                    </div>
+                    <div class="rep-logo">LOGO</div>
+                </div>
 
-            <!-- Scrollable Wrapper for Mobile -->
-            <div id="reportWrapper">
-                <div class="report-container" id="printArea">
-                    <div class="a4-paper">
-                        <div class="report-header">
-                            <div class="report-title">
-                                <h1>قوتابخانەی گزنگ</h1>
-                                <p>ڕاپۆرتی چالاکیەکان</p>
-                            </div>
-                            <div style="width:70px; height:70px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; border: 2px solid #e2e8f0;">LOGO</div>
-                        </div>
-
-                        <div class="report-meta">
-                            <div class="meta-item"><strong>بابەت/چالاکی</strong><span id="rep-name">...</span></div>
-                            <div class="meta-item"><strong>لیژنە</strong><span id="rep-committee">...</span></div>
-                            <div class="meta-item"><strong>سەرپەرشتیار/مامۆستا</strong><span id="rep-teacher">...</span></div>
-                            <div class="meta-item"><strong>بەروار</strong><span id="rep-date">...</span></div>
-                        </div>
-
-                        <div class="report-images" id="rep-images"></div>
-
-                        <div style="margin-bottom: 5px; font-weight: bold; color: #64748b;">تێبینی و وردەکاری:</div>
-                        <div class="report-notes" id="rep-notes">...</div>
-
-                        <div class="report-footer">
-                            <div class="signature"><p>ئامادەکردنی</p><div class="signature-line"></div></div>
-                            <div class="signature"><p>بەڕێوەبەری قوتابخانە</p><div class="signature-line"></div></div>
-                        </div>
+                <!-- زانیارییەکان (ئینپوتەکان ڕاستەوخۆ لێرەن) -->
+                <div class="rep-form-grid">
+                    <div class="form-item">
+                        <label>بابەت / چالاکی</label>
+                        <input type="text" class="form-input" id="inpName" placeholder="بنووسە...">
+                    </div>
+                    <div class="form-item">
+                        <label>لیژنە</label>
+                        <input type="text" class="form-input" id="inpComm" placeholder="بنووسە...">
+                    </div>
+                    <div class="form-item">
+                        <label>مامۆستا / سەرپەرشتیار</label>
+                        <input type="text" class="form-input" id="inpTeacher" placeholder="بنووسە...">
+                    </div>
+                    <div class="form-item">
+                        <label>بەروار</label>
+                        <input type="date" class="form-input" id="inpDate" style="text-align:right;">
                     </div>
                 </div>
+
+                <!-- وێنەکان (کلیک بکە بۆ دانان) -->
+                <div class="rep-images layout-landscape" id="imgContainer">
+                    <!-- ٤ خانەی وێنە -->
+                    <div class="img-slot" onclick="triggerFile(0)">
+                        <img id="img0">
+                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ١<br>📸</div>
+                    </div>
+                    <div class="img-slot" onclick="triggerFile(1)">
+                        <img id="img1">
+                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٢<br>📸</div>
+                    </div>
+                    <div class="img-slot" onclick="triggerFile(2)">
+                        <img id="img2">
+                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٣<br>📸</div>
+                    </div>
+                    <div class="img-slot" onclick="triggerFile(3)">
+                        <img id="img3">
+                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٤<br>📸</div>
+                    </div>
+                </div>
+                <!-- Input-ی شاراوە بۆ وەرگرتنی فایل -->
+                <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
+
+                <!-- تێبینی -->
+                <div class="rep-notes">
+                    <label style="font-size:0.9em; font-weight:bold;">تێبینی و وردەکاری:</label>
+                    <textarea id="inpNotes" placeholder="لێرە بنووسە..."></textarea>
+                </div>
+
+                <!-- واژۆ -->
+                <div class="rep-footer">
+                    <div class="signature">
+                        <p>ئامادەکردنی</p>
+                        <div class="sign-line"></div>
+                    </div>
+                    <div class="signature">
+                        <p>بەڕێوەبەری قوتابخانە</p>
+                        <div class="sign-line"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
+    <!-- Firebase Code -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -204,12 +271,16 @@
 
         let allActivities = [];
         window.isAdmin = false;
+        
+        // بۆ هەڵگرتنی فایلە لۆکاڵەکان پێش ئاپلۆد
+        window.localFiles = [null, null, null, null]; 
+        window.currentSlot = 0;
 
+        // Realtime Listener
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
-            document.getElementById('globalLoader').style.display = 'none';
         });
 
         function renderApp() {
@@ -218,130 +289,171 @@
             
             const displayList = allActivities.filter(a => 
                 a.name.toLowerCase().includes(searchTerm) || 
-                a.teacher.toLowerCase().includes(searchTerm) ||
-                (a.committee && a.committee.toLowerCase().includes(searchTerm))
+                a.teacher.toLowerCase().includes(searchTerm)
             );
 
             grid.innerHTML = displayList.map(act => `
                 <div class="activity-card">
-                    <div class="activity-header">
-                        <span class="committee-tag">${act.committee || 'گشتی'}</span>
+                    <div class="card-header">
                         <h3>${act.name}</h3>
-                        <div style="display:flex; justify-content:space-between; font-size:0.85em; color:#64748b;">
-                            <span>👤 ${act.teacher}</span>
-                            <span>📅 ${act.date}</span>
-                        </div>
+                        <div class="card-meta"><span>👤 ${act.teacher}</span><span>📅 ${act.date}</span></div>
                     </div>
-                    <div class="images-preview">
+                    <div class="card-imgs">
                         ${act.images ? act.images.slice(0,4).map(url => `<img src="${url}">`).join('') : ''}
                     </div>
                     <div class="card-actions">
-                        <button class="action-btn btn-report" onclick="openReport('${act.id}')">📄 کردنەوەی ڕاپۆرت</button>
-                        ${window.isAdmin ? `<button class="action-btn btn-delete" style="display:block" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>` : ''}
+                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 ڕاپۆرت</button>
+                        ${window.isAdmin ? `<button class="action-btn btn-del" style="display:block" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>` : ''}
                     </div>
                 </div>
             `).join('');
-
-            if(displayList.length === 0) grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">هیچ نییە</p>';
             
+            // Teachers Grid
             const tGrid = document.getElementById('teachersGrid');
             const tMap = {};
             allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
             tGrid.innerHTML = Object.keys(tMap).map(t => `
-                <div style="background:white; padding:20px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
-                    <div style="font-size:30px; margin-bottom:10px;">👤</div>
+                <div class="activity-card" style="padding:20px; text-align:center;">
+                    <div style="font-size:40px; margin-bottom:10px">👤</div>
                     <h3>${t}</h3>
-                    <p style="color:#64748b; font-weight:bold;">${tMap[t]} چالاکی</p>
+                    <p style="color:#666">${tMap[t]} چالاکی</p>
                 </div>
             `).join('');
         }
 
-        async function uploadImage(file) {
-            try {
-                const storageRef = ref(storage, 'images/' + Date.now() + '-' + Math.floor(Math.random()*1000));
-                const snapshot = await uploadBytes(storageRef, file);
-                return await getDownloadURL(snapshot.ref);
-            } catch (error) {
-                console.error("Upload failed:", error);
-                throw new Error("وێنەکە ئاپلۆد نەبوو. تکایە دڵنیابە ئینتەرنێت هەیە.");
+        // --- REPORT EDITOR LOGIC ---
+        
+        window.openEditor = () => {
+            // Reset Form
+            document.getElementById('inpName').value = '';
+            document.getElementById('inpComm').value = '';
+            document.getElementById('inpTeacher').value = '';
+            document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('inpNotes').value = '';
+            window.localFiles = [null, null, null, null];
+            for(let i=0; i<4; i++) {
+                document.getElementById('img'+i).src = '';
+                document.getElementById('img'+i).parentElement.classList.remove('has-img');
             }
-        }
+            document.getElementById('editorModal').classList.add('active');
+        };
 
-        document.getElementById('activityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('saveBtn');
-            const statusDiv = document.getElementById('uploadStatus');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '⏳ تکایە چاوەڕێبە...';
-            
+        window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
+
+        window.toggleLayout = () => {
+            const c = document.getElementById('imgContainer');
+            if(c.classList.contains('layout-landscape')) {
+                c.classList.remove('layout-landscape');
+                c.classList.add('layout-portrait');
+            } else {
+                c.classList.remove('layout-portrait');
+                c.classList.add('layout-landscape');
+            }
+        };
+
+        // Local Image Handling (Instant Preview)
+        window.triggerFile = (index) => {
+            window.currentSlot = index;
+            document.getElementById('hiddenFileInput').click();
+        };
+
+        document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(file) {
+                window.localFiles[window.currentSlot] = file; // Store for later upload
+                // Instant Preview
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const imgEl = document.getElementById('img' + window.currentSlot);
+                    imgEl.src = ev.target.result;
+                    imgEl.parentElement.classList.add('has-img');
+                };
+                reader.readAsDataURL(file);
+            }
+            e.target.value = ''; // Reset
+        });
+
+        // Printing & Downloading
+        window.printReport = () => window.print();
+        
+        window.downloadAsImage = () => {
+            const el = document.querySelector(".a4-paper");
+            // کاتی دەوێت بۆ ڕێندەرکردن، بۆیە کەمێک چاوەڕێ دەکەین
+            html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
+                const a = document.createElement('a');
+                a.download = 'Gzng_Report.jpg';
+                a.href = canvas.toDataURL('image/jpeg', 0.9);
+                a.click();
+            }).catch(e => alert("هەڵە: " + e));
+        };
+
+        // Save To Archive
+        window.saveToArchive = async () => {
+            const name = document.getElementById('inpName').value;
+            const teacher = document.getElementById('inpTeacher').value;
+            if(!name || !teacher) { alert("تکایە ناو و مامۆستا بنووسە!"); return; }
+
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+
             try {
-                const imageFiles = document.getElementById('imageInput').files;
                 let imageUrls = [];
-                
-                if(imageFiles.length > 0) {
-                    for(let i=0; i<imageFiles.length; i++) {
-                        statusDiv.textContent = `بارکردنی وێنەی ${i+1}...`;
-                        const url = await uploadImage(imageFiles[i]);
+                // Upload files stored in window.localFiles
+                for(let i=0; i<4; i++) {
+                    const file = window.localFiles[i];
+                    if(file) {
+                        const storageRef = ref(storage, 'images/' + Date.now() + '-' + i);
+                        await uploadBytes(storageRef, file);
+                        const url = await getDownloadURL(storageRef);
                         imageUrls.push(url);
                     }
                 }
-                
+
                 await addDoc(activitiesRef, {
-                    name: document.getElementById('activityName').value,
-                    committee: document.getElementById('committeeName').value,
-                    teacher: document.getElementById('teacherName').value.trim(),
-                    date: document.getElementById('activityDate').value,
-                    notes: document.getElementById('activityNotes').value,
+                    name: name,
+                    committee: document.getElementById('inpComm').value,
+                    teacher: teacher,
+                    date: document.getElementById('inpDate').value,
+                    notes: document.getElementById('inpNotes').value,
                     images: imageUrls,
                     createdAt: new Date()
                 });
 
-                closeAddModal();
-                alert("✅ بە سەرکەوتوویی تۆمارکرا!");
-            } catch (error) {
-                alert("هەڵە: " + error.message);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 پاشەکەوتکردن';
-                statusDiv.textContent = '';
+                loader.style.display = 'none';
+                alert("✅ سەیڤ کرا و چووە ناو ئەرشیف!");
+                closeEditor();
+            } catch(err) {
+                loader.style.display = 'none';
+                alert("هەڵە لە سەیڤکردن: " + err.message);
             }
-        });
+        };
 
-        window.openReport = (id) => {
+        // Viewing Saved Reports (Read-only mode)
+        window.viewSavedReport = (id) => {
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
-
-            document.getElementById('rep-name').textContent = act.name;
-            document.getElementById('rep-committee').textContent = act.committee || '---';
-            document.getElementById('rep-teacher').textContent = act.teacher;
-            document.getElementById('rep-date').textContent = act.date;
-            document.getElementById('rep-notes').textContent = act.notes || 'هیچ تێبینییەک نییە.';
             
-            const imgContainer = document.getElementById('rep-images');
-            imgContainer.innerHTML = act.images ? act.images.map(url => 
-                `<div class="report-img-box"><img src="${url}" crossorigin="anonymous"></div>`
-            ).join('') : '';
-
-            const modal = document.getElementById('reportModal');
-            modal.classList.add('active');
+            openEditor(); // Open modal
+            // Fill data
+            document.getElementById('inpName').value = act.name;
+            document.getElementById('inpComm').value = act.committee || '';
+            document.getElementById('inpTeacher').value = act.teacher;
+            document.getElementById('inpDate').value = act.date;
+            document.getElementById('inpNotes').value = act.notes || '';
             
-            if(window.innerWidth < 600) {
-                document.getElementById('mobileHint').style.display = 'block';
+            // Show saved images
+            for(let i=0; i<4; i++) {
+                const imgEl = document.getElementById('img'+i);
+                if(act.images && act.images[i]) {
+                    imgEl.src = act.images[i];
+                    imgEl.parentElement.classList.add('has-img');
+                }
             }
+            // Hide Save button since it's already saved
+            document.querySelector('.tool-btn.primary').style.display = 'none';
         };
 
-        window.downloadReport = () => {
-            const element = document.querySelector(".a4-paper");
-            html2canvas(element, { useCORS: true, scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'Report.jpg';
-                link.href = canvas.toDataURL("image/jpeg", 0.9);
-                link.click();
-            }).catch(err => alert("کێشە لە دابەزاندن: " + err));
-        };
-
-        window.openAddModal = () => document.getElementById('addModal').classList.add('active');
-        window.closeAddModal = () => { document.getElementById('addModal').classList.remove('active'); document.getElementById('activityForm').reset(); };
+        // Helpers
         window.switchView = (v) => {
             document.getElementById('activitiesGrid').style.display = v==='archive'?'grid':'none';
             document.getElementById('archiveControls').style.display = v==='archive'?'flex':'none';
@@ -350,6 +462,7 @@
             document.getElementById('btn-teachers').classList.toggle('active', v==='teachers');
         };
         window.deleteItem = async (id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); };
+        document.getElementById('searchBox').addEventListener('input', renderApp);
     </script>
 
     <script>
@@ -361,7 +474,7 @@
         }
         function toggleAdmin() {
             if(window.isAdmin) {
-                window.isAdmin = false; document.getElementById('adminBtn').style.background="#e2e8f0";
+                window.isAdmin = false; document.getElementById('adminBtn').style.background="#eee";
                 window.renderApp();
                 alert("دەرچوویت.");
             } else {
