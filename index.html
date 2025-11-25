@@ -57,20 +57,24 @@
         .stat-number { font-size: 2em; font-weight: 900; color: var(--admin-primary); }
         .stat-label { color: #64748b; font-size: 0.9em; }
 
-        .admin-table-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; border-bottom: 2px solid #e2e8f0; }
+        .admin-tab-btn { padding: 10px 20px; border: none; background: none; font-weight: bold; color: #64748b; cursor: pointer; font-family: inherit; border-bottom: 3px solid transparent; transition: 0.3s; font-size: 1em; }
+        .admin-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(79, 70, 229, 0.05); border-radius: 10px 10px 0 0; }
+
+        .admin-table-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); overflow-x: auto; min-height: 400px; }
         .admin-table { width: 100%; border-collapse: collapse; min-width: 600px; }
         .admin-table th { text-align: right; padding: 15px; border-bottom: 2px solid #e2e8f0; color: var(--text-gray); }
         .admin-table td { padding: 15px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
         
         .btn-admin-action { padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-left: 5px; }
         .btn-delete-red { background: #fee2e2; color: #ef4444; }
+        .btn-edit-blue { background: #dbeafe; color: #2563eb; }
         .btn-logout { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; margin-top: 10px; cursor: pointer; }
 
         /* Teacher Grid in Admin */
         .admin-teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .admin-teacher-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; position: relative; }
-        .delete-badge { position: absolute; top: 5px; left: 5px; background: red; color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; }
-
+        
         /* Editor Modal */
         .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 2000; overflow-y: auto; }
         .editor-modal.active { display: block; }
@@ -89,7 +93,6 @@
         .rep-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
         .form-item label { display: block; font-size: 0.8em; color: #64748b; margin-bottom: 3px; }
         
-        /* گۆڕانکاری: ئینپوتی مامۆستا کرایە سێلێکت */
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
         select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
@@ -167,7 +170,7 @@
         <div class="teachers-grid" id="teachersGrid" style="display:none;"></div>
     </div>
 
-    <!-- Admin Dashboard (Separate View) -->
+    <!-- Admin Dashboard -->
     <div id="adminDashboard" class="admin-dashboard">
         <div class="admin-sidebar">
             <h2>⚙️ داشبۆردی بەڕێوەبردن</h2>
@@ -189,9 +192,9 @@
             </div>
 
             <!-- Tools Tab -->
-            <div style="margin-bottom: 20px; display:flex; gap:10px;">
-                <button onclick="switchAdminTab('activities')" class="tool-btn primary">بەڕێوەبردنی چالاکییەکان</button>
-                <button onclick="switchAdminTab('teachers')" class="tool-btn">بەڕێوەبردنی مامۆستایان</button>
+            <div class="admin-tabs">
+                <button onclick="switchAdminTab('activities')" id="tab-admin-acts" class="admin-tab-btn active">بەڕێوەبردنی چالاکییەکان</button>
+                <button onclick="switchAdminTab('teachers')" id="tab-admin-teach" class="admin-tab-btn">بەڕێوەبردنی مامۆستایان</button>
             </div>
 
             <!-- Activities Manager -->
@@ -212,7 +215,7 @@
 
             <!-- Teachers Manager -->
             <div id="adminTeachersView" class="admin-table-container" style="display:none;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h3>👨‍🏫 لیستی مامۆستایان</h3>
                     <button onclick="openAddTeacherModal()" class="tool-btn primary">➕ زیادکردنی مامۆستا</button>
                 </div>
@@ -244,7 +247,6 @@
                     <div class="form-item"><label>لیژنە</label><input type="text" class="form-input" id="inpComm" placeholder="بنووسە..."></div>
                     <div class="form-item">
                         <label>مامۆستا / سەرپەرشتیار</label>
-                        <!-- گۆڕانکاری: بەکارهێنانی Select -->
                         <select class="form-input" id="inpTeacher" style="background:white;">
                             <option value="">ناوی مامۆستا هەڵبژێرە...</option>
                         </select>
@@ -286,9 +288,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
-        // ImgBB API Key
         const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
         const firebaseConfig = {
@@ -316,18 +317,21 @@
         onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
-            renderAdminDashboard();
+            if (document.getElementById('adminDashboard').style.display === 'block') {
+                renderAdminDashboard();
+            }
         });
 
         onSnapshot(teachersRef, (snapshot) => {
             allTeachers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
-            renderAdminDashboard();
-            // Update Teacher Dropdown
-            updateTeacherDropdown();
+            if (document.getElementById('adminDashboard').style.display === 'block') {
+                renderAdminDashboard();
+            }
+            updateTeacherDatalist();
         });
 
-        function updateTeacherDropdown() {
+        function updateTeacherDatalist() {
             const select = document.getElementById('inpTeacher');
             const currentVal = select.value;
             select.innerHTML = '<option value="">ناوی مامۆستا هەڵبژێرە...</option>';
@@ -358,7 +362,7 @@
                         ${act.images ? act.images.slice(0,4).map(url => `<img src="${url}">`).join('') : ''}
                     </div>
                     <div class="card-actions">
-                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 کردنەوەی ڕاپۆرت</button>
+                        <button class="action-btn btn-view" onclick="viewSavedReport('${act.id}')">📄 ڕاپۆرت</button>
                     </div>
                 </div>
             `).join('');
@@ -417,6 +421,8 @@
             adminTGrid.innerHTML = allTeacherNames.map(tName => {
                 const meta = allTeachers.find(t => t.name === tName);
                 const photoUrl = meta && meta.photo ? meta.photo : null;
+                // Pass the ID if available, otherwise name
+                const teacherId = meta ? meta.id : '';
                 return `
                 <div class="admin-teacher-card">
                     <div class="teacher-img-wrapper" style="width:60px; height:60px; font-size:24px;">
@@ -424,9 +430,10 @@
                     </div>
                     <div style="font-weight:bold;">${tName}</div>
                     <div style="font-size:0.8em; color:#666;">${tMap[tName]} چالاکی</div>
-                    <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
-                        <button class="btn-admin-action" style="background:#dbeafe; color:#2563eb;" onclick="openPhotoModal('${tName}')">وێنە</button>
-                        <button class="btn-admin-action btn-delete-red" onclick="deleteTeacherProfile('${tName}')">سڕینەوە</button>
+                    <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px; display:flex; justify-content:center;">
+                        <button class="btn-admin-action btn-edit-blue" onclick="editTeacherName('${tName}', '${teacherId}')">✏️</button>
+                        <button class="btn-admin-action" style="background:#dbeafe; color:#2563eb;" onclick="openPhotoModal('${tName}')">📷</button>
+                        <button class="btn-admin-action btn-delete-red" onclick="deleteTeacherProfile('${tName}')">🗑️</button>
                     </div>
                 </div>
             `}).join('');
@@ -436,9 +443,13 @@
             if(tab === 'activities') {
                 document.getElementById('adminActivitiesView').style.display = 'block';
                 document.getElementById('adminTeachersView').style.display = 'none';
+                document.getElementById('tab-admin-acts').classList.add('active');
+                document.getElementById('tab-admin-teach').classList.remove('active');
             } else {
                 document.getElementById('adminActivitiesView').style.display = 'none';
                 document.getElementById('adminTeachersView').style.display = 'block';
+                document.getElementById('tab-admin-acts').classList.remove('active');
+                document.getElementById('tab-admin-teach').classList.add('active');
             }
         };
 
@@ -453,8 +464,14 @@
 
         window.saveToArchive = async () => {
             const name = document.getElementById('inpName').value;
-            const teacher = document.getElementById('inpTeacher').value;
-            if(!name || !teacher) { alert("تکایە ناو و مامۆستا بنووسە!"); return; }
+            const teacher = document.getElementById('inpTeacher').value.trim(); // Get teacher name from select
+            if(!name || !teacher) { alert("تکایە ناو و مامۆستا پڕ بکەرەوە!"); return; }
+
+            // Validation: Ensure teacher exists in the list
+            if (!allTeachers.find(t => t.name === teacher)) {
+                alert("مامۆستا نادۆزرایەوە! تکایە داوا لە ئەدمین بکە ناوی زیاد بکات.");
+                return;
+            }
 
             const loader = document.getElementById('loader');
             const loaderText = document.getElementById('loaderText');
@@ -465,7 +482,7 @@
                 for(let i=0; i<4; i++) {
                     const file = window.localFiles[i];
                     if(file) {
-                        loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت بۆ ImgBB...`;
+                        loaderText.innerText = `وێنەی ${i+1} ئاپلۆد دەکرێت...`;
                         const url = await uploadToImgBB(file);
                         imageUrls.push(url);
                     }
@@ -500,7 +517,7 @@
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
             }
-            updateTeacherDropdown(); // Ensure dropdown is updated
+            updateTeacherDatalist(); // Populate select
             document.getElementById('editorModal').classList.add('active');
         };
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
@@ -533,7 +550,17 @@
             openEditor(); 
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
-            document.getElementById('inpTeacher').value = act.teacher; // Selects option in dropdown
+            
+            // Manually adding the option if it doesn't exist in current list (for old data)
+            const select = document.getElementById('inpTeacher');
+            if (![...select.options].some(o => o.value === act.teacher)) {
+                const opt = document.createElement('option');
+                opt.value = act.teacher;
+                opt.innerText = act.teacher;
+                select.appendChild(opt);
+            }
+            select.value = act.teacher;
+
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             for(let i=0; i<4; i++) {
@@ -547,14 +574,53 @@
         
         // Admin Teacher Logic
         window.openAddTeacherModal = () => { document.getElementById('newTeacherName').value = ''; document.getElementById('teacherModal').classList.add('active'); };
+        
         window.saveNewTeacher = async () => {
             const name = document.getElementById('newTeacherName').value.trim();
             if(!name) return;
+            // Check duplicate
+            if(allTeachers.some(t => t.name === name)) { alert("ئەم ناوە هەیە!"); return; }
+            
             await addDoc(teachersRef, { name: name, photo: "" });
             document.getElementById('teacherModal').classList.remove('active');
+            alert("مامۆستا زیاد کرا.");
         };
+
+        // Edit Teacher Name Function
+        window.editTeacherName = async (oldName, id) => {
+            if(!id) { alert("هەڵە لە دۆزینەوەی ناسنامە!"); return; }
+            const newName = prompt("ناوی نوێ بنووسە:", oldName);
+            if(newName && newName !== oldName) {
+                document.getElementById('loader').style.display = 'flex';
+                document.getElementById('loaderText').innerText = "ناو دەگۆڕدرێت...";
+                
+                try {
+                    const batch = writeBatch(db);
+                    
+                    // 1. Update Teacher Profile
+                    const teacherRef = doc(db, "teachers", id);
+                    batch.update(teacherRef, { name: newName });
+
+                    // 2. Find all activities with old name
+                    const q = query(activitiesRef, where("teacher", "==", oldName));
+                    const querySnapshot = await getDocs(q);
+                    
+                    querySnapshot.forEach((doc) => {
+                        batch.update(doc.ref, { teacher: newName });
+                    });
+
+                    await batch.commit();
+                    alert("ناو نوێکرایەوە!");
+                } catch(e) {
+                    alert("هەڵە: " + e.message);
+                } finally {
+                    document.getElementById('loader').style.display = 'none';
+                }
+            }
+        };
+
         window.deleteTeacherProfile = async (tName) => {
-            if(!confirm(`دڵنیایت؟`)) return;
+            if(!confirm(`دڵنیایت لە سڕینەوەی پرۆفایلی "${tName}"؟`)) return;
             const meta = allTeachers.find(t => t.name === tName);
             if(meta) await deleteDoc(doc(db, "teachers", meta.id));
         };
