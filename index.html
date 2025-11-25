@@ -25,12 +25,11 @@
             user-select: none;
         }
 
-        /* --- Button Interactions (Click & Hover Effects) --- */
+        /* --- Button Interactions --- */
         button, .tab-btn, .tool-btn, .add-btn, .action-btn, .ctrl-btn, .admin-tab-btn {
-            transition: all 0.2s ease; /* Smooth transition */
+            transition: all 0.2s ease;
         }
 
-        /* Hover Effect (Desktop) */
         @media (hover: hover) {
             button:hover, .action-btn:hover, .ctrl-btn:hover { filter: brightness(0.95); transform: translateY(-1px); }
             .tab-btn:hover { background-color: #f1f5f9; }
@@ -41,9 +40,8 @@
             .add-btn:hover { transform: scale(1.01); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4); }
         }
 
-        /* Active/Click Effect (Mobile & Desktop) */
         button:active, .tab-btn:active, .tool-btn:active, .add-btn:active, .action-btn:active, .ctrl-btn:active, .admin-tab-btn:active {
-            transform: scale(0.95) !important; /* Press down effect */
+            transform: scale(0.95) !important;
             filter: brightness(0.9);
         }
         
@@ -232,110 +230,45 @@
 
         /* --- FIXED PRINT STYLES --- */
         @media print {
-            /* General Reset for Print */
             .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal, .img-controls {
                 display: none !important;
             }
-            body, html { 
-                background: white !important; 
-                height: auto !important; 
-                overflow: visible !important; 
-                margin: 0 !important; 
-                padding: 0 !important; 
-            }
+            body, html { background: white !important; height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+            @page { size: A4; margin: 0mm; }
             
-            /* Page Setup */
-            @page {
-                size: A4;
-                margin: 0mm; /* Remove browser margins */
-            }
-
-            .editor-modal { 
-                display: block !important; 
-                position: relative !important; 
-                width: 100% !important; 
-                height: auto !important; 
-                overflow: visible !important; 
-                background: white !important; 
-                z-index: 1 !important; 
-            }
-            
-            .paper-wrapper { 
-                padding: 0 !important; 
-                margin: 0 !important; 
-                display: block !important; 
-            }
-            
+            .editor-modal { display: block !important; position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; background: white !important; z-index: 1 !important; }
+            .paper-wrapper { padding: 0 !important; margin: 0 !important; display: block !important; }
             .a4-paper { 
-                box-shadow: none !important; 
-                margin: 0 !important; 
-                width: 210mm !important; 
-                height: 296mm !important; /* Exact A4 Height */
-                padding: 10mm !important; /* Reduced padding for print */
-                border: none !important; 
-                box-sizing: border-box !important;
+                box-shadow: none !important; margin: 0 !important; width: 210mm !important; height: 296mm !important; 
+                padding: 10mm !important; border: none !important; box-sizing: border-box !important; 
             }
 
-            /* --- COMPACT HEADER FOR PRINT --- */
-            .rep-header {
-                padding-bottom: 5px !important;
-                margin-bottom: 10px !important;
-                border-bottom-width: 2px !important;
-            }
-            .rep-header div h1 {
-                font-size: 18px !important; /* Smaller Title */
-                margin: 0 !important;
-            }
-            .rep-header div p {
-                font-size: 12px !important;
-                margin: 0 !important;
-            }
-            .rep-logo {
-                width: 50px !important; /* Smaller Logo */
-                height: 50px !important;
-            }
+            /* Compact Header */
+            .rep-header { padding-bottom: 5px !important; margin-bottom: 10px !important; border-bottom-width: 2px !important; }
+            .rep-header div h1 { font-size: 18px !important; margin: 0 !important; }
+            .rep-header div p { font-size: 12px !important; margin: 0 !important; }
+            .rep-logo { width: 50px !important; height: 50px !important; }
 
-            /* --- COMPACT FORM GRID --- */
-            .rep-form-grid {
-                gap: 5px !important;
-                padding: 5px !important;
-                margin-bottom: 10px !important;
-            }
+            /* Compact Grid */
+            .rep-form-grid { gap: 5px !important; padding: 5px !important; margin-bottom: 10px !important; }
             .form-item label { font-size: 0.7em !important; margin-bottom: 0 !important; }
             .form-input { font-size: 0.9em !important; padding: 0 !important; }
 
-            /* --- NOTES SECTION --- */
-            .rep-notes label { display: none !important; } /* Hide "Notes" label to save space */
+            /* Notes - Increased to ~100px for ~3-4 lines */
+            .rep-notes label { display: none !important; } 
             .rep-notes textarea {
-                min-height: 60px !important; /* Smaller text area */
-                padding: 5px !important;
-                border: 1px solid #ddd !important;
-                font-size: 12px !important;
+                min-height: 100px !important; /* UPDATED SIZE */
+                padding: 5px !important; border: 1px solid #ddd !important; font-size: 12px !important;
             }
 
-            /* --- MAXIMIZE IMAGES --- */
-            .rep-images {
-                margin-top: 10px !important;
-                gap: 5px !important;
-            }
-            
-            /* Force bigger images in print to use available space */
-            .layout-landscape .img-slot { 
-                height: 230px !important; 
-                border-width: 1px !important;
-            }
-            .layout-portrait .img-slot { 
-                height: 320px !important; 
-                border-width: 1px !important;
-            }
+            /* Images */
+            .rep-images { margin-top: 10px !important; gap: 5px !important; }
+            .layout-landscape .img-slot { height: 230px !important; border-width: 1px !important; }
+            .layout-portrait .img-slot { height: 320px !important; border-width: 1px !important; }
 
             img { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .img-slot img { display: block !important; visibility: visible !important; }
-            
-            .rep-footer {
-                padding-top: 5px !important;
-                margin-top: 5px !important;
-            }
+            .rep-footer { padding-top: 5px !important; margin-top: 5px !important; }
             .school-name-footer { font-size: 10px !important; }
         }
     </style>
