@@ -27,14 +27,6 @@
         .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
         .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
         
-        .add-btn { 
-            width: 100%; border: none; padding: 15px; border-radius: 10px; 
-            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
-            color: white; font-family: 'Noto Sans Arabic'; font-size: 1.1em;
-            background: linear-gradient(135deg, var(--primary), #4338ca);
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-        }
-
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
         .card-header { padding: 15px; border-bottom: 1px solid #eee; }
@@ -110,6 +102,7 @@
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
         select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
+        .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; }
         
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
         .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
@@ -121,6 +114,7 @@
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
+        .rep-notes textarea:disabled { background: #fff; border:none; }
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
         .school-name-footer { font-size: 14px; font-weight: bold; color: #64748b; }
 
@@ -145,7 +139,6 @@
 </head>
 <body>
 
-    <!-- Security Screen -->
     <div id="securityOverlay">
         <div class="auth-box">
             <h2>🔒 پارێزراو</h2>
@@ -161,7 +154,6 @@
         <span id="loaderText">خەریکی ئاپلۆدکردن و سەیڤکردنە...<br>تکایە دایمەخە!</span>
     </div>
 
-    <!-- Public Content -->
     <div class="container" id="mainContent">
         <header>
             <button onclick="toggleAdmin()" class="admin-btn" id="adminBtn">🔑 ئەدمین</button>
@@ -174,7 +166,6 @@
             <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
         </div>
 
-        <!-- Filter Header (Hidden by default) -->
         <div id="filterHeader" class="filter-header">
             <div class="filter-info">
                 <div id="filterAvatarContainer"></div>
@@ -188,14 +179,12 @@
 
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            <button class="add-btn" onclick="openEditor()">📝 زیادکردنی چالاکی نوێ</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
         <div class="teachers-grid" id="teachersGrid" style="display:none;"></div>
     </div>
 
-    <!-- Admin Dashboard -->
     <div id="adminDashboard" class="admin-dashboard">
         <div class="admin-sidebar">
             <h2>⚙️ داشبۆردی بەڕێوەبردن</h2>
@@ -204,7 +193,6 @@
         </div>
         
         <div class="admin-content">
-            <!-- Stats -->
             <div class="stats-row">
                 <div class="stat-card">
                     <div class="stat-number" id="statActivities">0</div>
@@ -216,15 +204,16 @@
                 </div>
             </div>
 
-            <!-- Tools Tab -->
             <div class="admin-tabs">
                 <button onclick="switchAdminTab('activities')" id="tab-admin-acts" class="admin-tab-btn active">بەڕێوەبردنی چالاکییەکان</button>
                 <button onclick="switchAdminTab('teachers')" id="tab-admin-teach" class="admin-tab-btn">بەڕێوەبردنی مامۆستایان</button>
             </div>
 
-            <!-- Activities Manager -->
             <div id="adminActivitiesView" class="admin-table-container">
-                <h3>📋 لیستی هەموو چالاکییەکان</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3>📋 لیستی هەموو چالاکییەکان</h3>
+                    <button onclick="openEditor()" class="tool-btn primary">➕ زیادکردنی چالاکی</button>
+                </div>
                 <table class="admin-table">
                     <thead>
                         <tr>
@@ -238,7 +227,6 @@
                 </table>
             </div>
 
-            <!-- Teachers Manager (Admin Only) -->
             <div id="adminTeachersView" class="admin-table-container" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h3>👨‍🏫 لیستی مامۆستایان</h3>
@@ -249,15 +237,14 @@
         </div>
     </div>
 
-    <!-- Report Editor Modal -->
     <div class="editor-modal" id="editorModal">
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
-                <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە</button>
+                <button onclick="toggleLayout()" id="btnLayoutChange" class="tool-btn">🔄 گۆڕینی وێنە</button>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
                 <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
-                <button onclick="saveToArchive()" class="tool-btn primary">💾 سەیڤکردن</button>
+                <button onclick="saveToArchive()" id="btnSaveArchive" class="tool-btn primary">💾 سەیڤکردن</button>
             </div>
         </div>
 
@@ -272,7 +259,6 @@
                     <div class="form-item"><label>لیژنە</label><input type="text" class="form-input" id="inpComm" placeholder="بنووسە..."></div>
                     <div class="form-item">
                         <label>مامۆستا / سەرپەرشتیار</label>
-                        <!-- Only Select allowed -->
                         <select class="form-input" id="inpTeacher" style="background:white;">
                             <option value="">ناوی مامۆستا هەڵبژێرە...</option>
                         </select>
@@ -292,23 +278,21 @@
         </div>
     </div>
 
-    <!-- Admin Teacher Modal -->
-    <div class="simple-modal" id="teacherModal">
-        <div class="simple-modal-content">
+    <div class="simple-modal" id="teacherModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:4000; align-items:center; justify-content:center;">
+        <div class="simple-modal-content" style="background:white; padding:20px; border-radius:10px; width:90%; max-width:400px;">
             <h3>زیادکردنی مامۆستا</h3>
             <input type="text" id="newTeacherName" style="width:100%; padding:10px; margin:15px 0; border:1px solid #ddd; border-radius:8px;" placeholder="ناوی سیانی مامۆستا...">
             <button onclick="saveNewTeacher()" class="tool-btn primary" style="width:100%;">سەیڤکردن</button>
-            <button onclick="document.getElementById('teacherModal').classList.remove('active')" class="tool-btn danger" style="width:100%; margin-top:10px;">داخستن</button>
+            <button onclick="document.getElementById('teacherModal').style.display='none'" class="tool-btn danger" style="width:100%; margin-top:10px;">داخستن</button>
         </div>
     </div>
 
-    <!-- Photo Upload Modal -->
-    <div class="simple-modal" id="photoModal">
-        <div class="simple-modal-content">
+    <div class="simple-modal" id="photoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:4000; align-items:center; justify-content:center;">
+        <div class="simple-modal-content" style="background:white; padding:20px; border-radius:10px; width:90%; max-width:400px;">
             <h3>گۆڕینی وێنەی مامۆستا</h3>
             <input type="file" id="teacherPhotoInput" accept="image/*" style="display:none" onchange="handleTeacherPhotoSelect(this)">
             <button onclick="document.getElementById('teacherPhotoInput').click()" class="tool-btn" style="width:100%; margin-bottom:10px;">📂 هەڵبژاردنی وێنە</button>
-            <button onclick="document.getElementById('photoModal').classList.remove('active')" class="tool-btn danger" style="width:100%;">داخستن</button>
+            <button onclick="document.getElementById('photoModal').style.display='none'" class="tool-btn danger" style="width:100%;">داخستن</button>
         </div>
     </div>
 
@@ -581,7 +565,10 @@
         };
 
         // --- Helper Functions ---
+        
+        // This function opens the editor for ADDING new content (Admin Only Context)
         window.openEditor = () => {
+            // Reset fields
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
@@ -592,12 +579,26 @@
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
             }
-            updateTeacherDropdown(); // Ensure fresh list
+            updateTeacherDropdown(); 
+            
+            // Enable Inputs & Show Buttons since this is "Add New" mode (triggered by Admin)
+            enableEditorInputs(true);
+            document.getElementById('btnSaveArchive').style.display = 'inline-block';
+            document.getElementById('btnLayoutChange').style.display = 'inline-block';
+            
             document.getElementById('editorModal').classList.add('active');
         };
+        
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
         
-        window.triggerFile = (index) => { window.currentSlot = index; document.getElementById('hiddenFileInput').click(); };
+        window.triggerFile = (index) => { 
+            // Prevent file trigger if inputs are disabled (Read Only Mode)
+            if(document.getElementById('inpName').disabled) return;
+            
+            window.currentSlot = index; 
+            document.getElementById('hiddenFileInput').click(); 
+        };
+        
         document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if(file) {
@@ -619,14 +620,26 @@
             else { c.classList.remove('layout-portrait'); c.classList.add('layout-landscape'); }
         };
 
+        // Function to toggle Read-Only vs Editable state
+        function enableEditorInputs(enable) {
+            const ids = ['inpName', 'inpComm', 'inpTeacher', 'inpDate', 'inpNotes'];
+            ids.forEach(id => {
+                document.getElementById(id).disabled = !enable;
+            });
+            // Visual cue for images
+            document.getElementById('imgContainer').style.cursor = enable ? 'pointer' : 'default';
+        }
+
         window.viewSavedReport = (id) => {
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
-            openEditor(); 
+            
+            // Open Modal
+            document.getElementById('editorModal').classList.add('active');
+
+            // Fill Data
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
-            
-            // Set Select Value
             const select = document.getElementById('inpTeacher');
             if (![...select.options].some(o => o.value === act.teacher)) {
                 const opt = document.createElement('option');
@@ -635,20 +648,43 @@
                 select.appendChild(opt);
             }
             select.value = act.teacher;
-
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
+            
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
-                if(act.images && act.images[i]) { imgEl.src = act.images[i]; imgEl.parentElement.classList.add('has-img'); }
+                if(act.images && act.images[i]) { 
+                    imgEl.src = act.images[i]; 
+                    imgEl.parentElement.classList.add('has-img'); 
+                } else {
+                    imgEl.src = '';
+                    imgEl.parentElement.classList.remove('has-img');
+                }
             }
-            document.querySelector('.tool-btn.primary').style.display = 'none';
+
+            // CHECK ADMIN STATUS
+            const isAdmin = document.getElementById('adminDashboard').style.display === 'block';
+
+            if(isAdmin) {
+                // Admin can edit/change layout
+                enableEditorInputs(true);
+                document.getElementById('btnSaveArchive').style.display = 'inline-block'; // Or hide if you don't want update logic
+                document.getElementById('btnLayoutChange').style.display = 'inline-block';
+            } else {
+                // Public is Read-Only
+                enableEditorInputs(false);
+                document.getElementById('btnSaveArchive').style.display = 'none';
+                document.getElementById('btnLayoutChange').style.display = 'none';
+            }
         };
 
         window.deleteItem = async (id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); };
         
         // Admin Teacher Logic
-        window.openAddTeacherModal = () => { document.getElementById('newTeacherName').value = ''; document.getElementById('teacherModal').classList.add('active'); };
+        window.openAddTeacherModal = () => { 
+            document.getElementById('newTeacherName').value = ''; 
+            document.getElementById('teacherModal').style.display = 'flex'; 
+        };
         
         window.saveNewTeacher = async () => {
             const name = document.getElementById('newTeacherName').value.trim();
@@ -656,7 +692,7 @@
             if(allTeachers.some(t => t.name === name)) { alert("ئەم ناوە هەیە!"); return; }
             
             await addDoc(teachersRef, { name: name, photo: "" });
-            document.getElementById('teacherModal').classList.remove('active');
+            document.getElementById('teacherModal').style.display = 'none';
             alert("مامۆستا زیاد کرا.");
         };
 
@@ -690,13 +726,13 @@
         };
         window.openPhotoModal = (tName) => {
             teacherPhotoTarget = tName;
-            document.getElementById('photoModal').classList.add('active');
+            document.getElementById('photoModal').style.display = 'flex';
         };
         window.handleTeacherPhotoSelect = async (input) => {
             const file = input.files[0];
             if(!file) return;
             document.getElementById('loader').style.display = 'flex';
-            document.getElementById('photoModal').classList.remove('active');
+            document.getElementById('photoModal').style.display = 'none';
             try {
                 const url = await uploadToImgBB(file);
                 const meta = allTeachers.find(t => t.name === teacherPhotoTarget);
