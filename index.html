@@ -20,17 +20,12 @@
             min-height: 100vh; 
             padding: 10px; 
             color: var(--text-dark);
-            overflow-x: hidden; /* ڕێگری لە جوڵەی لاوەکی */
-            overflow-y: auto;   /* دڵنیابوون لە سکڕۆڵ */
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         
         /* --- Public View Styles --- */
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding-bottom: 120px; /* زیادکردنی بۆشایی خوارەوە */
-            display: none; 
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding-bottom: 120px; display: none; }
         header { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; position: relative; }
         h1 { font-size: 1.5em; margin-bottom: 5px; font-weight: 900; color: var(--primary); }
         
@@ -75,26 +70,10 @@
         .teacher-stats { font-size: 0.85em; color: var(--text-gray); background: #f1f5f9; padding: 4px 12px; border-radius: 20px; display: inline-block; }
 
         /* --- Admin Dashboard --- */
-        .admin-dashboard { 
-            display: none; 
-            background: #f1f5f9; 
-            height: 100vh; /* بەرزی تەواوی شاشە */
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            z-index: 500; 
-            overflow-y: auto; /* ڕێگەدان بە سکڕۆڵ */
-            -webkit-overflow-scrolling: touch;
-        }
+        .admin-dashboard { display: none; background: #f1f5f9; height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
         .admin-sidebar h2 { margin-bottom: 20px; color: var(--admin-accent); }
-        .admin-content { 
-            padding: 20px; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding-bottom: 120px; /* بۆشایی خوارەوە بۆ ئەوەی ناوەڕۆک نەشاردرێتەوە */
-        }
+        .admin-content { padding: 20px; max-width: 1200px; margin: 0 auto; padding-bottom: 120px; }
         
         .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; border-top: 4px solid var(--admin-accent); }
@@ -118,19 +97,8 @@
         .admin-teachers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
         .admin-teacher-card { background: white; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; position: relative; }
         
-        /* Editor Modal - Fixed Scrolling */
-        .editor-modal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100vh; /* بەرزی تەواو */
-            background: #f8fafc; 
-            z-index: 2000; 
-            overflow-y: auto; /* ڕێگەدان بە سکڕۆڵ */
-            -webkit-overflow-scrolling: touch;
-        }
+        /* Editor Modal */
+        .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #f8fafc; z-index: 2000; overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .editor-modal.active { display: block; }
         .editor-header { background: white; padding: 15px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .editor-tools { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
@@ -152,7 +120,7 @@
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
         .form-input:disabled { background: transparent; border-bottom: none; color: #333; cursor: default; border:none; -webkit-appearance: none; }
         
-        .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
+        .rep-images { display: grid; gap: 10px; margin-top: 20px; }
         .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
         .layout-portrait { grid-template-columns: 1fr 1fr; } .layout-portrait .img-slot { aspect-ratio: 3/4; }
         .img-slot { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 10px; overflow: hidden; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
@@ -182,6 +150,16 @@
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; padding-bottom: 100px; }
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body * { visibility: hidden; }
+            #editorModal, #editorModal * { visibility: visible; }
+            #editorModal { position: absolute; left: 0; top: 0; width: 100%; height: auto; overflow: visible; background: white; }
+            .editor-header, .editor-tools, .tool-btn { display: none !important; }
+            .paper-wrapper { padding: 0; }
+            .a4-paper { box-shadow: none; margin: 0; width: 100%; border: none; }
         }
     </style>
 </head>
@@ -313,14 +291,20 @@
                     </div>
                     <div class="form-item"><label>بەروار</label><input type="date" class="form-input" id="inpDate" style="text-align:right;"></div>
                 </div>
+                
+                <div class="rep-notes">
+                    <label style="font-size:0.9em; font-weight:bold;">تێبینی و وردەکاری:</label>
+                    <textarea id="inpNotes" placeholder="لێرە بنووسە..."></textarea>
+                </div>
+
                 <div class="rep-images layout-landscape" id="imgContainer">
                     <div class="img-slot" onclick="triggerFile(0)"><img id="img0"><div class="placeholder-text">وێنەی ١<br>📸</div></div>
                     <div class="img-slot" onclick="triggerFile(1)"><img id="img1"><div class="placeholder-text">وێنەی ٢<br>📸</div></div>
                     <div class="img-slot" onclick="triggerFile(2)"><img id="img2"><div class="placeholder-text">وێنەی ٣<br>📸</div></div>
                     <div class="img-slot" onclick="triggerFile(3)"><img id="img3"><div class="placeholder-text">وێنەی ٤<br>📸</div></div>
                 </div>
+                
                 <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
-                <div class="rep-notes"><label style="font-size:0.9em; font-weight:bold;">تێبینی و وردەکاری:</label><textarea id="inpNotes" placeholder="لێرە بنووسە..."></textarea></div>
                 <div class="rep-footer"><p class="school-name-footer">قوتابخانەی گزنگی ئینگلیزی ناحکومی</p></div>
             </div>
         </div>
@@ -731,7 +715,6 @@
             alert("مامۆستا زیاد کرا.");
         };
 
-        // Edit Function Logic
         window.editTeacherName = async (oldName, id) => {
             if(!id) return;
             const newName = prompt("ناوی نوێ بنووسە:", oldName);
@@ -819,6 +802,29 @@
             document.getElementById('adminDashboard').style.display = 'none';
             document.getElementById('mainContent').style.display = 'block';
         }
+
+        // --- NEW: Print Function ---
+        window.printReport = () => {
+            window.print();
+        };
+
+        // --- NEW: Download as Image Function ---
+        window.downloadAsImage = () => {
+            const element = document.getElementById('reportPaper');
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('loaderText').innerText = "وێنەکە ئامادە دەکرێت...";
+
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Gzng-Report-' + new Date().getTime() + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                document.getElementById('loader').style.display = 'none';
+            }).catch(err => {
+                alert("هەڵە لە دابەزاندن: " + err);
+                document.getElementById('loader').style.display = 'none';
+            });
+        };
     </script>
 </body>
 </html>
