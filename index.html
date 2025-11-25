@@ -67,7 +67,7 @@
             .editor-header, .editor-tools { display: none !important; }
             .paper-wrapper { padding: 0; margin: 0; }
             .a4-paper { box-shadow: none; width: 100%; height: 100%; margin: 0; padding: 15mm; page-break-after: always; }
-            .img-placeholder span { display: none; } /* Hide upload text when printing */
+            .img-placeholder span { display: none; } 
         }
 
         /* Report Content Layout */
@@ -81,8 +81,8 @@
 
         /* Image Slots */
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
-        /* Layouts */
-        .layout-landscape { grid-template-columns: 1fr 1fr; } /* 2 columns */
+        
+        .layout-landscape { grid-template-columns: 1fr 1fr; }
         .layout-landscape .img-slot { aspect-ratio: 16/9; }
         
         .layout-portrait { grid-template-columns: 1fr 1fr; }
@@ -93,17 +93,15 @@
             overflow: hidden; position: relative; cursor: pointer; display: flex; 
             align-items: center; justify-content: center; transition: 0.2s;
         }
-        .img-slot:hover { background: #e2e8f0; border-color: var(--primary); }
+        .img-slot:hover, .img-slot.drag-over { background: #e2e8f0; border-color: var(--primary); }
         .img-slot img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .img-slot.has-img img { display: block; }
         .img-slot.has-img .placeholder-text { display: none; }
         .placeholder-text { color: #94a3b8; font-size: 0.9em; text-align: center; pointer-events: none; }
 
         .rep-notes { margin-top: 10px; flex-grow: 1; }
-        /* گۆڕانکاری: بەرزی تێبینی زیاد کراوە */
         .rep-notes textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; font-family: inherit; resize: none; min-height: 200px; background: #fffbeb; font-size: 16px; line-height: 1.6; }
 
-        /* گۆڕانکاری: فووتەری نوێ */
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
         .school-name-footer { font-size: 14px; font-weight: bold; color: #64748b; }
 
@@ -112,7 +110,6 @@
         .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
 
-        /* Mobile Optimization for Editor */
         @media (max-width: 600px) {
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
@@ -124,7 +121,6 @@
 </head>
 <body>
 
-    <!-- پاراستن -->
     <div id="securityOverlay">
         <div class="auth-box">
             <h2>🔒 پارێزراو</h2>
@@ -137,7 +133,6 @@
 
     <div id="loader">داتا دەنێردرێت... تکایە چاوەڕێبە</div>
 
-    <!-- ناوەڕۆکی سەرەکی -->
     <div class="container" id="mainContent">
         <header>
             <button onclick="toggleAdmin()" class="admin-btn" id="adminBtn">🔑 ئەدمین</button>
@@ -159,23 +154,21 @@
         <div class="activities-grid" id="teachersGrid" style="display:none;"></div>
     </div>
 
-    <!-- پەڕەی دروستکردنی ڕاپۆرت (Editor Modal) -->
+    <!-- Report Editor -->
     <div class="editor-modal" id="editorModal">
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
-                <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە (پان/درێژ)</button>
+                <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە</button>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
-                <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن (Wêne)</button>
-                <button onclick="saveToArchive()" class="tool-btn primary">💾 سەیڤکردن بۆ ئەرشیف</button>
+                <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
+                <button onclick="saveToArchive()" class="tool-btn primary">💾 سەیڤکردن</button>
             </div>
         </div>
 
         <div class="paper-wrapper">
-            <!-- ئەمە وەرەقەی A4ـەکەیە -->
             <div class="a4-paper" id="reportPaper">
                 
-                <!-- سەردێڕ -->
                 <div class="rep-header">
                     <div>
                         <h1 style="font-size:22px; margin:0; color:black;">قوتابخانەی گزنگ</h1>
@@ -184,7 +177,6 @@
                     <div class="rep-logo">LOGO</div>
                 </div>
 
-                <!-- زانیارییەکان (ئینپوتەکان ڕاستەوخۆ لێرەن) -->
                 <div class="rep-form-grid">
                     <div class="form-item">
                         <label>بابەت / چالاکی</label>
@@ -204,36 +196,32 @@
                     </div>
                 </div>
 
-                <!-- وێنەکان (کلیک بکە بۆ دانان) -->
+                <!-- وێنەکان لەگەڵ پشتگیری Drag & Drop -->
                 <div class="rep-images layout-landscape" id="imgContainer">
-                    <!-- ٤ خانەی وێنە -->
-                    <div class="img-slot" onclick="triggerFile(0)">
+                    <div class="img-slot" onclick="triggerFile(0)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 0)">
                         <img id="img0">
-                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ١<br>📸</div>
+                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (١)<br>📸</div>
                     </div>
-                    <div class="img-slot" onclick="triggerFile(1)">
+                    <div class="img-slot" onclick="triggerFile(1)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 1)">
                         <img id="img1">
-                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٢<br>📸</div>
+                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٢)<br>📸</div>
                     </div>
-                    <div class="img-slot" onclick="triggerFile(2)">
+                    <div class="img-slot" onclick="triggerFile(2)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 2)">
                         <img id="img2">
-                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٣<br>📸</div>
+                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٣)<br>📸</div>
                     </div>
-                    <div class="img-slot" onclick="triggerFile(3)">
+                    <div class="img-slot" onclick="triggerFile(3)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 3)">
                         <img id="img3">
-                        <div class="placeholder-text">کلیک بکە بۆ وێنەی ٤<br>📸</div>
+                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٤)<br>📸</div>
                     </div>
                 </div>
-                <!-- Input-ی شاراوە بۆ وەرگرتنی فایل -->
                 <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
 
-                <!-- تێبینی -->
                 <div class="rep-notes">
                     <label style="font-size:0.9em; font-weight:bold;">تێبینی و وردەکاری:</label>
                     <textarea id="inpNotes" placeholder="لێرە بنووسە..."></textarea>
                 </div>
 
-                <!-- واژۆ -->
                 <div class="rep-footer">
                     <p class="school-name-footer">قوتابخانەی گزنگی ئینگلیزی ناحکومی</p>
                 </div>
@@ -242,7 +230,6 @@
         </div>
     </div>
 
-    <!-- Firebase Code -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -266,11 +253,9 @@
         let allActivities = [];
         window.isAdmin = false;
         
-        // بۆ هەڵگرتنی فایلە لۆکاڵەکان پێش ئاپلۆد
         window.localFiles = [null, null, null, null]; 
         window.currentSlot = 0;
 
-        // Realtime Listener
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -302,7 +287,6 @@
                 </div>
             `).join('');
             
-            // Teachers Grid
             const tGrid = document.getElementById('teachersGrid');
             const tMap = {};
             allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
@@ -315,10 +299,7 @@
             `).join('');
         }
 
-        // --- REPORT EDITOR LOGIC ---
-        
         window.openEditor = () => {
-            // Reset Form
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
@@ -345,34 +326,52 @@
             }
         };
 
-        // Local Image Handling (Instant Preview)
+        // File Selection
         window.triggerFile = (index) => {
             window.currentSlot = index;
             document.getElementById('hiddenFileInput').click();
         };
 
+        // Drag & Drop Logic
+        window.allowDrop = (e) => {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        };
+
+        window.leaveDrop = (e) => {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        window.handleDrop = (e, index) => {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if(file && file.type.startsWith('image/')) {
+                processFile(file, index);
+            }
+        };
+
+        function processFile(file, index) {
+            window.localFiles[index] = file;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const imgEl = document.getElementById('img' + index);
+                imgEl.src = ev.target.result;
+                imgEl.parentElement.classList.add('has-img');
+            };
+            reader.readAsDataURL(file);
+        }
+
         document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if(file) {
-                window.localFiles[window.currentSlot] = file; // Store for later upload
-                // Instant Preview
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    const imgEl = document.getElementById('img' + window.currentSlot);
-                    imgEl.src = ev.target.result;
-                    imgEl.parentElement.classList.add('has-img');
-                };
-                reader.readAsDataURL(file);
-            }
-            e.target.value = ''; // Reset
+            if(file) processFile(file, window.currentSlot);
+            e.target.value = '';
         });
 
-        // Printing & Downloading
         window.printReport = () => window.print();
         
         window.downloadAsImage = () => {
             const el = document.querySelector(".a4-paper");
-            // کاتی دەوێت بۆ ڕێندەرکردن، بۆیە کەمێک چاوەڕێ دەکەین
             html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
                 const a = document.createElement('a');
                 a.download = 'Gzng_Report.jpg';
@@ -381,7 +380,39 @@
             }).catch(e => alert("هەڵە: " + e));
         };
 
-        // Save To Archive
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1000; 
+                        const scaleSize = MAX_WIDTH / img.width;
+                        
+                        if (img.width > MAX_WIDTH) {
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleSize;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', 0.6);
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
         window.saveToArchive = async () => {
             const name = document.getElementById('inpName').value;
             const teacher = document.getElementById('inpTeacher').value;
@@ -392,12 +423,15 @@
 
             try {
                 let imageUrls = [];
-                // Upload files stored in window.localFiles
                 for(let i=0; i<4; i++) {
                     const file = window.localFiles[i];
                     if(file) {
-                        const storageRef = ref(storage, 'images/' + Date.now() + '-' + i);
-                        await uploadBytes(storageRef, file);
+                        loader.innerText = `وێنەی ${i+1} بچووک دەکرێتەوە...`;
+                        const compressedFile = await compressImage(file);
+                        
+                        loader.innerText = `وێنەی ${i+1} دەنێردرێت...`;
+                        const storageRef = ref(storage, 'images/' + Date.now() + '-' + i + '.jpg');
+                        await uploadBytes(storageRef, compressedFile);
                         const url = await getDownloadURL(storageRef);
                         imageUrls.push(url);
                     }
@@ -414,28 +448,27 @@
                 });
 
                 loader.style.display = 'none';
+                loader.innerText = "داتا دەنێردرێت... تکایە چاوەڕێبە"; 
                 alert("✅ سەیڤ کرا و چووە ناو ئەرشیف!");
                 closeEditor();
             } catch(err) {
                 loader.style.display = 'none';
+                loader.innerText = "داتا دەنێردرێت... تکایە چاوەڕێبە";
                 alert("هەڵە لە سەیڤکردن: " + err.message);
             }
         };
 
-        // Viewing Saved Reports (Read-only mode)
         window.viewSavedReport = (id) => {
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
             
-            openEditor(); // Open modal
-            // Fill data
+            openEditor(); 
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
             document.getElementById('inpTeacher').value = act.teacher;
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             
-            // Show saved images
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
                 if(act.images && act.images[i]) {
@@ -443,11 +476,9 @@
                     imgEl.parentElement.classList.add('has-img');
                 }
             }
-            // Hide Save button since it's already saved
             document.querySelector('.tool-btn.primary').style.display = 'none';
         };
 
-        // Helpers
         window.switchView = (v) => {
             document.getElementById('activitiesGrid').style.display = v==='archive'?'grid':'none';
             document.getElementById('archiveControls').style.display = v==='archive'?'flex':'none';
