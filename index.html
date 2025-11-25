@@ -2,98 +2,92 @@
 <html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <!-- کتێبخانەی دابەزاندنی وێنە -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #4f46e5; --bg-color: #f3f4f6; --card-bg: #ffffff;
             --text-dark: #1e293b; --text-gray: #64748b; --shadow: 0 10px 30px -5px rgba(0,0,0,0.1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 20px; color: var(--text-dark); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 15px; color: var(--text-dark); padding-bottom: 40px; }
         .container { max-width: 1200px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        header { background: var(--card-bg); padding: 30px 20px; border-radius: 20px; box-shadow: var(--shadow); text-align: center; margin-bottom: 30px; position: relative; overflow: hidden; }
+        header { background: var(--card-bg); padding: 25px 15px; border-radius: 20px; box-shadow: var(--shadow); text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; }
         header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, var(--primary), #ec4899); }
-        h1 { font-size: 2.2em; margin-bottom: 5px; font-weight: 900; }
+        h1 { font-size: 1.8em; margin-bottom: 5px; font-weight: 900; }
         
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; background: white; padding: 8px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .tab-btn { background: transparent; color: var(--text-gray); border: none; padding: 10px 25px; border-radius: 40px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Noto Sans Arabic'; }
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; background: white; padding: 6px; border-radius: 50px; width: fit-content; margin: 0 auto 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .tab-btn { background: transparent; color: var(--text-gray); border: none; padding: 10px 20px; border-radius: 40px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Noto Sans Arabic'; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        .controls { background: white; padding: 10px; border-radius: 16px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .search-box { flex: 1; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-family: 'Noto Sans Arabic'; background: #f8fafc; }
-        .add-btn { background: linear-gradient(135deg, var(--primary), #4338ca); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); display: flex; align-items: center; gap: 8px; font-family: 'Noto Sans Arabic'; }
+        .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .search-box { flex: 1; padding: 14px 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 16px; font-family: 'Noto Sans Arabic'; background: #f8fafc; min-width: 200px; }
+        .add-btn { background: linear-gradient(135deg, var(--primary), #4338ca); color: white; border: none; padding: 14px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Noto Sans Arabic'; font-size: 16px; flex-grow: 1; }
 
-        .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); transition: 0.3s; display: flex; flex-direction: column; position: relative; border: 1px solid #f1f5f9; }
-        .activity-card:hover { transform: translateY(-5px); }
         .activity-header { padding: 15px; background: white; border-bottom: 1px solid #f1f5f9; }
         .activity-header h3 { font-size: 1.2em; margin-bottom: 5px; color: var(--text-dark); }
         .committee-tag { background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 8px; font-size: 0.8em; font-weight: bold; display: inline-block; margin-bottom: 5px; }
         
-        .images-preview { height: 200px; overflow: hidden; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: #f1f5f9; }
+        .images-preview { height: 220px; overflow: hidden; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: #f1f5f9; }
         .images-preview img { width: 100%; height: 100%; object-fit: cover; }
 
         .card-actions { padding: 15px; border-top: 1px solid #f1f5f9; display: flex; gap: 10px; background: #f8fafc; }
-        .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 0.9em; transition: 0.2s; }
+        .action-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 0.95em; transition: 0.2s; }
         .btn-report { background: #dbeafe; color: #2563eb; }
-        .btn-report:hover { background: #bfdbfe; }
-        .btn-delete { background: #fee2e2; color: #ef4444; display: none; } /* Hidden by default */
+        .btn-delete { background: #fee2e2; color: #ef4444; display: none; } 
 
-        /* --- مۆداڵەکان --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; padding: 10px; overflow-y: auto; }
+        /* Modal styles optimized for mobile */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; overflow-y: auto; backdrop-filter: blur(5px); }
         .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 20px; padding: 25px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .modal-content { background: white; border-radius: 20px; padding: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; margin: auto; }
         
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #475569; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Noto Sans Arabic'; background: #f8fafc; }
-        .save-btn { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic'; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9em; color: #475569; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; font-family: 'Noto Sans Arabic'; background: #f8fafc; font-size: 16px; }
+        .save-btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic'; font-size: 16px; }
 
-        /* --- دیزاینی ڕاپۆرتی A4 --- */
-        .report-container { background: white; width: 100%; max-width: 210mm; margin: 0 auto; padding: 0; overflow: hidden; display: none; }
-        .a4-paper { 
-            background: white; width: 100%; min-height: 297mm; padding: 20mm; 
-            position: relative; color: black; direction: rtl; text-align: right;
-        }
+        /* Report A4 Styling */
+        .report-container { background: white; width: 210mm; min-width: 210mm; margin: 0 auto; padding: 0; overflow: hidden; display: block; }
+        .a4-paper { background: white; width: 100%; min-height: 297mm; padding: 20mm; position: relative; color: black; direction: rtl; text-align: right; box-sizing: border-box; }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #1e293b; padding-bottom: 20px; margin-bottom: 30px; }
-        .report-logo { width: 80px; height: 80px; object-fit: contain; }
         .report-title h1 { font-size: 24px; font-weight: 900; margin: 0; color: #1e293b; }
-        .report-title p { font-size: 16px; color: #64748b; margin: 5px 0 0 0; }
-        
         .report-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
-        .meta-item strong { display: block; font-size: 12px; color: #64748b; margin-bottom: 3px; }
-        .meta-item span { font-size: 16px; font-weight: bold; color: #1e293b; }
-
         .report-images { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
         .report-img-box { aspect-ratio: 4/3; background: #eee; border-radius: 10px; overflow: hidden; border: 2px solid #e2e8f0; }
         .report-img-box img { width: 100%; height: 100%; object-fit: cover; }
-
         .report-notes { background: #fffbeb; border: 1px solid #fcd34d; padding: 20px; border-radius: 10px; margin-bottom: 40px; min-height: 100px; }
         .report-footer { display: flex; justify-content: space-between; margin-top: 50px; padding-top: 20px; border-top: 2px solid #e2e8f0; }
-        .signature { text-align: center; width: 150px; }
-        .signature p { font-weight: bold; margin-bottom: 40px; font-size: 14px; }
-        .signature-line { height: 1px; background: #94a3b8; width: 100%; }
-
-        .admin-btn-top { position: absolute; top: 20px; left: 20px; background: #e2e8f0; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 12px; }
         
-        /* Loader */
+        .admin-btn-top { position: absolute; top: 20px; left: 20px; background: #e2e8f0; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-family: 'Noto Sans Arabic'; font-size: 13px; font-weight: bold; }
+        
         #globalLoader { position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--primary); font-weight: bold; }
+
+        /* Mobile Specific Fixes */
+        @media (max-width: 600px) {
+            .nav-tabs { width: 100%; padding: 5px; }
+            .tab-btn { flex: 1; padding: 12px; font-size: 14px; }
+            .controls { flex-direction: column; }
+            .search-box, .add-btn { width: 100%; }
+            .activity-card { margin-bottom: 10px; }
+            /* Make report scrollable on mobile */
+            #reportWrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 15px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Screen Lock -->
-    <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e293b; z-index:10000; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-        <div style="background:white; padding:40px; border-radius:20px; text-align:center; width:90%; max-width:400px;">
+    <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#1e293b; z-index:10000; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 20px;">
+        <div style="background:white; padding:30px; border-radius:20px; text-align:center; width:100%; max-width:350px;">
             <h2>🔒 پارێزراو</h2>
-            <input type="password" id="sitePassword" style="width:100%; padding:10px; margin:20px 0; text-align:center; font-size:18px; border:2px solid #e2e8f0; border-radius:10px;" placeholder="وشەی نهێنی...">
-            <button onclick="checkPassword()" style="width:100%; padding:10px; background:#4f46e5; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">چوونەژوورەوە</button>
+            <p style="color:#64748b; margin-bottom:15px;">تکایە وشەی نهێنی بنووسە</p>
+            <input type="password" id="sitePassword" style="width:100%; padding:14px; margin:10px 0 20px; text-align:center; font-size:18px; border:2px solid #e2e8f0; border-radius:10px; outline:none;" placeholder="••••••">
+            <button onclick="checkPassword()" style="width:100%; padding:14px; background:#4f46e5; color:white; border:none; border-radius:10px; font-weight:bold; font-size:16px; cursor:pointer;">چوونەژوورەوە</button>
             <p id="errorMsg" style="color:red; margin-top:10px; display:none;">هەڵەیە!</p>
         </div>
     </div>
@@ -121,7 +115,7 @@
         <div class="teachers-grid" id="teachersGrid" style="display:none; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
     </div>
 
-    <!-- مۆداڵی زیادکردن -->
+    <!-- Add Modal -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <h2 style="text-align:center; margin-bottom:20px;">زیادکردنی چالاکی نوێ</h2>
@@ -137,59 +131,57 @@
                 </div>
                 <div class="form-group"><label>تێبینی</label><textarea id="activityNotes" rows="3"></textarea></div>
                 <button type="submit" class="save-btn" id="saveBtn">💾 پاشەکەوتکردن</button>
-                <button type="button" onclick="closeAddModal()" style="width:100%; padding:10px; background:none; border:none; color:#64748b; cursor:pointer; margin-top:5px;">داخستن</button>
+                <button type="button" onclick="closeAddModal()" style="width:100%; padding:15px; background:none; border:none; color:#64748b; cursor:pointer; margin-top:5px; font-weight:bold;">داخستن</button>
             </form>
         </div>
     </div>
 
-    <!-- مۆداڵی ڕاپۆرت (A4) -->
+    <!-- Report Modal (Mobile Optimized Scroll) -->
     <div class="modal" id="reportModal" style="align-items: flex-start; padding-top: 20px;">
-        <div style="width: 100%; max-width: 215mm;">
-            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px;">
-                <button onclick="downloadReport()" style="background: #f97316; color: white; padding: 10px 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">⬇️ دابەزاندن (JPG)</button>
-                <button onclick="document.getElementById('reportModal').classList.remove('active')" style="background: white; color: #64748b; padding: 10px 20px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">داخستن</button>
+        <div style="width: 100%; max-width: 220mm;">
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <button onclick="downloadReport()" style="background: #f97316; color: white; padding: 12px 25px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);">⬇️ دابەزاندن (JPG)</button>
+                <button onclick="document.getElementById('reportModal').classList.remove('active')" style="background: white; color: #64748b; padding: 12px 25px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">داخستن</button>
             </div>
             
-            <div class="report-container" id="printArea" style="display: block;">
-                <div class="a4-paper">
-                    <!-- سەرپەڕی ڕاپۆرت -->
-                    <div class="report-header">
-                        <div class="report-title">
-                            <h1>قوتابخانەی گزنگ</h1>
-                            <p>ڕاپۆرتی چالاکیەکان</p>
+            <div style="background: #333; padding: 10px; border-radius: 10px; color: white; font-size: 12px; text-align: center; margin-bottom: 10px; display: none;" id="mobileHint">
+                ↔️ دەتوانیت ڕاپۆرتەکە بە لای ڕاست و چەپدا ببەیت
+            </div>
+
+            <!-- Scrollable Wrapper for Mobile -->
+            <div id="reportWrapper">
+                <div class="report-container" id="printArea">
+                    <div class="a4-paper">
+                        <div class="report-header">
+                            <div class="report-title">
+                                <h1>قوتابخانەی گزنگ</h1>
+                                <p>ڕاپۆرتی چالاکیەکان</p>
+                            </div>
+                            <div style="width:70px; height:70px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; border: 2px solid #e2e8f0;">LOGO</div>
                         </div>
-                        <!-- لێرە لۆگۆ دابنێ ئەگەر هەتە -->
-                        <div style="width:60px; height:60px; background:#f1f5f9; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">LOGO</div>
-                    </div>
 
-                    <!-- زانیارییەکان -->
-                    <div class="report-meta">
-                        <div class="meta-item"><strong>بابەت/چالاکی</strong><span id="rep-name">...</span></div>
-                        <div class="meta-item"><strong>لیژنە</strong><span id="rep-committee">...</span></div>
-                        <div class="meta-item"><strong>سەرپەرشتیار/مامۆستا</strong><span id="rep-teacher">...</span></div>
-                        <div class="meta-item"><strong>بەروار</strong><span id="rep-date">...</span></div>
-                    </div>
+                        <div class="report-meta">
+                            <div class="meta-item"><strong>بابەت/چالاکی</strong><span id="rep-name">...</span></div>
+                            <div class="meta-item"><strong>لیژنە</strong><span id="rep-committee">...</span></div>
+                            <div class="meta-item"><strong>سەرپەرشتیار/مامۆستا</strong><span id="rep-teacher">...</span></div>
+                            <div class="meta-item"><strong>بەروار</strong><span id="rep-date">...</span></div>
+                        </div>
 
-                    <!-- وێنەکان -->
-                    <div class="report-images" id="rep-images">
-                        <!-- وێنەکان لێرە دادەنرێن -->
-                    </div>
+                        <div class="report-images" id="rep-images"></div>
 
-                    <!-- تێبینی -->
-                    <div style="margin-bottom: 5px; font-weight: bold; color: #64748b;">تێبینی و وردەکاری:</div>
-                    <div class="report-notes" id="rep-notes">...</div>
+                        <div style="margin-bottom: 5px; font-weight: bold; color: #64748b;">تێبینی و وردەکاری:</div>
+                        <div class="report-notes" id="rep-notes">...</div>
 
-                    <!-- واژۆکان -->
-                    <div class="report-footer">
-                        <div class="signature"><p>ئامادەکردنی</p><div class="signature-line"></div></div>
-                        <div class="signature"><p>بەڕێوەبەری قوتابخانە</p><div class="signature-line"></div></div>
+                        <div class="report-footer">
+                            <div class="signature"><p>ئامادەکردنی</p><div class="signature-line"></div></div>
+                            <div class="signature"><p>بەڕێوەبەری قوتابخانە</p><div class="signature-line"></div></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Firebase & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -213,7 +205,6 @@
         let allActivities = [];
         window.isAdmin = false;
 
-        // Realtime Listener
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -253,7 +244,6 @@
 
             if(displayList.length === 0) grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">هیچ نییە</p>';
             
-            // Render Teachers List (Simplified for brevity)
             const tGrid = document.getElementById('teachersGrid');
             const tMap = {};
             allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
@@ -266,17 +256,14 @@
             `).join('');
         }
 
-        // --- UPLOAD & SAVE LOGIC (Improved Error Handling) ---
         async function uploadImage(file) {
             try {
                 const storageRef = ref(storage, 'images/' + Date.now() + '-' + Math.floor(Math.random()*1000));
-                // پەستاندنەوە لێرە لابراوە بۆ دڵنیابوون لە ئاپلۆد، ئەگەر ویستت دەتوانین زیادی بکەینەوە
-                // بەڵام بۆ چارەسەری کێشەی ئاپلۆد، با جارێ ڕاستەوخۆ بێت
                 const snapshot = await uploadBytes(storageRef, file);
                 return await getDownloadURL(snapshot.ref);
             } catch (error) {
                 console.error("Upload failed:", error);
-                throw new Error("وێنەکە ئاپلۆد نەبوو. دڵنیابەرەوە ئینتەرنێتت هەیە و Rulesـەکانت Publicـن.");
+                throw new Error("وێنەکە ئاپلۆد نەبوو. تکایە دڵنیابە ئینتەرنێت هەیە.");
             }
         }
 
@@ -301,7 +288,7 @@
                 
                 await addDoc(activitiesRef, {
                     name: document.getElementById('activityName').value,
-                    committee: document.getElementById('committeeName').value, // لیژنە
+                    committee: document.getElementById('committeeName').value,
                     teacher: document.getElementById('teacherName').value.trim(),
                     date: document.getElementById('activityDate').value,
                     notes: document.getElementById('activityNotes').value,
@@ -320,7 +307,6 @@
             }
         });
 
-        // --- REPORT FUNCTIONS ---
         window.openReport = (id) => {
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
@@ -336,7 +322,12 @@
                 `<div class="report-img-box"><img src="${url}" crossorigin="anonymous"></div>`
             ).join('') : '';
 
-            document.getElementById('reportModal').classList.add('active');
+            const modal = document.getElementById('reportModal');
+            modal.classList.add('active');
+            
+            if(window.innerWidth < 600) {
+                document.getElementById('mobileHint').style.display = 'block';
+            }
         };
 
         window.downloadReport = () => {
@@ -349,7 +340,6 @@
             }).catch(err => alert("کێشە لە دابەزاندن: " + err));
         };
 
-        // Helpers
         window.openAddModal = () => document.getElementById('addModal').classList.add('active');
         window.closeAddModal = () => { document.getElementById('addModal').classList.remove('active'); document.getElementById('activityForm').reset(); };
         window.switchView = (v) => {
@@ -363,7 +353,6 @@
     </script>
 
     <script>
-        // Passwords
         function checkPassword() {
             if(document.getElementById('sitePassword').value === "2526") { 
                 document.getElementById('securityOverlay').style.display = 'none';
@@ -373,12 +362,12 @@
         function toggleAdmin() {
             if(window.isAdmin) {
                 window.isAdmin = false; document.getElementById('adminBtn').style.background="#e2e8f0";
-                window.renderApp(); // Refresh to hide delete btns
+                window.renderApp();
                 alert("دەرچوویت.");
             } else {
                 if(prompt("پاسۆردی ئەدمین:") === "2324") {
                     window.isAdmin = true; document.getElementById('adminBtn').style.background="#86efac";
-                    window.renderApp(); // Refresh to show delete btns
+                    window.renderApp();
                     alert("بەخێربێیت ئەدمین.");
                 } else alert("هەڵەیە!");
             }
