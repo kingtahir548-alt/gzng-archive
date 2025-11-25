@@ -14,21 +14,28 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 10px; color: var(--text-dark); }
         
-        /* Container & Header */
         .container { max-width: 1200px; margin: 0 auto; padding-bottom: 80px; display: none; }
         header { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; position: relative; }
         h1 { font-size: 1.5em; margin-bottom: 5px; font-weight: 900; color: var(--primary); }
         
-        /* Tabs & Controls */
         .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .tab-btn { background: white; border: 1px solid #ddd; padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: inherit; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
         
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; }
-        .search-box { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; }
-        .add-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        /* گۆڕانکاری لە بەشی کۆنتڕۆڵەکان بۆ دوو دوگمە */
+        .controls { background: white; padding: 15px; border-radius: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .search-box { padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; width: 100%; }
+        
+        .buttons-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .add-btn { 
+            flex: 1; border: none; padding: 12px 20px; border-radius: 10px; 
+            font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; 
+            color: white; font-family: 'Noto Sans Arabic'; font-size: 0.95em;
+        }
+        .btn-upload { background: linear-gradient(135deg, var(--primary), #4338ca); }
+        .btn-link { background: linear-gradient(135deg, #059669, #047857); }
 
-        /* Grid */
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .activity-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
         .activity-card:hover { transform: translateY(-5px); }
@@ -42,7 +49,6 @@
         .btn-view { background: #e0e7ff; color: var(--primary); }
         .btn-del { background: #fee2e2; color: #ef4444; display: none; }
 
-        /* --- REPORT GENERATOR (Full Screen Modal) --- */
         .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 2000; overflow-y: auto; }
         .editor-modal.active { display: block; }
         
@@ -51,8 +57,8 @@
         .tool-btn { padding: 8px 15px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-family: inherit; font-weight: bold; font-size: 0.9em; white-space: nowrap; }
         .tool-btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
         .tool-btn.danger { background: white; color: #ef4444; border-color: #ef4444; }
+        .tool-btn.active-mode { background: #dcfce7; border-color: #22c55e; color: #15803d; }
 
-        /* A4 Paper Styling */
         .paper-wrapper { padding: 20px; display: flex; justify-content: center; }
         .a4-paper { 
             width: 210mm; min-height: 297mm; background: white; padding: 15mm; 
@@ -60,17 +66,16 @@
             color: black; direction: rtl; text-align: right; 
             display: flex; flex-direction: column;
         }
-        /* Print specific */
+        
         @media print {
             body * { visibility: hidden; }
             .editor-modal, .editor-modal * { visibility: visible; }
-            .editor-header, .editor-tools { display: none !important; }
+            .editor-header, .editor-tools, .link-inputs-container { display: none !important; }
             .paper-wrapper { padding: 0; margin: 0; }
             .a4-paper { box-shadow: none; width: 100%; height: 100%; margin: 0; padding: 15mm; page-break-after: always; }
-            .img-placeholder span { display: none; } 
+            .img-placeholder span { display: none; }
         }
 
-        /* Report Content Layout */
         .rep-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .rep-logo { width: 70px; height: 70px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #ddd; }
         
@@ -79,12 +84,9 @@
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
 
-        /* Image Slots */
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
-        
         .layout-landscape { grid-template-columns: 1fr 1fr; }
         .layout-landscape .img-slot { aspect-ratio: 16/9; }
-        
         .layout-portrait { grid-template-columns: 1fr 1fr; }
         .layout-portrait .img-slot { aspect-ratio: 3/4; }
 
@@ -105,7 +107,9 @@
         .rep-footer { margin-top: auto; padding-top: 20px; text-align: center; border-top: 1px solid #eee; }
         .school-name-footer { font-size: 14px; font-weight: bold; color: #64748b; }
 
-        /* Admin & Auth */
+        .link-inputs-container { display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; background: #fff7ed; padding: 15px; border-radius: 10px; border: 1px solid #ffedd5; }
+        .link-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; direction: ltr; font-size: 12px; }
+
         #securityOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
         .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
@@ -114,6 +118,8 @@
             .a4-paper { width: 100%; padding: 10mm; min-height: auto; aspect-ratio: 210/297; }
             .editor-header { position: sticky; top: 0; }
             .paper-wrapper { padding: 10px 0; }
+            .link-inputs-container { grid-template-columns: 1fr; }
+            .buttons-row { flex-direction: column; }
         }
         
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold;}
@@ -145,9 +151,21 @@
             <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">مامۆستایان</button>
         </div>
 
+        <!-- بەشی نوێی دوگمەکان -->
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            <button class="add-btn" onclick="openEditor()">📝 زیادکردن + ڕاپۆرت</button>
+            
+            <div class="buttons-row">
+                <!-- دوگمەی زیادکردن بە فایل (Upload) -->
+                <button class="add-btn btn-upload" onclick="openEditor('file')">
+                    📝 زیادکردن + ڕاپۆرت (Upload)
+                </button>
+                
+                <!-- دوگمەی زیادکردن بە لینک (Link) -->
+                <button class="add-btn btn-link" onclick="openEditor('link')">
+                    🔗 زیادکردن + ڕاپۆرت (Link)
+                </button>
+            </div>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
@@ -159,6 +177,8 @@
         <div class="editor-header">
             <button onclick="closeEditor()" class="tool-btn danger">داخستن</button>
             <div class="editor-tools">
+                <!-- دوگمەی گۆڕینی مۆد لێرە ماوەتەوە بۆ هەموو حاڵەتێک، بەڵام دوگمە سەرەکییەکان بڕیار دەدەن -->
+                <button onclick="toggleImageMode()" id="btnImgMode" class="tool-btn">گۆڕینی مۆد</button>
                 <button onclick="toggleLayout()" class="tool-btn">🔄 گۆڕینی وێنە</button>
                 <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
                 <button onclick="downloadAsImage()" class="tool-btn">⬇️ دابەزاندن</button>
@@ -196,23 +216,31 @@
                     </div>
                 </div>
 
-                <!-- وێنەکان لەگەڵ پشتگیری Drag & Drop -->
+                <!-- بەشی لینکەکان -->
+                <div class="link-inputs-container" id="linkInputsArea">
+                    <input type="text" class="link-input" placeholder="لینکی وێنەی ١ (ImgBB URL)..." oninput="updateLinkPreview(0, this.value)">
+                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٢ (ImgBB URL)..." oninput="updateLinkPreview(1, this.value)">
+                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٣ (ImgBB URL)..." oninput="updateLinkPreview(2, this.value)">
+                    <input type="text" class="link-input" placeholder="لینکی وێنەی ٤ (ImgBB URL)..." oninput="updateLinkPreview(3, this.value)">
+                </div>
+
+                <!-- وێنەکان -->
                 <div class="rep-images layout-landscape" id="imgContainer">
                     <div class="img-slot" onclick="triggerFile(0)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 0)">
                         <img id="img0">
-                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (١)<br>📸</div>
+                        <div class="placeholder-text">وێنەی ١<br>📸</div>
                     </div>
                     <div class="img-slot" onclick="triggerFile(1)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 1)">
                         <img id="img1">
-                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٢)<br>📸</div>
+                        <div class="placeholder-text">وێنەی ٢<br>📸</div>
                     </div>
                     <div class="img-slot" onclick="triggerFile(2)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 2)">
                         <img id="img2">
-                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٣)<br>📸</div>
+                        <div class="placeholder-text">وێنەی ٣<br>📸</div>
                     </div>
                     <div class="img-slot" onclick="triggerFile(3)" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event, 3)">
                         <img id="img3">
-                        <div class="placeholder-text">کلیک بکە یان وێنە ڕابکێشە (٤)<br>📸</div>
+                        <div class="placeholder-text">وێنەی ٤<br>📸</div>
                     </div>
                 </div>
                 <input type="file" id="hiddenFileInput" accept="image/*" style="display:none">
@@ -252,9 +280,10 @@
 
         let allActivities = [];
         window.isAdmin = false;
-        
         window.localFiles = [null, null, null, null]; 
+        window.linkUrls = ["", "", "", ""];
         window.currentSlot = 0;
+        window.useLinks = false; 
 
         const q = query(activitiesRef, orderBy("date", "desc"));
         onSnapshot(q, (snapshot) => {
@@ -299,21 +328,68 @@
             `).join('');
         }
 
-        window.openEditor = () => {
+        // Updated openEditor to handle different modes
+        window.openEditor = (mode) => {
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
             document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
             document.getElementById('inpNotes').value = '';
+            
+            // Reset images
             window.localFiles = [null, null, null, null];
+            window.linkUrls = ["", "", "", ""];
+            
+            // Set mode based on button clicked
+            if (mode === 'link') {
+                window.useLinks = true;
+            } else {
+                window.useLinks = false;
+            }
+            
+            updateImageModeUI();
+            
             for(let i=0; i<4; i++) {
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
+                document.querySelectorAll('.link-input')[i].value = '';
             }
             document.getElementById('editorModal').classList.add('active');
         };
 
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
+
+        window.toggleImageMode = () => {
+            window.useLinks = !window.useLinks;
+            updateImageModeUI();
+        };
+
+        function updateImageModeUI() {
+            const btn = document.getElementById('btnImgMode');
+            const inputs = document.getElementById('linkInputsArea');
+            
+            if (window.useLinks) {
+                btn.classList.add('active-mode');
+                btn.innerText = "📂 گۆڕین بۆ فایل (Upload)";
+                inputs.style.display = 'grid';
+            } else {
+                btn.classList.remove('active-mode');
+                btn.innerText = "🔗 گۆڕین بۆ لینک (ImgBB)";
+                inputs.style.display = 'none';
+            }
+        }
+
+        window.updateLinkPreview = (index, url) => {
+            window.linkUrls[index] = url;
+            const imgEl = document.getElementById('img' + index);
+            if (url) {
+                imgEl.src = url;
+                imgEl.parentElement.classList.add('has-img');
+            } else {
+                imgEl.src = '';
+                imgEl.parentElement.classList.remove('has-img');
+            }
+        };
 
         window.toggleLayout = () => {
             const c = document.getElementById('imgContainer');
@@ -326,14 +402,14 @@
             }
         };
 
-        // File Selection
         window.triggerFile = (index) => {
+            if (window.useLinks) return; 
             window.currentSlot = index;
             document.getElementById('hiddenFileInput').click();
         };
 
-        // Drag & Drop Logic
         window.allowDrop = (e) => {
+            if (window.useLinks) return;
             e.preventDefault();
             e.currentTarget.classList.add('drag-over');
         };
@@ -343,6 +419,7 @@
         }
 
         window.handleDrop = (e, index) => {
+            if (window.useLinks) return;
             e.preventDefault();
             e.currentTarget.classList.remove('drag-over');
             const file = e.dataTransfer.files[0];
@@ -391,7 +468,6 @@
                         const canvas = document.createElement('canvas');
                         const MAX_WIDTH = 1000; 
                         const scaleSize = MAX_WIDTH / img.width;
-                        
                         if (img.width > MAX_WIDTH) {
                             canvas.width = MAX_WIDTH;
                             canvas.height = img.height * scaleSize;
@@ -399,13 +475,9 @@
                             canvas.width = img.width;
                             canvas.height = img.height;
                         }
-                        
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        canvas.toBlob((blob) => {
-                            resolve(blob);
-                        }, 'image/jpeg', 0.6);
+                        canvas.toBlob((blob) => { resolve(blob); }, 'image/jpeg', 0.6);
                     };
                     img.onerror = (err) => reject(err);
                 };
@@ -423,17 +495,21 @@
 
             try {
                 let imageUrls = [];
-                for(let i=0; i<4; i++) {
-                    const file = window.localFiles[i];
-                    if(file) {
-                        loader.innerText = `وێنەی ${i+1} بچووک دەکرێتەوە...`;
-                        const compressedFile = await compressImage(file);
-                        
-                        loader.innerText = `وێنەی ${i+1} دەنێردرێت...`;
-                        const storageRef = ref(storage, 'images/' + Date.now() + '-' + i + '.jpg');
-                        await uploadBytes(storageRef, compressedFile);
-                        const url = await getDownloadURL(storageRef);
-                        imageUrls.push(url);
+                
+                if (window.useLinks) {
+                    imageUrls = window.linkUrls.filter(url => url.trim() !== "");
+                } else {
+                    for(let i=0; i<4; i++) {
+                        const file = window.localFiles[i];
+                        if(file) {
+                            loader.innerText = `وێنەی ${i+1} بچووک دەکرێتەوە...`;
+                            const compressedFile = await compressImage(file);
+                            loader.innerText = `وێنەی ${i+1} دەنێردرێت...`;
+                            const storageRef = ref(storage, 'images/' + Date.now() + '-' + i + '.jpg');
+                            await uploadBytes(storageRef, compressedFile);
+                            const url = await getDownloadURL(storageRef);
+                            imageUrls.push(url);
+                        }
                     }
                 }
 
@@ -449,7 +525,7 @@
 
                 loader.style.display = 'none';
                 loader.innerText = "داتا دەنێردرێت... تکایە چاوەڕێبە"; 
-                alert("✅ سەیڤ کرا و چووە ناو ئەرشیف!");
+                alert("✅ سەیڤ کرا!");
                 closeEditor();
             } catch(err) {
                 loader.style.display = 'none';
@@ -462,13 +538,15 @@
             const act = allActivities.find(a => a.id === id);
             if(!act) return;
             
-            openEditor(); 
+            openEditor(); // By default opens in file mode, but we'll switch if needed or just show images
+            
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
             document.getElementById('inpTeacher').value = act.teacher;
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             
+            // Pre-fill images
             for(let i=0; i<4; i++) {
                 const imgEl = document.getElementById('img'+i);
                 if(act.images && act.images[i]) {
