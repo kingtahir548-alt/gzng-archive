@@ -10,7 +10,7 @@
         :root {
             --primary: #4f46e5; --bg-color: #f3f4f6; --card-bg: #ffffff;
             --text-dark: #1e293b; --text-gray: #64748b;
-            --admin-primary: #0f172a; --admin-accent: #38bdf8; /* ڕەنگی تایبەتی ئەدمین */
+            --admin-primary: #0f172a; --admin-accent: #38bdf8;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-color); min-height: 100vh; padding: 10px; color: var(--text-dark); }
@@ -46,7 +46,7 @@
         .action-btn { flex: 1; padding: 8px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.9em; }
         .btn-view { background: #e0e7ff; color: var(--primary); }
 
-        /* --- Admin Dashboard Styles (New & Different) --- */
+        /* --- Admin Dashboard Styles --- */
         .admin-dashboard { display: none; background: #f1f5f9; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: 500; overflow-y: auto; }
         .admin-sidebar { background: var(--admin-primary); color: white; padding: 20px; text-align: center; }
         .admin-sidebar h2 { margin-bottom: 20px; color: var(--admin-accent); }
@@ -88,8 +88,12 @@
         .rep-logo { width: 70px; height: 70px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid #ddd; }
         .rep-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
         .form-item label { display: block; font-size: 0.8em; color: #64748b; margin-bottom: 3px; }
+        
+        /* گۆڕانکاری: ئینپوتی مامۆستا کرایە سێلێکت */
         .form-input { width: 100%; border: none; background: transparent; font-family: inherit; font-weight: bold; font-size: 1em; border-bottom: 1px dashed #cbd5e1; padding: 2px; }
+        select.form-input { -webkit-appearance: none; appearance: none; background: white; cursor: pointer; }
         .form-input:focus { outline: none; border-bottom-color: var(--primary); }
+        
         .rep-images { display: grid; gap: 10px; margin-bottom: 20px; }
         .layout-landscape { grid-template-columns: 1fr 1fr; } .layout-landscape .img-slot { aspect-ratio: 16/9; }
         .layout-portrait { grid-template-columns: 1fr 1fr; } .layout-portrait .img-slot { aspect-ratio: 3/4; }
@@ -238,7 +242,13 @@
                 <div class="rep-form-grid">
                     <div class="form-item"><label>بابەت / چالاکی</label><input type="text" class="form-input" id="inpName" placeholder="بنووسە..."></div>
                     <div class="form-item"><label>لیژنە</label><input type="text" class="form-input" id="inpComm" placeholder="بنووسە..."></div>
-                    <div class="form-item"><label>مامۆستا / سەرپەرشتیار</label><input type="text" class="form-input" id="inpTeacher" placeholder="بنووسە..."></div>
+                    <div class="form-item">
+                        <label>مامۆستا / سەرپەرشتیار</label>
+                        <!-- گۆڕانکاری: بەکارهێنانی Select -->
+                        <select class="form-input" id="inpTeacher" style="background:white;">
+                            <option value="">ناوی مامۆستا هەڵبژێرە...</option>
+                        </select>
+                    </div>
                     <div class="form-item"><label>بەروار</label><input type="date" class="form-input" id="inpDate" style="text-align:right;"></div>
                 </div>
                 <div class="rep-images layout-landscape" id="imgContainer">
@@ -306,14 +316,29 @@
         onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
             allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
-            renderAdminDashboard(); // Update admin if open
+            renderAdminDashboard();
         });
 
         onSnapshot(teachersRef, (snapshot) => {
             allTeachers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             renderApp();
             renderAdminDashboard();
+            // Update Teacher Dropdown
+            updateTeacherDropdown();
         });
+
+        function updateTeacherDropdown() {
+            const select = document.getElementById('inpTeacher');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">ناوی مامۆستا هەڵبژێرە...</option>';
+            allTeachers.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t.name;
+                opt.textContent = t.name;
+                select.appendChild(opt);
+            });
+            if(currentVal) select.value = currentVal;
+        }
 
         // --- PUBLIC APP LOGIC ---
         function renderApp() {
@@ -345,7 +370,7 @@
             const tGrid = document.getElementById('teachersGrid');
             const tMap = {};
             allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
-            allTeachers.forEach(t => { if (!tMap[t.name]) tMap[t.name] = 0; }); // Add manual teachers
+            allTeachers.forEach(t => { if (!tMap[t.name]) tMap[t.name] = 0; });
 
             const sortedTeachers = Object.keys(tMap).sort((a, b) => tMap[b] - tMap[a]);
 
@@ -365,12 +390,10 @@
 
         // --- ADMIN DASHBOARD LOGIC ---
         window.renderAdminDashboard = () => {
-            // Update Stats
             document.getElementById('statActivities').innerText = allActivities.length;
             const uniqueTeachers = new Set(allActivities.map(a => a.teacher.trim()));
             document.getElementById('statTeachers').innerText = Math.max(uniqueTeachers.size, allTeachers.length);
 
-            // Render Activities Table
             const tableBody = document.getElementById('adminActivitiesTable');
             tableBody.innerHTML = allActivities.map(act => `
                 <tr>
@@ -384,7 +407,6 @@
                 </tr>
             `).join('');
 
-            // Render Teachers Management Grid
             const adminTGrid = document.getElementById('adminTeachersGrid');
             const tMap = {};
             allActivities.forEach(a => { const t = a.teacher.trim(); tMap[t] = (tMap[t] || 0) + 1; });
@@ -440,7 +462,6 @@
 
             try {
                 let imageUrls = [];
-                // Loop through files, upload to ImgBB automatically
                 for(let i=0; i<4; i++) {
                     const file = window.localFiles[i];
                     if(file) {
@@ -469,7 +490,6 @@
 
         // --- Helper Functions ---
         window.openEditor = () => {
-            // Reset fields
             document.getElementById('inpName').value = '';
             document.getElementById('inpComm').value = '';
             document.getElementById('inpTeacher').value = '';
@@ -480,6 +500,7 @@
                 document.getElementById('img'+i).src = '';
                 document.getElementById('img'+i).parentElement.classList.remove('has-img');
             }
+            updateTeacherDropdown(); // Ensure dropdown is updated
             document.getElementById('editorModal').classList.add('active');
         };
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
@@ -488,11 +509,11 @@
         document.getElementById('hiddenFileInput').addEventListener('change', (e) => {
             const file = e.target.files[0];
             if(file) {
-                window.localFiles[window.currentSlot] = file; // Store file
+                window.localFiles[window.currentSlot] = file;
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     const imgEl = document.getElementById('img' + window.currentSlot);
-                    imgEl.src = ev.target.result; // Show preview locally
+                    imgEl.src = ev.target.result; 
                     imgEl.parentElement.classList.add('has-img');
                 };
                 reader.readAsDataURL(file);
@@ -512,7 +533,7 @@
             openEditor(); 
             document.getElementById('inpName').value = act.name;
             document.getElementById('inpComm').value = act.committee || '';
-            document.getElementById('inpTeacher').value = act.teacher;
+            document.getElementById('inpTeacher').value = act.teacher; // Selects option in dropdown
             document.getElementById('inpDate').value = act.date;
             document.getElementById('inpNotes').value = act.notes || '';
             for(let i=0; i<4; i++) {
@@ -566,7 +587,6 @@
         };
         document.getElementById('searchBox').addEventListener('input', renderApp);
         
-        // Export for external scripts
         window.renderApp = renderApp;
         window.renderAdminDashboard = renderAdminDashboard;
     </script>
@@ -586,7 +606,7 @@
                 if(prompt("پاسۆردی ئەدمین:") === "2324") {
                     document.getElementById('mainContent').style.display = 'none';
                     document.getElementById('adminDashboard').style.display = 'block';
-                    window.renderAdminDashboard(); // Load admin data
+                    window.renderAdminDashboard();
                 } else alert("هەڵەیە!");
             }
         }
