@@ -8,12 +8,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
+            /* Light Theme */
             --bg-body: #f0f2f5; --bg-glass: rgba(255, 255, 255, 0.95); --bg-nav: rgba(255, 255, 255, 0.9);
             --bg-card: #ffffff; --text-main: #1e293b; --text-light: #64748b;
             --primary: #6366f1; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08); --border: 1px solid rgba(0, 0, 0, 0.05); --radius: 16px;
         }
         [data-theme="dark"] {
+            /* Dark Theme */
             --bg-body: #0f172a; --bg-glass: rgba(30, 41, 59, 0.9); --bg-nav: rgba(15, 23, 42, 0.9);
             --bg-card: #1e293b; --text-main: #f1f5f9; --text-light: #94a3b8;
             --primary: #818cf8; --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
@@ -44,14 +46,7 @@
         .search-input { width: 100%; padding: 15px 20px; border-radius: 50px; border: var(--border); background: var(--bg-card); color: var(--text-main); font-size: 1em; box-shadow: var(--shadow); transition: 0.3s; }
         .search-input:focus { transform: scale(1.01); border-color: var(--primary); }
         
-        /* --- ADD BUTTON (VISIBLE NOW) --- */
-        .add-activity-btn {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: var(--primary-gradient); color: white;
-            padding: 12px 25px; border-radius: 50px; font-weight: bold;
-            margin: 0 auto 30px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
-            transition: 0.3s; width: fit-content;
-        }
+        .add-activity-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--primary-gradient); color: white; padding: 12px 25px; border-radius: 50px; font-weight: bold; margin: 0 auto 30px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); transition: 0.3s; width: fit-content; }
         .add-activity-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
 
         .filter-header { display: none; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 25px; background: var(--bg-card); border-radius: 15px; border: var(--border); }
@@ -83,7 +78,6 @@
         
         .editor-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
         .editor-toolbar { background: #1e293b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
-        
         .paper-area { background: #334155; padding: 20px; border-radius: 15px; flex-grow: 1; overflow: auto; display: flex; justify-content: center; }
         .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 15mm; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .p-header { display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
@@ -109,20 +103,13 @@
 <body>
 
     <nav class="navbar">
-        <div class="nav-brand">
-            <div class="nav-logo-icon">🏫</div>
-            <span>ئەرشیفی گزنگ</span>
-        </div>
-        <div class="nav-right">
-            <button onclick="toggleTheme()" class="theme-toggle" id="themeIcon">🌙</button>
-            <button id="adminBtn" class="admin-link-btn"><span>🔑</span> <span style="font-size:0.9em;">ئەدمین</span></button>
-        </div>
+        <div class="nav-brand"><div class="nav-logo-icon">🏫</div><span>ئەرشیفی گزنگ</span></div>
+        <div class="nav-right"><button onclick="toggleTheme()" class="theme-toggle" id="themeIcon">🌙</button><button id="adminBtn" class="admin-link-btn"><span>🔑</span> <span style="font-size:0.9em;">ئەدمین</span></button></div>
     </nav>
 
     <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; justify-content:center; align-items:center;">
         <div class="glass" style="padding:40px; text-align:center; max-width:300px; width:90%; background:white;">
-            <div style="font-size:3em; margin-bottom:10px;">🔒</div>
-            <h2 style="margin-bottom:20px; color:#333;">پارێزراو</h2>
+            <div style="font-size:3em; margin-bottom:10px;">🔒</div><h2 style="margin-bottom:20px; color:#333;">پارێزراو</h2>
             <input type="password" id="sitePassword" placeholder="پاسۆرد" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:15px; text-align:center;">
             <button onclick="checkSitePassword()" class="admin-link-btn" style="width:100%; justify-content:center; background:var(--primary); color:white;">چوونەژوورەوە</button>
             <p id="errorMsg" style="color:red; margin-top:10px; display:none;">هەڵەیە</p>
@@ -145,26 +132,14 @@
                 <button onclick="switchView('archive')" class="pill active" id="btn-archive">ئەرشیف</button>
                 <button onclick="switchView('teachers')" class="pill" id="btn-teachers">مامۆستایان</button>
             </div>
-
             <div id="archiveControls">
-                <div class="search-area">
-                    <input type="text" class="search-input" id="searchBox" placeholder="گەڕان...">
-                </div>
-                <div style="text-align:center;">
-                    <button onclick="openEditor()" class="add-activity-btn" id="btnAddActivity">
-                        <span>➕</span> زیادکردنی چالاکی نوێ
-                    </button>
-                </div>
+                <div class="search-area"><input type="text" class="search-input" id="searchBox" placeholder="گەڕان..."></div>
+                <div style="text-align:center;"><button onclick="openEditor()" class="add-activity-btn" id="btnAddActivity"><span>➕</span> زیادکردنی چالاکی نوێ</button></div>
             </div>
-
             <div id="filterHeader" class="filter-header">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <div id="filterAvatarContainer"></div>
-                    <h2 id="filterName" style="font-size:1.2em; margin:0;"></h2>
-                </div>
+                <div style="display:flex; align-items:center; gap:15px;"><div id="filterAvatarContainer"></div><h2 id="filterName" style="font-size:1.2em; margin:0;"></h2></div>
                 <button onclick="clearFilter()" style="color:#ef4444; background:rgba(239, 68, 68, 0.1); padding:8px 15px; border-radius:10px;">❌ گەڕانەوە</button>
             </div>
-
             <div id="activitiesGrid" class="grid"></div>
             <div id="teachersGrid" class="teacher-grid" style="display:none;"></div>
         </div>
@@ -173,36 +148,19 @@
     <div id="adminDashboard" class="admin-dashboard">
         <div class="admin-nav">
             <h2 style="display:flex; align-items:center; gap:10px;">⚙️ داشبۆرد <span style="font-size:0.6em; background:#334155; padding:2px 8px; border-radius:10px;">بەڕێوەبەر</span></h2>
-            <div style="display:flex; gap:10px;">
-                <button onclick="closeAdminDashboard()" style="background:#3b82f6; color:white; padding:8px 15px; border-radius:8px;">🔙 گەڕانەوە بۆ سایت</button>
-                <button onclick="logoutAdmin()" style="background:#ef4444; color:white; padding:8px 15px; border-radius:8px;">دەرچوون</button>
-            </div>
+            <div style="display:flex; gap:10px;"><button onclick="closeAdminDashboard()" style="background:#3b82f6; color:white; padding:8px 15px; border-radius:8px;">🔙 گەڕانەوە بۆ سایت</button><button onclick="logoutAdmin()" style="background:#ef4444; color:white; padding:8px 15px; border-radius:8px;">دەرچوون</button></div>
         </div>
         <div class="container" style="padding-top:30px;">
             <div class="grid" style="margin-bottom:30px;">
-                <div class="card" style="padding:20px; text-align:center;">
-                    <div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statActivities">0</div>
-                    <p>چالاکی</p>
-                </div>
-                <div class="card" style="padding:20px; text-align:center;">
-                    <div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statTeachers">0</div>
-                    <p>مامۆستا</p>
-                </div>
+                <div class="card" style="padding:20px; text-align:center;"><div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statActivities">0</div><p>چالاکی</p></div>
+                <div class="card" style="padding:20px; text-align:center;"><div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statTeachers">0</div><p>مامۆستا</p></div>
             </div>
             <div class="nav-pills">
                 <button onclick="switchAdminTab('activities')" id="tab-admin-acts" class="pill active">بەڕێوەبردنی چالاکییەکان</button>
                 <button onclick="switchAdminTab('teachers')" id="tab-admin-teach" class="pill">بەڕێوەبردنی مامۆستایان</button>
             </div>
-            <div id="adminActivitiesView" class="glass" style="padding:20px; background:var(--bg-card);">
-                <table style="width:100%; border-collapse:collapse;">
-                    <thead><tr style="text-align:right; border-bottom:2px solid #eee;"><th>بابەت</th><th>مامۆستا</th><th>کردار</th></tr></thead>
-                    <tbody id="adminActivitiesTable"></tbody>
-                </table>
-            </div>
-            <div id="adminTeachersView" class="glass" style="padding:20px; display:none; background:var(--bg-card);">
-                <button onclick="openAddTeacherModal()" class="admin-link-btn" style="background:var(--primary); color:white; margin-bottom:20px;">➕ زیادکردنی مامۆستا</button>
-                <div id="adminTeachersGrid" class="teacher-grid"></div>
-            </div>
+            <div id="adminActivitiesView" class="glass" style="padding:20px; background:var(--bg-card);"><table style="width:100%; border-collapse:collapse;"><thead><tr style="text-align:right; border-bottom:2px solid #eee;"><th>بابەت</th><th>مامۆستا</th><th>کردار</th></tr></thead><tbody id="adminActivitiesTable"></tbody></table></div>
+            <div id="adminTeachersView" class="glass" style="padding:20px; display:none; background:var(--bg-card);"><button onclick="openAddTeacherModal()" class="admin-link-btn" style="background:var(--primary); color:white; margin-bottom:20px;">➕ زیادکردنی مامۆستا</button><div id="adminTeachersGrid" class="teacher-grid"></div></div>
         </div>
     </div>
 
@@ -210,14 +168,8 @@
         <div class="editor-container">
             <div class="editor-toolbar">
                 <button onclick="closeEditor()" style="color:#ef4444; font-weight:bold;">داخستن</button>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="setLayout('landscape')" style="background:#334155; padding:5px 10px; border-radius:5px;">وێنەی پان</button>
-                    <button onclick="setLayout('portrait')" style="background:#334155; padding:5px 10px; border-radius:5px;">وێنەی درێژ</button>
-                </div>
-                <div style="display:flex; gap:10px;">
-                    <button onclick="window.print()" style="background:white; color:black; padding:5px 10px; border-radius:5px;">🖨️</button>
-                    <button onclick="saveToArchive()" id="btnSaveArchive" style="background:var(--primary); color:white; padding:5px 15px; border-radius:5px;">💾 سەیڤ</button>
-                </div>
+                <div style="display:flex; gap:10px;"><button onclick="setLayout('landscape')" style="background:#334155; padding:5px 10px; border-radius:5px;">وێنەی پان</button><button onclick="setLayout('portrait')" style="background:#334155; padding:5px 10px; border-radius:5px;">وێنەی درێژ</button></div>
+                <div style="display:flex; gap:10px;"><button onclick="window.print()" style="background:white; color:black; padding:5px 10px; border-radius:5px;">🖨️</button><button onclick="saveToArchive()" id="btnSaveArchive" style="background:var(--primary); color:white; padding:5px 15px; border-radius:5px;">💾 سەیڤ</button></div>
             </div>
             <div class="paper-area">
                 <div class="a4-page" id="reportPaper">
@@ -260,10 +212,11 @@
                 <option value="female">👩‍🏫 مامۆستای ئافرەت</option>
             </select>
 
-            <label style="font-size:0.9em; color:gray;">وێنە (ئارەزوومەندانە)</label>
-            <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+            <label style="font-size:0.9em; color:gray;">وێنە</label>
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
                 <img id="editTeacherPreview" src="" style="width:50px; height:50px; border-radius:50%; border:1px solid #ddd; object-fit:cover; display:none;">
-                <button onclick="document.getElementById('editTeacherFile').click()" class="admin-link-btn" style="background:#e0e7ff; color:blue;">📷 گۆڕینی وێنە</button>
+                <button onclick="document.getElementById('editTeacherFile').click()" class="admin-link-btn" style="background:#e0e7ff; color:blue;">📷 گۆڕین</button>
+                <button onclick="removeTeacherPhoto()" class="admin-link-btn" style="background:#fee2e2; color:red;">❌ سڕینەوەی وێنە</button>
                 <input type="file" id="editTeacherFile" style="display:none;" accept="image/*" onchange="previewTeacherImage(this)">
             </div>
 
@@ -301,11 +254,11 @@
         window.imgState={0:{s:1,x:0,y:0},1:{s:1,x:0,y:0},2:{s:1,x:0,y:0},3:{s:1,x:0,y:0}};
         let currentFilter=null;
         let tempTeacherFile = null;
+        let removePhotoFlag = false;
 
         const MALE_ICON = "https://img.icons8.com/fluency/96/teacher.png";
         const FEMALE_ICON = "https://img.icons8.com/fluency/96/teacher-female.png";
 
-        // --- THEME ---
         window.toggleTheme = () => {
             const html = document.documentElement;
             const next = html.getAttribute('data-theme')==='dark'?'light':'dark';
@@ -316,7 +269,6 @@
         document.documentElement.setAttribute('data-theme',saved);
         document.getElementById('themeIcon').innerText = saved==='dark'?'☀️':'🌙';
 
-        // --- AUTH ---
         onAuthStateChanged(auth, (u) => {
             user = u;
             const btn = document.getElementById('adminBtn');
@@ -334,7 +286,6 @@
         };
         window.logoutAdmin=async()=>{if(confirm("دەرچوون؟")){await signOut(auth); closeAdminDashboard();}};
 
-        // --- DATA ---
         onSnapshot(query(actRef, orderBy("date", "desc")), (s) => {
             acts = s.docs.map(d=>({id:d.id, ...d.data()}));
             renderApp(); renderAdminContent();
@@ -345,7 +296,7 @@
         });
 
         function getTeacherImg(t) {
-            if(t.photo && t.photo !== "") return t.photo;
+            if(t.photo && typeof t.photo === 'string' && t.photo.length > 10) return t.photo;
             return t.gender === 'female' ? FEMALE_ICON : MALE_ICON;
         }
 
@@ -358,7 +309,6 @@
             if(currentFilter) { renderFilter(); return; }
             const term = document.getElementById('searchBox').value.toLowerCase();
             const list = acts.filter(a=>a.name.toLowerCase().includes(term)||a.teacher.toLowerCase().includes(term));
-            
             document.getElementById('activitiesGrid').innerHTML = list.map(a => `
                 <div class="card">
                     <div class="card-img-grid">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
@@ -369,7 +319,6 @@
                     <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">📄 بینینی ڕاپۆرت</button></div>
                 </div>
             `).join('');
-
             const tMap={}; acts.forEach(a=>tMap[a.teacher]=(tMap[a.teacher]||0)+1);
             document.getElementById('teachersGrid').innerHTML = teachers.map(t => `
                 <div class="teacher-item" onclick="filterT('${t.name}')">
@@ -407,7 +356,6 @@
         };
         document.getElementById('searchBox').addEventListener('input',renderApp);
 
-        // --- ADMIN DASHBOARD ---
         window.openAdminDashboard=()=>{document.getElementById('adminDashboard').style.display='block'; renderAdminContent();};
         window.closeAdminDashboard=()=>{document.getElementById('adminDashboard').style.display='none';};
         
@@ -419,20 +367,14 @@
                 <tr style="border-bottom:1px solid #eee;">
                     <td style="padding:15px;">${a.name}</td>
                     <td>${a.teacher}</td>
-                    <td>
-                        <button onclick="viewReport('${a.id}')" style="color:blue;">📄</button>
-                        <button onclick="delItem('${a.id}')" style="color:red; margin-right:10px;">🗑️</button>
-                    </td>
+                    <td><button onclick="viewReport('${a.id}')" style="color:blue;">📄</button><button onclick="delItem('${a.id}')" style="color:red; margin-right:10px;">🗑️</button></td>
                 </tr>
             `).join('');
             document.getElementById('adminTeachersGrid').innerHTML=teachers.map(t=>`
                 <div class="teacher-item" style="cursor:default;">
                     <img src="${getTeacherImg(t)}" class="avatar-lg">
                     <div>${t.name}</div>
-                    <div style="margin-top:10px;">
-                        <button onclick="openEditTeacher('${t.id}')">✏️</button>
-                        <button onclick="delTProfile('${t.name}','${t.id}')" style="color:red;">🗑️</button>
-                    </div>
+                    <div style="margin-top:10px;"><button onclick="openEditTeacher('${t.id}')">✏️</button><button onclick="delTProfile('${t.name}','${t.id}')" style="color:red;">🗑️</button></div>
                 </div>
             `).join('');
         }
@@ -443,14 +385,13 @@
             document.getElementById('tab-admin-teach').classList.toggle('active',t==='teachers');
         }
 
-        // --- TEACHER ADD/EDIT LOGIC ---
         window.openAddTeacherModal = () => {
             document.getElementById('teacherModalTitle').innerText = "زیادکردنی مامۆستا";
             document.getElementById('editTeacherId').value = ""; 
             document.getElementById('editTeacherName').value = "";
             document.getElementById('editTeacherGender').value = "male";
             document.getElementById('editTeacherPreview').style.display = 'none';
-            tempTeacherFile = null;
+            tempTeacherFile = null; removePhotoFlag = false;
             document.getElementById('teacherEditModal').classList.add('active');
         };
 
@@ -462,18 +403,23 @@
             document.getElementById('editTeacherName').value = t.name;
             document.getElementById('editTeacherGender').value = t.gender || "male";
             const img = document.getElementById('editTeacherPreview');
-            if(t.photo) { img.src = t.photo; img.style.display = 'block'; } else { img.style.display = 'none'; }
-            tempTeacherFile = null;
+            if(t.photo && t.photo.length > 5) { img.src = t.photo; img.style.display = 'block'; } else { img.style.display = 'none'; }
+            tempTeacherFile = null; removePhotoFlag = false;
             document.getElementById('teacherEditModal').classList.add('active');
         };
 
         window.previewTeacherImage = (input) => {
             if(input.files && input.files[0]) {
-                tempTeacherFile = input.files[0];
+                tempTeacherFile = input.files[0]; removePhotoFlag = false;
                 const img = document.getElementById('editTeacherPreview');
                 img.src = URL.createObjectURL(tempTeacherFile);
                 img.style.display = 'block';
             }
+        };
+        
+        window.removeTeacherPhoto = () => {
+            removePhotoFlag = true; tempTeacherFile = null;
+            document.getElementById('editTeacherPreview').style.display = 'none';
         };
 
         async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
@@ -493,13 +439,13 @@
 
             const data = { name: name, gender: gender };
             if(photoUrl) data.photo = photoUrl;
+            if(removePhotoFlag) data.photo = ""; // Clear photo
 
             if(id) {
                 const oldT = teachers.find(x => x.id === id);
-                const oldName = oldT.name;
                 await updateDoc(doc(db, "teachers", id), data);
-                if(oldName !== name) {
-                    const q = query(actRef, where("teacher", "==", oldName));
+                if(oldT.name !== name) {
+                    const q = query(actRef, where("teacher", "==", oldT.name));
                     const snap = await getDocs(q);
                     const batch = writeBatch(db);
                     snap.forEach(d => batch.update(d.ref, { teacher: name }));
@@ -515,7 +461,6 @@
 
         window.delTProfile=async(n, id)=>{if(confirm("دڵنیایت لە سڕینەوەی "+n+"؟"))await deleteDoc(doc(db,"teachers",id));};
 
-        // --- EDITOR & LOGIC ---
         window.openEditor=()=>{
             ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(i=>document.getElementById(i).value='');
             document.getElementById('inpDate').value=new Date().toISOString().split('T')[0];
