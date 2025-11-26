@@ -52,8 +52,8 @@
         .container { max-width: 1200px; margin: 0 auto; width: 95%; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .nav-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: 10px; }
-        .pill { padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light); background: var(--bg-card); border: var(--border); transition: 0.3s; }
+        .nav-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: 10px; flex-wrap: wrap; }
+        .pill { padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light); background: var(--bg-card); border: var(--border); transition: 0.3s; display: flex; align-items: center; gap: 5px;}
         .pill.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transform: scale(1.05); border-color: transparent; }
 
         .search-area { max-width: 600px; margin: 0 auto 20px; position: relative; }
@@ -159,7 +159,12 @@
             <div class="nav-pills">
                 <button onclick="switchView('archive')" class="pill active" id="btn-archive" data-i18n="tab_archive">ئەرشیف</button>
                 <button onclick="switchView('teachers')" class="pill" id="btn-teachers" data-i18n="tab_teachers">مامۆستایان</button>
+                
+                <button onclick="window.open('LERE_LINKEKE_DANEE', '_blank')" class="pill" style="background: #ecfdf5; color: #059669; border-color: #10b981;">
+                    📅 <span data-i18n="btn_schedule">خشتەی ڕۆژانە</span>
+                </button>
             </div>
+            
             <div id="archiveControls">
                 <div class="search-area"><input type="text" class="search-input" id="searchBox" placeholder="گەڕان..."></div>
                 <div style="text-align:center;"><button onclick="openEditor()" class="add-activity-btn" id="btnAddActivity"><span style="margin:0 5px;">➕</span> <span data-i18n="btn_add_activity">زیادکردنی چالاکی نوێ</span></button></div>
@@ -285,7 +290,7 @@
         // --- TRANSLATIONS ---
         const translations = {
             ku: {
-                app_title: "ئەرشیفی گزنگ", btn_admin: "ئەدمین", tab_archive: "ئەرشیف", tab_teachers: "مامۆستایان",
+                app_title: "ئەرشیفی گزنگ", btn_admin: "ئەدمین", tab_archive: "ئەرشیف", tab_teachers: "مامۆستایان", btn_schedule: "خشتەی ڕۆژانە",
                 btn_add_activity: "زیادکردنی چالاکی نوێ", btn_back: "گەڕانەوە", dashboard: "داشبۆرد",
                 stat_activity: "چالاکی", stat_teacher: "مامۆستا", manage_activities: "بەڕێوەبردنی چالاکییەکان",
                 manage_teachers: "بەڕێوەبردنی مامۆستایان", lbl_subject: "بابەت", lbl_teacher: "مامۆستا", lbl_action: "کردار",
@@ -297,7 +302,7 @@
                 secure_area: "ناوچەی پارێزراو", btn_login: "چوونەژوورەوە", error_pass: "پاسۆرد هەڵەیە", admin_login_title: "چوونەژوورەوەی ئەدمین", search: "گەڕان..."
             },
             en: {
-                app_title: "Gzng Archive", btn_admin: "Admin", tab_archive: "Archive", tab_teachers: "Teachers",
+                app_title: "Gzng Archive", btn_admin: "Admin", tab_archive: "Archive", tab_teachers: "Teachers", btn_schedule: "Daily Schedule",
                 btn_add_activity: "Add New Activity", btn_back: "Back", dashboard: "Dashboard",
                 stat_activity: "Activities", stat_teacher: "Teachers", manage_activities: "Manage Activities",
                 manage_teachers: "Manage Teachers", lbl_subject: "Subject", lbl_teacher: "Teacher", lbl_action: "Action",
@@ -309,7 +314,7 @@
                 secure_area: "Restricted Area", btn_login: "Login", error_pass: "Wrong Password", admin_login_title: "Admin Login", search: "Search..."
             },
             ar: {
-                app_title: "أرشيف غزنگ", btn_admin: "إدارة", tab_archive: "الأرشيف", tab_teachers: "المدرسين",
+                app_title: "أرشيف غزنگ", btn_admin: "إدارة", tab_archive: "الأرشيف", tab_teachers: "المدرسين", btn_schedule: "الجدول اليومي",
                 btn_add_activity: "إضافة نشاط جديد", btn_back: "رجوع", dashboard: "لوحة التحكم",
                 stat_activity: "أنشطة", stat_teacher: "مدرسين", manage_activities: "إدارة الأنشطة",
                 manage_teachers: "إدارة المدرسين", lbl_subject: "الموضوع", lbl_teacher: "المدرس", lbl_action: "إجراء",
@@ -337,7 +342,7 @@
 
         window.setLang = (lang) => {
             localStorage.setItem('lang', lang);
-            location.reload();
+            location.reload(); // Simplest way to re-render everything with new lang
         };
 
         // Init Lang
@@ -346,7 +351,7 @@
         document.documentElement.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
         function t(key) { return translations[currentLang][key] || key; }
         
-        // Apply translations
+        // Apply translations to static elements
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
