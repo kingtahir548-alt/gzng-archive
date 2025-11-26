@@ -63,6 +63,7 @@
             color: white; font-family: 'Noto Sans Arabic'; font-size: 1.1em;
             background: linear-gradient(135deg, var(--primary), #4338ca);
             box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            display: none; /* Hidden by default, shown for admin */
         }
 
         .activities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -210,7 +211,9 @@
         /* Auth & Loader */
         #securityOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1e293b; z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .auth-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 350px; }
-        .admin-btn { position: absolute; top: 20px; left: 20px; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; }
+        
+        .admin-login-btn { position: absolute; top: 20px; left: 20px; padding: 8px 15px; border-radius: 20px; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; background: #eee; font-weight: bold; }
+        
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); z-index:3000; display:none; flex-direction:column; justify-content:center; align-items:center; color:var(--primary); font-weight:bold; text-align: center;}
 
         /* Filter Header */
@@ -230,7 +233,7 @@
 
         /* --- FIXED PRINT STYLES --- */
         @media print {
-            .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal, .img-controls {
+            .container, .admin-dashboard, #securityOverlay, #loader, .editor-header, .simple-modal, .img-controls, .admin-login-btn {
                 display: none !important;
             }
             body, html { background: white !important; height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
@@ -254,10 +257,10 @@
             .form-item label { font-size: 0.7em !important; margin-bottom: 0 !important; }
             .form-input { font-size: 0.9em !important; padding: 0 !important; }
 
-            /* Notes - Increased to ~100px for ~3-4 lines */
+            /* Notes */
             .rep-notes label { display: none !important; } 
             .rep-notes textarea {
-                min-height: 100px !important; /* UPDATED SIZE */
+                min-height: 100px !important; 
                 padding: 5px !important; border: 1px solid #ddd !important; font-size: 12px !important;
             }
 
@@ -278,21 +281,32 @@
     <div id="securityOverlay">
         <div class="auth-box">
             <h2>🔒 پارێزراو</h2>
-            <p style="color:#64748b; margin:10px 0;">تکایە وشەی نهێنی بنووسە</p>
+            <p style="color:#64748b; margin:10px 0;">تکایە کۆدی چوونەژوورەوە بنووسە</p>
             <input type="password" id="sitePassword" style="width:100%; padding:10px; text-align:center; border:1px solid #ddd; border-radius:10px; margin-bottom:15px;" placeholder="••••••">
-            <button onclick="checkPassword()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">چوونەژوورەوە</button>
+            <button onclick="checkSitePassword()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">چوونەژوورەوە</button>
             <p id="errorMsg" style="color:red; margin-top:10px; display:none;">هەڵەیە!</p>
+        </div>
+    </div>
+
+    <div class="simple-modal" id="adminAuthModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9000; align-items:center; justify-content:center;">
+        <div class="simple-modal-content" style="background:white; padding:30px; border-radius:15px; width:90%; max-width:350px; text-align:center;">
+            <h3>🔑 چوونەژوورەوەی ئەدمین</h3>
+            <p style="font-size:0.9em; color:#666; margin-bottom:15px;">تەنها بۆ بەڕێوەبەران</p>
+            <input type="email" id="adminEmail" placeholder="ئیمەیڵ" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+            <input type="password" id="adminPass" placeholder="پاسۆرد" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:8px;">
+            <button onclick="loginAdmin()" class="tool-btn primary" style="width:100%; padding:12px;">چوونەژوورەوە</button>
+            <button onclick="document.getElementById('adminAuthModal').style.display='none'" class="tool-btn" style="width:100%; margin-top:10px; background:#f1f5f9;">داخستن</button>
         </div>
     </div>
 
     <div id="loader">
         <div style="font-size:30px; margin-bottom:15px">⏳</div>
-        <span id="loaderText">خەریکی ئاپلۆدکردن و سەیڤکردنە...<br>تکایە دایمەخە!</span>
+        <span id="loaderText">خەریکی ئیشکردنە...<br>تکایە دایمەخە!</span>
     </div>
 
     <div class="container" id="mainContent">
         <header>
-            <button onclick="toggleAdmin()" class="admin-btn" id="adminBtn">🔑 ئەدمین</button>
+            <button id="adminBtn" class="admin-login-btn">🔑 ئەدمین</button>
             <h1>🏫 قوتابخانەی گزنگ</h1>
             <p style="color:#64748b">ئەرشیفی چالاکیەکان</p>
         </header>
@@ -315,7 +329,7 @@
 
         <div class="controls" id="archiveControls">
             <input type="text" class="search-box" id="searchBox" placeholder="گەڕان...">
-            <button onclick="openEditor()" class="add-btn">➕ زیادکردنی چالاکی نوێ</button>
+            <button onclick="openEditor()" class="add-btn" id="btnAddActivity">➕ زیادکردنی چالاکی نوێ</button>
         </div>
 
         <div class="activities-grid" id="activitiesGrid"></div>
@@ -326,7 +340,7 @@
         <div class="admin-sidebar">
             <h2>⚙️ داشبۆردی بەڕێوەبردن</h2>
             <p>بەخێربێیت بەڕێوەبەر</p>
-            <button onclick="exitAdmin()" class="btn-logout">چوونە دەرەوە</button>
+            <button onclick="logoutAdmin()" class="btn-logout">چوونە دەرەوە</button>
         </div>
         
         <div class="admin-content">
@@ -475,10 +489,12 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
+        // ئەمە کۆدی پڕۆژەکەی تۆیە (gzng-f4273)
         const firebaseConfig = {
             apiKey: "AIzaSyAr_JHCa5BbM5RJ9KCp0IBom1rdAgVX4CM",
             authDomain: "gzng-f4273.firebaseapp.com",
@@ -490,6 +506,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); // Initialize Auth
         const db = getFirestore(app);
         const activitiesRef = collection(db, "activities");
         const teachersRef = collection(db, "teachers");
@@ -500,6 +517,7 @@
         window.currentSlot = 0;
         let teacherPhotoTarget = null;
         let currentFilter = null;
+        let currentUser = null; // Track logged in user
 
         // Image State for Transforms
         window.imgState = {
@@ -507,6 +525,59 @@
             1: { s: 1, x: 0, y: 0 },
             2: { s: 1, x: 0, y: 0 },
             3: { s: 1, x: 0, y: 0 }
+        };
+
+        // --- AUTH LOGIC ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const btn = document.getElementById('adminBtn');
+            const addBtn = document.getElementById('btnAddActivity');
+            const btnSave = document.getElementById('btnSaveArchive');
+            
+            if (user) {
+                // Admin is logged in
+                btn.innerText = "⚙️ داشبۆرد";
+                btn.onclick = () => {
+                    document.getElementById('mainContent').style.display = 'none';
+                    document.getElementById('adminDashboard').style.display = 'block';
+                    renderAdminDashboard();
+                };
+                addBtn.style.display = 'flex'; // Show Add button
+                btnSave.style.display = 'inline-block';
+            } else {
+                // Guest
+                btn.innerText = "🔑 ئەدمین";
+                btn.onclick = () => document.getElementById('adminAuthModal').style.display = 'flex';
+                addBtn.style.display = 'none'; // Hide Add button
+                btnSave.style.display = 'none'; // Will handle in editor logic too
+                
+                // If dashboard was open, close it
+                if(document.getElementById('adminDashboard').style.display === 'block') {
+                    document.getElementById('adminDashboard').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                }
+            }
+        });
+
+        window.loginAdmin = async () => {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+            if(!email || !pass) { alert("تکایە هەموو خانەکان پڕبکەوە"); return; }
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                document.getElementById('adminAuthModal').style.display = 'none';
+                document.getElementById('adminEmail').value = '';
+                document.getElementById('adminPass').value = '';
+            } catch (error) {
+                alert("هەڵە لە چوونەژوورەوە: " + error.message);
+            }
+        };
+
+        window.logoutAdmin = async () => {
+            if(confirm("دڵنیایت دەتەوێت بچیتە دەرەوە؟")) {
+                await signOut(auth);
+            }
         };
 
         // Load Data
@@ -638,6 +709,8 @@
 
         // --- ADMIN DASHBOARD LOGIC ---
         window.renderAdminDashboard = () => {
+            if(!currentUser) return; // Guard
+
             document.getElementById('statActivities').innerText = allActivities.length;
             const uniqueTeachers = new Set(allActivities.map(a => a.teacher.trim()));
             document.getElementById('statTeachers').innerText = Math.max(uniqueTeachers.size, allTeachers.length);
@@ -706,6 +779,8 @@
         }
 
         window.saveToArchive = async () => {
+            if (!currentUser) { alert("نابێت! دەبێت ئەدمین بیت."); return; }
+
             const name = document.getElementById('inpName').value;
             const teacher = document.getElementById('inpTeacher').value.trim(); 
             if(!name || !teacher) { alert("تکایە ناو و مامۆستا هەڵبژێرە!"); return; }
@@ -769,9 +844,8 @@
             
             updateTeacherDropdown(); 
             
+            // New items are always editable if user is admin (which check is implied by button visibility)
             enableEditorInputs(true);
-            document.getElementById('btnSaveArchive').style.display = 'inline-block';
-            document.getElementById('layoutControls').style.display = 'flex';
             
             document.getElementById('editorModal').classList.add('active');
         };
@@ -779,6 +853,7 @@
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
         
         window.triggerFile = (index) => { 
+            // Only allow editing if inputs are enabled
             if(document.getElementById('inpName').disabled) return;
             window.currentSlot = index; 
             document.getElementById('hiddenFileInput').click(); 
@@ -924,9 +999,8 @@
                 }
             }
 
-            const isAdmin = document.getElementById('adminDashboard').style.display === 'block';
-
-            if(isAdmin) {
+            // ONLY ADMIN CAN EDIT
+            if(currentUser) {
                 enableEditorInputs(true);
                 document.getElementById('btnSaveArchive').style.display = 'inline-block'; 
                 document.getElementById('layoutControls').style.display = 'flex';
@@ -937,7 +1011,10 @@
             }
         };
 
-        window.deleteItem = async (id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); };
+        window.deleteItem = async (id) => { 
+            if(!currentUser) { alert("تەنها ئەدمین!"); return; }
+            if(confirm("دڵنیایت؟")) await deleteDoc(doc(db, "activities", id)); 
+        };
         
         // Admin Teacher Logic
         window.openAddTeacherModal = () => { 
@@ -946,6 +1023,7 @@
         };
         
         window.saveNewTeacher = async () => {
+            if(!currentUser) return;
             const name = document.getElementById('newTeacherName').value.trim();
             if(!name) return;
             if(allTeachers.some(t => t.name === name)) { alert("ئەم ناوە هەیە!"); return; }
@@ -956,6 +1034,7 @@
         };
 
         window.editTeacherName = async (oldName, id) => {
+            if(!currentUser) return;
             if(!id) return;
             const newName = prompt("ناوی نوێ بنووسە:", oldName);
             if(newName && newName !== oldName) {
@@ -976,6 +1055,7 @@
         };
 
         window.deleteTeacherProfile = async (tName) => {
+            if(!currentUser) return;
             if(!confirm(`دڵنیایت لە سڕینەوەی پرۆفایلی "${tName}"؟`)) return;
             const meta = allTeachers.find(t => t.name === tName);
             if(meta) await deleteDoc(doc(db, "teachers", meta.id));
@@ -985,6 +1065,7 @@
             document.getElementById('photoModal').style.display = 'flex';
         };
         window.handleTeacherPhotoSelect = async (input) => {
+            if(!currentUser) return;
             const file = input.files[0];
             if(!file) return;
             document.getElementById('loader').style.display = 'flex';
@@ -1019,30 +1100,14 @@
     </script>
 
     <script>
-        function checkPassword() {
+        function checkSitePassword() {
+            // This is just a simple frontend gate
             if(document.getElementById('sitePassword').value === "2526") { 
                 document.getElementById('securityOverlay').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
             } else { document.getElementById('errorMsg').style.display = 'block'; }
         }
         
-        function toggleAdmin() {
-            if(document.getElementById('adminDashboard').style.display === 'block') {
-                exitAdmin();
-            } else {
-                if(prompt("پاسۆردی ئەدمین:") === "2324") {
-                    document.getElementById('mainContent').style.display = 'none';
-                    document.getElementById('adminDashboard').style.display = 'block';
-                    window.renderAdminDashboard();
-                } else alert("هەڵەیە!");
-            }
-        }
-
-        function exitAdmin() {
-            document.getElementById('adminDashboard').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-        }
-
         // --- Print Function ---
         window.printReport = () => {
             window.print();
@@ -1067,16 +1132,19 @@
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 
-                if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
-                     document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
+                // Show controls again
+                const btnSave = document.getElementById('btnSaveArchive');
+                if(document.getElementById('adminDashboard').style.display === 'block' || (btnSave && btnSave.style.display !== 'none')) {
+                      document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
                 }
                 
                 document.getElementById('loader').style.display = 'none';
             }).catch(err => {
                 alert("هەڵە لە دابەزاندن: " + err);
                 document.getElementById('loader').style.display = 'none';
-                if(document.getElementById('adminDashboard').style.display === 'block' || document.getElementById('btnSaveArchive').style.display !== 'none') {
-                     document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
+                const btnSave = document.getElementById('btnSaveArchive');
+                if(document.getElementById('adminDashboard').style.display === 'block' || (btnSave && btnSave.style.display !== 'none')) {
+                      document.querySelectorAll('.img-controls').forEach(el => el.style.display = 'flex');
                 }
             });
         };
