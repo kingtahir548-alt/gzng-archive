@@ -36,21 +36,15 @@
         .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; transition: 0.3s; color: var(--text-main); font-weight: bold; border: 1px solid transparent; }
         .icon-btn:hover { background: rgba(128,128,128,0.1); border-color: var(--border); }
 
-        /* --- LANGUAGE DROPDOWN --- */
         .lang-dropdown { position: relative; }
         .lang-menu {
-            position: absolute; top: 120%; left: -10px; /* Aligns nicely in RTL */
-            background: var(--bg-card); border: var(--border); border-radius: 12px;
-            box-shadow: var(--shadow); width: 160px; display: none; flex-direction: column;
-            overflow: hidden; z-index: 2000;
+            position: absolute; top: 120%; left: -10px; background: var(--bg-card); border: var(--border); border-radius: 12px;
+            box-shadow: var(--shadow); width: 160px; display: none; flex-direction: column; overflow: hidden; z-index: 2000;
         }
-        /* Fix left alignment for English */
         html[dir="ltr"] .lang-menu { right: -10px; left: auto; }
-        
         .lang-menu.show { display: flex; animation: fadeIn 0.2s ease; }
         .lang-item { padding: 12px 15px; text-align: start; cursor: pointer; transition: 0.2s; font-size: 0.95em; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
         .lang-item:hover { background: rgba(128,128,128,0.1); color: var(--primary); }
-        .lang-item span { font-size: 1.2em; }
 
         .admin-link-btn { background: rgba(128,128,128,0.1); color: var(--text-main); padding: 8px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
         .admin-link-btn:hover { background: var(--primary); color: white; }
@@ -284,7 +278,7 @@
         window.imgState={0:{s:1,x:0,y:0},1:{s:1,x:0,y:0},2:{s:1,x:0,y:0},3:{s:1,x:0,y:0}};
         let currentFilter=null, tempTeacherFile = null, removePhotoFlag = false;
 
-        // NEW CLEAN VECTOR ICONS
+        // CLEAN VECTOR ICONS
         const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042356.png";
         const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042422.png";
 
@@ -343,7 +337,7 @@
 
         window.setLang = (lang) => {
             localStorage.setItem('lang', lang);
-            location.reload(); // Simplest way to re-render everything with new lang
+            location.reload();
         };
 
         // Init Lang
@@ -352,7 +346,7 @@
         document.documentElement.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
         function t(key) { return translations[currentLang][key] || key; }
         
-        // Apply translations to static elements
+        // Apply translations
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
@@ -405,13 +399,28 @@
                     <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">${t('view_report')}</button></div>
                 </div>
             `).join('');
-            const tMap={}; acts.forEach(a=>tMap[a.teacher]=(tMap[a.teacher]||0)+1);
-            document.getElementById('teachersGrid').innerHTML = teachers.map(t => `
-                <div class="teacher-item" onclick="filterT('${t.name}')">
-                    <img src="${getTeacherImg(t)}" class="avatar-lg">
-                    <div style="font-weight:bold;">${t.name}</div><div style="color:gray; font-size:0.8em;">${tMap[t.name]||0} ${t('stat_activity')}</div>
+            
+            // MERGE LOGIC: Teachers + Activities
+            const tMap = {};
+            acts.forEach(a => tMap[a.teacher] = (tMap[a.teacher] || 0) + 1);
+            const profileNames = teachers.map(t => t.name);
+            const allNames = [...new Set([...Object.keys(tMap), ...profileNames])];
+
+            document.getElementById('teachersGrid').innerHTML = allNames.map(name => {
+                const profile = teachers.find(t => t.name === name);
+                let img = MALE_ICON;
+                if (profile) {
+                    if (profile.photo && profile.photo.length > 10) img = profile.photo;
+                    else if (profile.gender === 'female') img = FEMALE_ICON;
+                }
+                return `
+                <div class="teacher-item" onclick="filterT('${name}')">
+                    <img src="${img}" class="avatar-lg">
+                    <div style="font-weight:bold;">${name}</div>
+                    <div style="color:gray; font-size:0.8em;">${tMap[name]||0} ${t('stat_activity')}</div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.filterT=(n)=>{currentFilter=n; switchView('archive');};
