@@ -20,7 +20,6 @@
             --primary: #818cf8; --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.3); --border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        /* English Font Override */
         html[lang="en"] { --font-main: 'Roboto', sans-serif; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -34,14 +33,30 @@
         .nav-logo-icon { width: 35px; height: 35px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
         .nav-right { display: flex; align-items: center; gap: 10px; }
         
-        .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1em; transition: 0.3s; color: var(--text-main); font-weight: bold; border: 1px solid transparent; }
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; transition: 0.3s; color: var(--text-main); font-weight: bold; border: 1px solid transparent; }
         .icon-btn:hover { background: rgba(128,128,128,0.1); border-color: var(--border); }
+
+        /* --- LANGUAGE DROPDOWN --- */
+        .lang-dropdown { position: relative; }
+        .lang-menu {
+            position: absolute; top: 120%; left: -10px; /* Aligns nicely in RTL */
+            background: var(--bg-card); border: var(--border); border-radius: 12px;
+            box-shadow: var(--shadow); width: 160px; display: none; flex-direction: column;
+            overflow: hidden; z-index: 2000;
+        }
+        /* Fix left alignment for English */
+        html[dir="ltr"] .lang-menu { right: -10px; left: auto; }
+        
+        .lang-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+        .lang-item { padding: 12px 15px; text-align: start; cursor: pointer; transition: 0.2s; font-size: 0.95em; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .lang-item:hover { background: rgba(128,128,128,0.1); color: var(--primary); }
+        .lang-item span { font-size: 1.2em; }
 
         .admin-link-btn { background: rgba(128,128,128,0.1); color: var(--text-main); padding: 8px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
         .admin-link-btn:hover { background: var(--primary); color: white; }
 
         .container { max-width: 1200px; margin: 0 auto; width: 95%; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .nav-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: 10px; }
         .pill { padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light); background: var(--bg-card); border: var(--border); transition: 0.3s; }
@@ -73,7 +88,7 @@
         .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
         .teacher-item { text-align: center; padding: 20px 10px; background: var(--bg-card); border-radius: 20px; transition: 0.3s; border: var(--border); cursor: pointer; box-shadow: var(--shadow); }
         .teacher-item:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; border: 3px solid var(--primary); padding: 3px; background: var(--bg-body); }
+        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: contain; border: 3px solid var(--primary); padding: 10px; background: var(--bg-body); }
 
         .admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none; }
         .admin-nav { position: sticky; top: 0; background: #1e293b; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
@@ -86,7 +101,6 @@
         .paper-area { background: #334155; padding: 20px; border-radius: 15px; flex-grow: 1; overflow: auto; display: flex; justify-content: center; }
         .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 15mm; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
-        /* Direction handling for A4 */
         html[dir="ltr"] .a4-page { text-align: left; direction: ltr; }
         
         .p-header { display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
@@ -114,7 +128,14 @@
     <nav class="navbar">
         <div class="nav-brand"><div class="nav-logo-icon">🏫</div><span data-i18n="app_title">ئەرشیفی گزنگ</span></div>
         <div class="nav-right">
-            <button onclick="toggleLang()" class="icon-btn" id="langBtn">KU</button>
+            <div class="lang-dropdown">
+                <button onclick="toggleLangMenu()" class="icon-btn">🌐</button>
+                <div id="langMenu" class="lang-menu">
+                    <div class="lang-item" onclick="setLang('ku')"><span>🏳️</span> کوردی</div>
+                    <div class="lang-item" onclick="setLang('en')"><span>🇺🇸</span> English</div>
+                    <div class="lang-item" onclick="setLang('ar')"><span>🇮🇶</span> عربي</div>
+                </div>
+            </div>
             <button onclick="toggleTheme()" class="icon-btn" id="themeIcon">🌙</button>
             <button id="adminBtn" class="admin-link-btn"><span>🔑</span> <span data-i18n="btn_admin" style="font-size:0.9em;">ئەدمین</span></button>
         </div>
@@ -263,8 +284,9 @@
         window.imgState={0:{s:1,x:0,y:0},1:{s:1,x:0,y:0},2:{s:1,x:0,y:0},3:{s:1,x:0,y:0}};
         let currentFilter=null, tempTeacherFile = null, removePhotoFlag = false;
 
-        const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
-        const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/847/847963.png";
+        // NEW CLEAN VECTOR ICONS
+        const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042356.png";
+        const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042422.png";
 
         // --- TRANSLATIONS ---
         const translations = {
@@ -306,34 +328,37 @@
             }
         };
 
-        let currentLang = localStorage.getItem('lang') || 'ku';
-        
-        window.toggleLang = () => {
-            if(currentLang === 'ku') currentLang = 'en';
-            else if(currentLang === 'en') currentLang = 'ar';
-            else currentLang = 'ku';
-            applyLang();
+        // Language Logic
+        window.toggleLangMenu = () => {
+            const menu = document.getElementById('langMenu');
+            menu.classList.toggle('show');
+        };
+        // Close menu when clicking outside
+        window.onclick = (e) => {
+            if (!e.target.matches('.icon-btn') && !e.target.matches('.icon-btn *')) {
+                const menu = document.getElementById('langMenu');
+                if (menu.classList.contains('show')) menu.classList.remove('show');
+            }
         };
 
-        function applyLang() {
-            localStorage.setItem('lang', currentLang);
-            document.getElementById('langBtn').innerText = currentLang.toUpperCase();
-            document.documentElement.setAttribute('lang', currentLang);
-            document.documentElement.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
-            
-            // Update Text
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
-            });
-            // Update Placeholders
-            const searchBox = document.getElementById('searchBox');
-            if(searchBox) searchBox.placeholder = translations[currentLang]['search'];
-        }
-        // Initial Apply
-        applyLang();
+        window.setLang = (lang) => {
+            localStorage.setItem('lang', lang);
+            location.reload(); // Simplest way to re-render everything with new lang
+        };
 
+        // Init Lang
+        let currentLang = localStorage.getItem('lang') || 'ku';
+        document.documentElement.setAttribute('lang', currentLang);
+        document.documentElement.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
         function t(key) { return translations[currentLang][key] || key; }
+        
+        // Apply translations to static elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
+        });
+        if(document.getElementById('searchBox')) document.getElementById('searchBox').placeholder = t('search');
+
 
         // --- THEME & SETUP ---
         window.toggleTheme = () => {
