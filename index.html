@@ -8,191 +8,82 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            /* Light Theme */
-            --bg-body: #f0f2f5;
-            --bg-glass: rgba(255, 255, 255, 0.95);
-            --bg-nav: rgba(255, 255, 255, 0.9);
-            --bg-card: #ffffff;
-            --text-main: #1e293b;
-            --text-light: #64748b;
-            --primary: #6366f1;
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --border: 1px solid rgba(0, 0, 0, 0.05);
-            --radius: 16px;
+            --bg-body: #f0f2f5; --bg-glass: rgba(255, 255, 255, 0.95); --bg-nav: rgba(255, 255, 255, 0.9);
+            --bg-card: #ffffff; --text-main: #1e293b; --text-light: #64748b;
+            --primary: #6366f1; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08); --border: 1px solid rgba(0, 0, 0, 0.05); --radius: 16px;
         }
-
         [data-theme="dark"] {
-            /* Dark Theme */
-            --bg-body: #0f172a;
-            --bg-glass: rgba(30, 41, 59, 0.9);
-            --bg-nav: rgba(15, 23, 42, 0.9);
-            --bg-card: #1e293b;
-            --text-main: #f1f5f9;
-            --text-light: #94a3b8;
-            --primary: #818cf8;
-            --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --bg-body: #0f172a; --bg-glass: rgba(30, 41, 59, 0.9); --bg-nav: rgba(15, 23, 42, 0.9);
+            --bg-card: #1e293b; --text-main: #f1f5f9; --text-light: #94a3b8;
+            --primary: #818cf8; --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3); --border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: 'Noto Sans Arabic', sans-serif; background-color: var(--bg-body); min-height: 100vh; color: var(--text-main); overflow-x: hidden; padding-top: 80px; padding-bottom: 40px; transition: background-color 0.3s ease; }
         
-        body { 
-            font-family: 'Noto Sans Arabic', sans-serif; 
-            background-color: var(--bg-body); 
-            min-height: 100vh; 
-            color: var(--text-main);
-            overflow-x: hidden;
-            padding-top: 80px; 
-            padding-bottom: 40px;
-            transition: background-color 0.3s ease;
-        }
-
-        /* --- UI COMPONENTS --- */
-        .glass {
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-        }
-
+        .glass { background: var(--bg-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
         button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
-        /* --- NAVBAR --- */
-        .navbar {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
-            background: var(--bg-nav); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: var(--border);
-            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-nav); backdrop-filter: blur(15px); border-bottom: var(--border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-brand { font-size: 1.3em; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
         .nav-logo-icon { width: 35px; height: 35px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; }
-
         .nav-right { display: flex; align-items: center; gap: 10px; }
-
-        .theme-toggle {
-            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.2em; transition: 0.3s; color: var(--text-main);
-        }
-        .theme-toggle:hover { background: rgba(128,128,128,0.1); transform: rotate(15deg); }
-
-        .admin-link-btn {
-            background: rgba(128,128,128,0.1); color: var(--text-main); padding: 8px 15px; border-radius: 50px;
-            font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; transition: 0.3s;
-        }
+        .theme-toggle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; transition: 0.3s; color: var(--text-main); }
+        .admin-link-btn { background: rgba(128,128,128,0.1); color: var(--text-main); padding: 8px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
         .admin-link-btn:hover { background: var(--primary); color: white; }
 
-        /* --- MAIN CONTAINER --- */
         .container { max-width: 1200px; margin: 0 auto; width: 95%; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Navigation Pills */
         .nav-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: 10px; }
-        .pill {
-            padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light);
-            background: var(--bg-card); border: var(--border); transition: 0.3s;
-        }
+        .pill { padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light); background: var(--bg-card); border: var(--border); transition: 0.3s; }
         .pill.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transform: scale(1.05); border-color: transparent; }
 
-        /* Search & Filter */
-        .search-area { max-width: 600px; margin: 0 auto 30px; position: relative; }
-        .search-input {
-            width: 100%; padding: 15px 20px; border-radius: 50px; border: var(--border);
-            background: var(--bg-card); color: var(--text-main); font-size: 1em;
-            box-shadow: var(--shadow); transition: 0.3s;
-        }
+        .search-area { max-width: 600px; margin: 0 auto 20px; position: relative; }
+        .search-input { width: 100%; padding: 15px 20px; border-radius: 50px; border: var(--border); background: var(--bg-card); color: var(--text-main); font-size: 1em; box-shadow: var(--shadow); transition: 0.3s; }
         .search-input:focus { transform: scale(1.01); border-color: var(--primary); }
-
-        .filter-header { 
-            display: none; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 25px;
-            background: var(--bg-card); border-radius: 15px; border: var(--border);
-        }
-
-        /* --- CARDS & GRIDS (FIXED LAYOUT) --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         
-        .card { 
-            background: var(--bg-card); border-radius: 16px; overflow: hidden; 
-            box-shadow: var(--shadow); border: var(--border);
-            display: flex; flex-direction: column; /* Ensures vertical stacking */
-            transition: 0.3s;
+        /* --- ADD BUTTON (VISIBLE NOW) --- */
+        .add-activity-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: var(--primary-gradient); color: white;
+            padding: 12px 25px; border-radius: 50px; font-weight: bold;
+            margin: 0 auto 30px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+            transition: 0.3s; width: fit-content;
         }
+        .add-activity-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
+
+        .filter-header { display: none; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 25px; background: var(--bg-card); border-radius: 15px; border: var(--border); }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: var(--border); display: flex; flex-direction: column; transition: 0.3s; }
         .card:hover { transform: translateY(-5px); }
         
-        /* Image Section - Fixed Height */
-        .card-img-grid { 
-            display: grid; grid-template-columns: 1fr 1fr; 
-            height: 180px; /* Fixed height prevents overlap */
-            width: 100%;
-            gap: 1px; background: #e2e8f0; 
-            flex-shrink: 0; /* Don't shrink images */
-        }
+        .card-img-grid { display: grid; grid-template-columns: 1fr 1fr; height: 180px; width: 100%; gap: 1px; background: #e2e8f0; flex-shrink: 0; }
         .card-img-grid img { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Body Section - Distinct from Image */
-        .card-body { 
-            padding: 15px; 
-            flex-grow: 1; 
-            background: var(--bg-card);
-            position: relative; 
-            z-index: 2; /* Ensure text is above */
-        }
+        .card-body { padding: 15px; flex-grow: 1; background: var(--bg-card); position: relative; z-index: 2; }
         .card-title { font-weight: 800; font-size: 1.1em; margin-bottom: 8px; color: var(--text-main); }
         .card-info { font-size: 0.85em; color: var(--text-light); display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-        
-        .card-footer { 
-            padding: 12px 15px; background: rgba(128,128,128,0.03); 
-            border-top: 1px solid rgba(128,128,128,0.05); 
-        }
-        .btn-card { 
-            width: 100%; padding: 10px; border-radius: 10px; background: rgba(99, 102, 241, 0.1); 
-            color: var(--primary); font-weight: bold; transition: 0.2s; 
-        }
+        .card-footer { padding: 12px 15px; background: rgba(128,128,128,0.03); border-top: 1px solid rgba(128,128,128,0.05); }
+        .btn-card { width: 100%; padding: 10px; border-radius: 10px; background: rgba(99, 102, 241, 0.1); color: var(--primary); font-weight: bold; transition: 0.2s; }
         .btn-card:hover { background: var(--primary); color: white; }
 
-        /* Teachers Grid */
         .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .teacher-item { 
-            text-align: center; padding: 20px 10px; background: var(--bg-card); 
-            border-radius: 20px; transition: 0.3s; border: var(--border); cursor: pointer; 
-            box-shadow: var(--shadow);
-        }
+        .teacher-item { text-align: center; padding: 20px 10px; background: var(--bg-card); border-radius: 20px; transition: 0.3s; border: var(--border); cursor: pointer; box-shadow: var(--shadow); }
         .teacher-item:hover { transform: translateY(-5px); border-color: var(--primary); }
-        
-        .avatar-lg { 
-            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; 
-            border: 3px solid var(--primary); padding: 3px; background: var(--bg-body); 
-        }
+        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; border: 3px solid var(--primary); padding: 3px; background: var(--bg-body); }
 
-        /* --- ADMIN DASHBOARD --- */
-        .admin-dashboard {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none;
-        }
-        .admin-nav {
-            position: sticky; top: 0; background: #1e293b; color: white; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center; z-index: 10;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
+        .admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none; }
+        .admin-nav { position: sticky; top: 0; background: #1e293b; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* --- MODALS --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-            z-index: 3000; display: none; justify-content: center; align-items: center;
-            padding: 20px; opacity: 0; transition: opacity 0.2s;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s; }
         .modal-overlay.active { display: flex; opacity: 1; }
         
         .editor-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
         .editor-toolbar { background: #1e293b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
         
-        /* Paper Area */
         .paper-area { background: #334155; padding: 20px; border-radius: 15px; flex-grow: 1; overflow: auto; display: flex; justify-content: center; }
         .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 15mm; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .p-header { display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
@@ -208,16 +99,11 @@
         .c-btn { width: 25px; height: 25px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         @media print {
-            body * { visibility: hidden; }
-            .a4-page, .a4-page * { visibility: visible; }
+            body * { visibility: hidden; } .a4-page, .a4-page * { visibility: visible; }
             .a4-page { position: absolute; left: 0; top: 0; margin: 0; padding: 10mm; width: 210mm; height: 297mm; }
             .controls, .editor-toolbar, .modal-overlay { display: none !important; }
         }
-        @media (max-width: 768px) {
-            .nav-brand span { font-size: 0.9em; }
-            .a4-page { width: 100%; height: auto; aspect-ratio: 210/297; padding: 5mm; }
-            .p-images.landscape .slot { height: 120px; }
-        }
+        @media (max-width: 768px) { .nav-brand span { font-size: 0.9em; } .a4-page { width: 100%; height: auto; aspect-ratio: 210/297; padding: 5mm; } .p-images.landscape .slot { height: 120px; } }
     </style>
 </head>
 <body>
@@ -265,7 +151,7 @@
                     <input type="text" class="search-input" id="searchBox" placeholder="گەڕان...">
                 </div>
                 <div style="text-align:center;">
-                    <button onclick="openEditor()" class="admin-link-btn" id="btnAddActivity" style="display:none; margin: 0 auto; background:var(--primary); color:white; padding:12px 25px;">
+                    <button onclick="openEditor()" class="add-activity-btn" id="btnAddActivity">
                         <span>➕</span> زیادکردنی چالاکی نوێ
                     </button>
                 </div>
@@ -416,7 +302,6 @@
         let currentFilter=null;
         let tempTeacherFile = null;
 
-        // --- ICONS ---
         const MALE_ICON = "https://img.icons8.com/fluency/96/teacher.png";
         const FEMALE_ICON = "https://img.icons8.com/fluency/96/teacher-female.png";
 
@@ -435,15 +320,12 @@
         onAuthStateChanged(auth, (u) => {
             user = u;
             const btn = document.getElementById('adminBtn');
-            const addBtn = document.getElementById('btnAddActivity');
             if(u){
                 btn.innerHTML=`<span>⚙️</span> داشبۆرد`; btn.style.background="var(--primary)"; btn.style.color="white";
                 btn.onclick=openAdminDashboard;
-                addBtn.style.display='flex';
             } else {
                 btn.innerHTML=`<span>🔑</span> ئەدمین`; btn.style.background="rgba(128,128,128,0.1)"; btn.style.color="var(--text-main)";
                 btn.onclick=()=>document.getElementById('adminAuthModal').classList.add('active');
-                addBtn.style.display='none';
             }
         });
         window.loginAdmin=async()=>{
@@ -564,7 +446,7 @@
         // --- TEACHER ADD/EDIT LOGIC ---
         window.openAddTeacherModal = () => {
             document.getElementById('teacherModalTitle').innerText = "زیادکردنی مامۆستا";
-            document.getElementById('editTeacherId').value = ""; // Empty ID = New
+            document.getElementById('editTeacherId').value = ""; 
             document.getElementById('editTeacherName').value = "";
             document.getElementById('editTeacherGender').value = "male";
             document.getElementById('editTeacherPreview').style.display = 'none';
@@ -579,11 +461,8 @@
             document.getElementById('editTeacherId').value = id;
             document.getElementById('editTeacherName').value = t.name;
             document.getElementById('editTeacherGender').value = t.gender || "male";
-            
             const img = document.getElementById('editTeacherPreview');
-            if(t.photo) { img.src = t.photo; img.style.display = 'block'; }
-            else { img.style.display = 'none'; }
-            
+            if(t.photo) { img.src = t.photo; img.style.display = 'block'; } else { img.style.display = 'none'; }
             tempTeacherFile = null;
             document.getElementById('teacherEditModal').classList.add('active');
         };
@@ -605,11 +484,10 @@
             const gender = document.getElementById('editTeacherGender').value;
             if(!name) return alert("ناو بنووسە");
 
-            document.getElementById('teacherEditModal').classList.remove('active'); // Close immediately for UX
-            
+            document.getElementById('teacherEditModal').classList.remove('active'); 
             let photoUrl = null;
             if(tempTeacherFile) {
-                alert("وێنە ئاپلۆد دەکرێت... چاوەڕێ بە");
+                alert("وێنە ئاپلۆد دەکرێت...");
                 try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("هەڵە لە وێنە"); }
             }
 
@@ -617,13 +495,9 @@
             if(photoUrl) data.photo = photoUrl;
 
             if(id) {
-                // EDIT EXISTING
                 const oldT = teachers.find(x => x.id === id);
                 const oldName = oldT.name;
-                
                 await updateDoc(doc(db, "teachers", id), data);
-                
-                // Update activities if name changed
                 if(oldName !== name) {
                     const q = query(actRef, where("teacher", "==", oldName));
                     const snap = await getDocs(q);
@@ -633,7 +507,6 @@
                 }
                 alert("گۆڕانکارییەکان کران");
             } else {
-                // CREATE NEW
                 if(!data.photo) data.photo = "";
                 await addDoc(teachRef, data);
                 alert("مامۆستا زیادکرا");
@@ -670,7 +543,7 @@
         }
 
         window.saveToArchive=async()=>{
-            if(!user)return; const n=document.getElementById('inpName').value; const t=document.getElementById('inpTeacher').value;
+            const n=document.getElementById('inpName').value; const t=document.getElementById('inpTeacher').value;
             if(!n||!t){alert("زانیاری کەمە");return;} alert("چاوەڕێ بە...");
             try{
                 let u=[]; for(let i=0;i<4;i++)if(window.localFiles[i])u.push(await upload(window.localFiles[i]));
