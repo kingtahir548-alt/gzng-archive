@@ -8,31 +8,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            /* Light Theme Variables */
             --bg-body: #f0f2f5;
-            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.9);
             --bg-card: #ffffff;
             --text-main: #1e293b;
             --text-light: #64748b;
             --primary: #6366f1;
             --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-            --border: 1px solid rgba(255, 255, 255, 0.5);
-            --blur: blur(12px);
-            --radius: 24px;
+            --border: 1px solid rgba(255, 255, 255, 0.6);
+            --radius: 16px;
         }
 
         [data-theme="dark"] {
-            /* Dark Theme Variables */
             --bg-body: #0f172a;
-            --bg-glass: rgba(30, 41, 59, 0.7);
+            --bg-glass: rgba(30, 41, 59, 0.85);
             --bg-card: #1e293b;
             --text-main: #f1f5f9;
             --text-light: #94a3b8;
             --primary: #818cf8;
             --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
             --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-            --border: 1px solid rgba(255, 255, 255, 0.05);
+            --border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -40,403 +37,285 @@
         body { 
             font-family: 'Noto Sans Arabic', sans-serif; 
             background-color: var(--bg-body); 
-            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
             background-attachment: fixed;
             min-height: 100vh; 
             color: var(--text-main);
             overflow-x: hidden;
-            transition: background-color 0.5s ease, color 0.3s ease;
-            padding-bottom: 40px;
+            transition: background-color 0.5s ease;
+            padding-top: 80px; /* Space for fixed header */
         }
 
-        /* --- Animations --- */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
-
-        /* --- Components --- */
-        .glass-panel {
+        /* --- Global Components --- */
+        .glass {
             background: var(--bg-glass);
-            backdrop-filter: var(--blur);
-            -webkit-backdrop-filter: var(--blur);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: var(--border);
-            border-radius: var(--radius);
             box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        button { cursor: pointer; font-family: inherit; border: none; }
+        button { cursor: pointer; font-family: inherit; border: none; background: none; }
         
-        /* Navbar */
+        /* --- Modern Navbar --- */
         .navbar {
-            position: sticky; top: 10px; z-index: 100;
-            margin: 10px auto 20px; max-width: 1200px; width: 95%;
-            padding: 15px 25px;
-            display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: var(--border);
         }
         
-        .logo-area h1 { font-size: 1.4em; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-actions { display: flex; gap: 10px; align-items: center; }
+        .nav-brand { font-size: 1.3em; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 35px; height: 35px; background: var(--primary); border-radius: 10px; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        .theme-toggle {
-            background: rgba(128, 128, 128, 0.1); width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2em;
-            transition: 0.3s; color: var(--text-main);
+        .nav-menu { display: flex; gap: 5px; background: rgba(128,128,128,0.08); padding: 5px; border-radius: 50px; }
+        .nav-link { 
+            padding: 8px 20px; border-radius: 25px; color: var(--text-light); font-weight: bold; font-size: 0.95em; transition: 0.3s; 
+            display: flex; align-items: center; gap: 6px;
         }
-        .theme-toggle:hover { background: rgba(128, 128, 128, 0.2); transform: rotate(15deg); }
+        .nav-link:hover { background: rgba(128,128,128,0.1); color: var(--text-main); }
+        .nav-link.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
-        .btn-primary {
-            background: var(--primary-gradient); color: white; padding: 10px 20px; border-radius: 50px;
-            font-weight: bold; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-            transition: 0.3s; display: flex; align-items: center; gap: 8px;
+        .nav-tools { display: flex; align-items: center; gap: 15px; }
+        .theme-btn { font-size: 1.2em; padding: 8px; border-radius: 50%; transition: 0.3s; }
+        .theme-btn:hover { background: rgba(128,128,128,0.1); transform: rotate(15deg); }
+
+        /* Mobile Menu Adjustments */
+        @media (max-width: 650px) {
+            .nav-text { display: none; }
+            .nav-link { padding: 10px 15px; }
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
 
-        /* Navigation Pills */
-        .nav-pills { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; }
-        .pill {
-            padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light);
-            background: var(--bg-card); border: var(--border); transition: 0.3s;
+        /* --- Main Layout --- */
+        .container { max-width: 1200px; margin: 0 auto; width: 95%; padding-bottom: 50px; }
+        
+        .page-header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 1.5em; font-weight: 800; }
+
+        .search-bar { 
+            width: 100%; max-width: 600px; margin: 0 auto 30px; position: relative; 
         }
-        .pill.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
-        .pill:hover:not(.active) { background: rgba(128,128,128,0.1); }
-
-        /* Main Grid */
-        .container { max-width: 1200px; margin: 0 auto; width: 95%; animation: fadeIn 0.6s ease; }
-        .search-container { position: relative; max-width: 600px; margin: 0 auto 30px; }
         .search-input {
-            width: 100%; padding: 18px 25px; border-radius: 50px; border: none;
+            width: 100%; padding: 16px 25px; border-radius: 50px; border: var(--border);
             background: var(--bg-card); color: var(--text-main); font-size: 1.1em;
             box-shadow: var(--shadow); transition: 0.3s;
         }
-        .search-input:focus { transform: scale(1.02); box-shadow: 0 15px 40px rgba(0,0,0,0.15); }
+        .search-input:focus { transform: scale(1.01); border-color: var(--primary); }
 
+        /* Cards Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         
-        /* Cards */
         .card { 
             background: var(--bg-card); border-radius: 20px; overflow: hidden; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02); border: var(--border);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: var(--border);
+            transition: 0.3s; display: flex; flex-direction: column;
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
         
-        .card-img-grid { display: grid; grid-template-columns: 1fr 1fr; height: 200px; gap: 1px; background: var(--bg-body); }
-        .card-img-grid img { width: 100%; height: 100%; object-fit: cover; }
+        .card-imgs { display: grid; grid-template-columns: 1fr 1fr; height: 180px; gap: 1px; background: #eee; }
+        .card-imgs img { width: 100%; height: 100%; object-fit: cover; }
         
-        .card-body { padding: 20px; flex-grow: 1; }
-        .card-title { font-weight: 800; font-size: 1.1em; margin-bottom: 8px; color: var(--text-main); }
-        .card-info { font-size: 0.85em; color: var(--text-light); display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .card-footer { padding: 15px 20px; border-top: 1px solid rgba(128,128,128,0.1); background: rgba(128,128,128,0.02); }
-        .btn-card { width: 100%; padding: 10px; border-radius: 12px; background: rgba(99, 102, 241, 0.1); color: var(--primary); font-weight: bold; transition: 0.2s; }
-        .btn-card:hover { background: var(--primary); color: white; }
+        .card-body { padding: 18px; flex-grow: 1; }
+        .card-title { font-weight: 800; font-size: 1.1em; margin-bottom: 8px; }
+        .card-meta { font-size: 0.85em; color: var(--text-light); margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        
+        .btn-view { 
+            width: 100%; padding: 12px; background: rgba(99, 102, 241, 0.08); color: var(--primary); 
+            font-weight: bold; margin-top: auto; border-top: 1px solid rgba(0,0,0,0.05); transition: 0.2s;
+        }
+        .btn-view:hover { background: var(--primary); color: white; }
 
-        /* Teacher Avatars */
-        .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .teacher-item { text-align: center; padding: 25px 10px; background: var(--bg-card); border-radius: 25px; transition: 0.3s; border: var(--border); cursor: pointer; }
-        .teacher-item:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .avatar-lg { width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 15px; object-fit: cover; border: 3px solid var(--primary); padding: 3px; background: var(--bg-body); }
-        .teacher-name { font-weight: bold; color: var(--text-main); margin-bottom: 5px; }
-        .teacher-count { font-size: 0.8em; color: var(--text-light); background: rgba(128,128,128,0.1); padding: 2px 10px; border-radius: 10px; }
+        /* Teachers List */
+        .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .t-card { 
+            background: var(--bg-card); padding: 20px; border-radius: 20px; text-align: center; 
+            border: var(--border); transition: 0.3s; cursor: pointer;
+        }
+        .t-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .t-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: var(--bg-body); }
 
-        /* --- Editor Modal (The Workspace) --- */
-        .modal-overlay {
+        /* Add Button (Floating) */
+        .fab {
+            position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px;
+            background: var(--primary-gradient); color: white; border-radius: 50%;
+            display: none; align-items: center; justify-content: center; font-size: 24px;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.4); z-index: 900; transition: 0.3s;
+        }
+        .fab:hover { transform: scale(1.1) rotate(90deg); }
+
+        /* Admin Dashboard (Full Page Overlay) */
+        .dashboard {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px);
-            z-index: 2000; display: none; overflow-y: auto; padding: 20px 0;
-            opacity: 0; transition: opacity 0.3s;
+            background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none;
         }
-        .modal-overlay.active { display: block; opacity: 1; }
+        .dash-nav {
+            background: #1e293b; color: white; padding: 15px 25px; 
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 10;
+        }
+        .dash-btn { padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 0.9em; }
+        .dash-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Filter Header */
+        .filter-bar {
+            display: none; align-items: center; justify-content: space-between;
+            background: var(--bg-card); padding: 15px; border-radius: 15px;
+            margin-bottom: 25px; border: var(--border); animation: fadeIn 0.3s;
+        }
+
+        /* --- Editor (Hidden Logic same as before, simplified UI) --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; display: none; justify-content: center; overflow-y: auto; padding: 20px; backdrop-filter: blur(5px); }
+        .modal.active { display: flex; }
+        .paper-view { background: #555; padding: 20px; border-radius: 15px; max-width: 1000px; width: 100%; display: flex; flex-direction: column; gap: 10px; }
         
-        .editor-container {
-            width: 95%; max-width: 1000px; margin: 0 auto;
-            display: flex; flex-direction: column; gap: 20px;
-            animation: fadeIn 0.4s ease;
-        }
+        /* Keeping A4 Styles for Printing */
+        .a4 { width: 210mm; min-height: 297mm; background: white; padding: 15mm; margin: 0 auto; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; }
+        .p-head { border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .p-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 10px; border: 1px solid #ddd; margin-bottom: 15px; }
+        .p-inp { width: 100%; border: none; border-bottom: 1px dashed #ccc; background: transparent; font-weight: bold; }
+        .p-imgs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .slot { background: #eee; border: 2px dashed #ccc; height: 180px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .slot img { width: 100%; height: 100%; object-fit: contain; }
+        .slot:hover .ctrls { opacity: 1; }
+        .ctrls { position: absolute; bottom: 5px; display: flex; gap: 5px; opacity: 0; transition: 0.2s; }
+        .c-btn { width: 25px; height: 25px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        .editor-toolbar {
-            background: #1e293b; padding: 15px; border-radius: 15px;
-            display: flex; justify-content: space-between; align-items: center; color: white;
-            position: sticky; top: 0; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .tool-group { display: flex; gap: 10px; overflow-x: auto; }
-        .tool-btn { background: #334155; color: white; padding: 8px 15px; border-radius: 8px; font-size: 0.9em; white-space: nowrap; }
-        .tool-btn:hover { background: #475569; }
-        .tool-btn.accent { background: var(--primary); }
-
-        /* The A4 Paper - KEEP DIMENSIONS EXACT */
-        .paper-area {
-            background: #0f172a; padding: 30px; border-radius: 20px;
-            display: flex; justify-content: center; overflow-x: auto;
-        }
-        .a4-page {
-            width: 210mm; min-height: 297mm; background: white; 
-            padding: 15mm; box-shadow: 0 0 50px rgba(0,0,0,0.5); 
-            color: black; direction: rtl; text-align: right; 
-            display: flex; flex-direction: column; flex-shrink: 0;
-            position: relative;
-        }
-
-        /* Paper Internal Styles */
-        .p-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
-        .p-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        .p-input-group label { font-size: 12px; color: #64748b; display: block; }
-        .p-input { width: 100%; border: none; background: transparent; border-bottom: 1px dashed #cbd5e1; font-weight: bold; font-family: inherit; padding: 2px; }
-        
-        .p-images { display: grid; gap: 10px; margin-top: 20px; }
-        .p-images.landscape { grid-template-columns: 1fr 1fr; } 
-        .p-images.landscape .slot { height: 180px; }
-        .p-images.portrait { grid-template-columns: 1fr 1fr; }
-        .p-images.portrait .slot { height: 280px; }
-
-        .slot {
-            background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 8px;
-            overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
-        }
-        .slot img { width: 100%; height: 100%; object-fit: contain; transform-origin: center; }
-        .slot:hover .controls { opacity: 1; }
-        .controls { position: absolute; bottom: 10px; display: flex; gap: 5px; background: rgba(0,0,0,0.7); padding: 5px; border-radius: 20px; opacity: 0; transition: 0.2s; z-index: 5; }
-        .c-btn { width: 25px; height: 25px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
-        
-        .p-footer { margin-top: auto; text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #eee; padding-top: 10px; }
-
-        /* Admin Dashboard Modern */
-        .admin-dashboard {
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: var(--bg-body); z-index: 1000; overflow-y: auto; display: none;
-        }
-        .admin-nav { background: #1e293b; color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
-        .admin-stat-card { background: var(--bg-card); padding: 25px; border-radius: 20px; text-align: center; border: var(--border); box-shadow: var(--shadow); }
-        .admin-stat-num { font-size: 2.5em; font-weight: 900; color: var(--primary); }
-
-        /* Print Override */
         @media print {
-            body * { visibility: hidden; }
-            .a4-page, .a4-page * { visibility: visible; }
-            .a4-page { position: absolute; left: 0; top: 0; margin: 0; padding: 10mm; box-shadow: none; width: 210mm; height: 297mm; }
-            .controls, .editor-toolbar, .modal-overlay { display: none !important; }
-            .p-input { border-bottom: none !important; }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .a4-page { width: 100%; height: auto; aspect-ratio: 210/297; padding: 5mm; }
-            .p-images.landscape .slot { height: 120px; }
-            .p-images.portrait .slot { height: 180px; }
-            .controls { opacity: 1; }
+            body > * { display: none !important; }
+            .modal { display: block !important; position: absolute !important; background: white !important; overflow: visible !important; }
+            .paper-view { padding: 0 !important; background: white !important; display: block !important; }
+            .a4 { box-shadow: none !important; margin: 0 !important; }
+            .ctrls, .editor-tools { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; justify-content:center; align-items:center;">
-        <div class="glass-panel" style="padding:40px; text-align:center; max-width:300px; width:90%;">
-            <div style="font-size:3em; margin-bottom:10px;">🔒</div>
-            <h2 style="color:white; margin-bottom:20px;">ناوچەی پارێزراو</h2>
-            <input type="password" id="sitePassword" placeholder="پاسۆرد بنووسە" style="width:100%; padding:12px; border-radius:10px; border:none; margin-bottom:15px; text-align:center;">
-            <button onclick="checkSitePassword()" class="btn-primary" style="width:100%; justify-content:center;">چوونەژوورەوە</button>
-            <p id="errorMsg" style="color:#ef4444; margin-top:10px; display:none;">پاسۆرد هەڵەیە</p>
+    <nav class="navbar glass">
+        <div class="nav-brand">
+            <div class="logo-icon">🏫</div>
+            <span class="nav-text">ئەرشیفی گزنگ</span>
         </div>
-    </div>
 
-    <div id="adminAuthModal" class="modal-overlay" style="z-index:9000; align-items:center; justify-content:center; display:none; flex-direction:column;">
-        <div class="glass-panel" style="background:white; padding:30px; width:90%; max-width:350px; text-align:center; position:relative; top: 20%;">
-            <h3>بەڕێوەبەر</h3>
-            <p style="color:#666; margin-bottom:20px; font-size:0.9em;">تکایە داخڵ بە بۆ دەستکاری کردن</p>
-            <input type="email" id="adminEmail" placeholder="ئیمەیڵ" class="search-input" style="margin-bottom:10px; border:1px solid #ddd;">
-            <input type="password" id="adminPass" placeholder="پاسۆرد" class="search-input" style="margin-bottom:20px; border:1px solid #ddd;">
-            <button onclick="loginAdmin()" class="btn-primary" style="width:100%; justify-content:center;">چوونەژوورەوە</button>
-            <button onclick="document.getElementById('adminAuthModal').style.display='none'" style="margin-top:15px; background:none; color:#666;">داخستن</button>
+        <div class="nav-menu">
+            <button onclick="switchView('archive')" class="nav-link active" id="link-archive">
+                <span>🏠</span> <span class="nav-text">سەرەکی</span>
+            </button>
+            <button onclick="switchView('teachers')" class="nav-link" id="link-teachers">
+                <span>👨‍🏫</span> <span class="nav-text">مامۆستایان</span>
+            </button>
+            <button onclick="checkAdminAccess()" class="nav-link" id="link-admin">
+                <span>⚙️</span> <span class="nav-text">ئەدمین</span>
+            </button>
         </div>
-    </div>
 
-    <div id="mainContent" style="display:none;">
+        <div class="nav-tools">
+            <button onclick="toggleTheme()" class="theme-btn" id="themeIcon">🌙</button>
+        </div>
+    </nav>
+
+    <button id="fabBtn" class="fab" onclick="openEditor()">+</button>
+
+    <div class="container" id="mainContainer">
         
-        <nav class="navbar glass-panel">
-            <div class="logo-area">
-                <h1>ئەرشیفی گزنگ</h1>
+        <div id="filterBar" class="filter-bar">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <h3 id="filterTitle">ئەرشیفی مامۆستا...</h3>
             </div>
-            <div class="nav-actions">
-                <button onclick="toggleTheme()" class="theme-toggle" id="themeIcon">🌙</button>
-                <button id="adminBtn" class="btn-primary" style="background:rgba(128,128,128,0.1); color:var(--text-main); box-shadow:none;">
-                    🔑 ئەدمین
-                </button>
-            </div>
-        </nav>
+            <button onclick="clearFilter()" style="color:#ef4444; font-weight:bold;">❌ گەڕانەوە</button>
+        </div>
 
-        <div class="container">
-            <div class="nav-pills">
-                <button onclick="switchView('archive')" class="pill active" id="btn-archive">ئەرشیف</button>
-                <button onclick="switchView('teachers')" class="pill" id="btn-teachers">مامۆستایان</button>
-            </div>
+        <div id="searchContainer" class="search-bar">
+            <input type="text" id="searchBox" class="search-input" placeholder="گەڕان...">
+        </div>
 
-            <div id="archiveControls">
-                <div class="search-container">
-                    <input type="text" class="search-input" id="searchBox" placeholder="گەڕان بەدوای چالاکی، مامۆستا...">
-                </div>
-                <button onclick="openEditor()" class="btn-primary" id="btnAddActivity" style="display:none; margin: 0 auto 30px;">
-                    <span>➕</span> زیادکردنی چالاکی نوێ
-                </button>
-            </div>
+        <div id="view-archive" class="grid"></div>
+        <div id="view-teachers" class="teacher-grid" style="display:none;"></div>
 
-            <div id="filterHeader" class="glass-panel" style="display:none; padding:15px; margin-bottom:20px; align-items:center; justify-content:space-between;">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <div id="filterAvatarContainer"></div>
-                    <h2 id="filterName"></h2>
-                </div>
-                <button onclick="clearFilter()" style="color:#ef4444; background:rgba(239, 68, 68, 0.1); padding:8px 15px; border-radius:10px;">❌ گەڕانەوە</button>
-            </div>
+    </div>
 
-            <div id="activitiesGrid" class="grid"></div>
-            <div id="teachersGrid" class="teacher-grid" style="display:none;"></div>
+    <div id="adminDashboard" class="dashboard">
+        <div class="dash-nav">
+            <h2>بەڕێوەبردن</h2>
+            <button onclick="closeAdmin()" class="dash-btn" style="background:#3b82f6;">🔙 گەڕانەوە بۆ سایت</button>
+        </div>
+        <div class="container" style="padding-top: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3>لیستی هەموو چالاکییەکان</h3>
+                <button onclick="logoutAdmin()" style="color:#ef4444; font-weight:bold;">چوونە دەرەوە</button>
+            </div>
+            <div class="glass" style="padding:20px; border-radius:15px;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead><tr style="text-align:right; color:var(--text-light);"><th>بابەت</th><th>مامۆستا</th><th>کردار</th></tr></thead>
+                    <tbody id="adminTableBody"></tbody>
+                </table>
+            </div>
+            <div style="margin-top:30px;">
+                <h3>مامۆستایان</h3>
+                <button onclick="openTeacherModal()" style="margin:10px 0; color:var(--primary); font-weight:bold;">➕ زیادکردنی مامۆستا</button>
+                <div id="adminTeacherList" class="teacher-grid"></div>
+            </div>
         </div>
     </div>
 
-    <div id="adminDashboard" class="admin-dashboard">
-        <div class="admin-nav">
-            <h2>⚙️ داشبۆرد</h2>
-            <button onclick="logoutAdmin()" class="tool-btn" style="background:#ef4444;">چوونە دەرەوە</button>
-        </div>
-        <div class="container" style="padding-top:30px;">
-            <div class="grid" style="margin-bottom:30px;">
-                <div class="admin-stat-card">
-                    <div class="admin-stat-num" id="statActivities">0</div>
-                    <p>چالاکی</p>
+    <div id="editorModal" class="modal">
+        <div class="paper-view">
+            <div class="editor-tools" style="display:flex; justify-content:space-between; background:white; padding:10px; border-radius:10px; margin-bottom:10px;">
+                <div>
+                    <button onclick="closeEditor()" style="color:red; font-weight:bold;">داخستن</button>
                 </div>
-                <div class="admin-stat-card">
-                    <div class="admin-stat-num" id="statTeachers">0</div>
-                    <p>مامۆستا</p>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="window.print()">🖨️</button>
+                    <button onclick="saveToArchive()" id="btnSave" style="color:blue; font-weight:bold; display:none;">💾 سەیڤ</button>
                 </div>
             </div>
             
-            <div class="nav-pills">
-                <button onclick="switchAdminTab('activities')" id="tab-admin-acts" class="pill active">چالاکییەکان</button>
-                <button onclick="switchAdminTab('teachers')" id="tab-admin-teach" class="pill">مامۆستایان</button>
-            </div>
-
-            <div id="adminActivitiesView" class="glass-panel" style="padding:20px;">
-                <table style="width:100%; border-collapse:collapse;">
-                    <tbody id="adminActivitiesTable"></tbody>
-                </table>
-            </div>
-
-            <div id="adminTeachersView" class="glass-panel" style="padding:20px; display:none;">
-                <button onclick="openAddTeacherModal()" class="btn-primary" style="margin-bottom:20px;">➕ زیادکردنی مامۆستا</button>
-                <div id="adminTeachersGrid" class="teacher-grid"></div>
+            <div class="a4" id="reportPaper">
+                <div class="p-head">
+                    <div><h1>قوتابخانەی گزنگ</h1><p>فۆرمی ڕاپۆرت</p></div>
+                    <div style="width:50px; height:50px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center;">L</div>
+                </div>
+                <div class="p-grid">
+                    <div><label>بابەت</label><input id="inpName" class="p-inp"></div>
+                    <div><label>لیژنە</label><input id="inpComm" class="p-inp"></div>
+                    <div><label>مامۆستا</label><select id="inpTeacher" class="p-inp" style="background:white;"></select></div>
+                    <div><label>بەروار</label><input id="inpDate" type="date" class="p-inp"></div>
+                </div>
+                <textarea id="inpNotes" style="width:100%; height:100px; border:1px solid #ddd; margin-bottom:10px; padding:5px;"></textarea>
+                <div class="p-imgs" id="imgGrid">
+                    </div>
+                <div style="margin-top:auto; text-align:center; font-size:12px; color:#777; border-top:1px solid #eee; padding-top:5px;">قوتابخانەی گزنگ</div>
             </div>
         </div>
     </div>
 
-    <div id="editorModal" class="modal-overlay">
-        <div class="editor-container">
-            <div class="editor-toolbar">
-                <div class="tool-group">
-                    <button onclick="closeEditor()" class="tool-btn" style="color:#ef4444;">داخستن</button>
-                </div>
-                <div class="tool-group" id="layoutControls">
-                    <button onclick="setLayout('landscape')" class="tool-btn">وێنەی پان</button>
-                    <button onclick="setLayout('portrait')" class="tool-btn">وێنەی درێژ</button>
-                </div>
-                <div class="tool-group">
-                    <button onclick="printReport()" class="tool-btn">🖨️ پرینت</button>
-                    <button onclick="downloadAsImage()" class="tool-btn">⬇️ وێنە</button>
-                    <button onclick="saveToArchive()" id="btnSaveArchive" class="tool-btn accent">💾 سەیڤ</button>
-                </div>
-            </div>
-
-            <div class="paper-area">
-                <div class="a4-page" id="reportPaper">
-                    <div class="p-header">
-                        <div>
-                            <h1 style="font-size:24px; color:black; margin:0;">قوتابخانەی گزنگ</h1>
-                            <p style="color:#666; font-size:14px; margin-top:5px;">فۆرمی ڕاپۆرتی چالاکی</p>
-                        </div>
-                        <div class="rep-logo" style="width:60px; height:60px; background:#eee; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold;">LOGO</div>
-                    </div>
-                    
-                    <div class="p-form">
-                        <div class="p-input-group"><label>بابەت</label><input id="inpName" class="p-input" type="text"></div>
-                        <div class="p-input-group"><label>لیژنە</label><input id="inpComm" class="p-input" type="text"></div>
-                        <div class="p-input-group">
-                            <label>مامۆستا</label>
-                            <select id="inpTeacher" class="p-input" style="background:white;"><option value="">هەڵبژێرە...</option></select>
-                        </div>
-                        <div class="p-input-group"><label>بەروار</label><input id="inpDate" class="p-input" type="date"></div>
-                    </div>
-
-                    <div style="margin-bottom:15px;">
-                        <label style="font-size:12px; color:#64748b;">تێبینی:</label>
-                        <textarea id="inpNotes" style="width:100%; height:150px; border:1px solid #ddd; padding:10px; border-radius:5px; resize:none; font-family:inherit;"></textarea>
-                    </div>
-
-                    <div id="imgContainer" class="p-images landscape">
-                        <div class="slot" id="slot0" onmousedown="startDrag(event, 0)" ontouchstart="startDrag(event, 0)">
-                            <img id="img0">
-                            <div class="controls">
-                                <div class="c-btn" onclick="triggerFile(0)">📂</div>
-                                <div class="c-btn" onclick="adjustZoom(0, 0.1)">+</div>
-                                <div class="c-btn" onclick="adjustZoom(0, -0.1)">-</div>
-                            </div>
-                        </div>
-                        <div class="slot" id="slot1" onmousedown="startDrag(event, 1)" ontouchstart="startDrag(event, 1)">
-                            <img id="img1">
-                            <div class="controls">
-                                <div class="c-btn" onclick="triggerFile(1)">📂</div>
-                                <div class="c-btn" onclick="adjustZoom(1, 0.1)">+</div>
-                                <div class="c-btn" onclick="adjustZoom(1, -0.1)">-</div>
-                            </div>
-                        </div>
-                        <div class="slot" id="slot2" onmousedown="startDrag(event, 2)" ontouchstart="startDrag(event, 2)">
-                            <img id="img2">
-                            <div class="controls">
-                                <div class="c-btn" onclick="triggerFile(2)">📂</div>
-                                <div class="c-btn" onclick="adjustZoom(2, 0.1)">+</div>
-                                <div class="c-btn" onclick="adjustZoom(2, -0.1)">-</div>
-                            </div>
-                        </div>
-                        <div class="slot" id="slot3" onmousedown="startDrag(event, 3)" ontouchstart="startDrag(event, 3)">
-                            <img id="img3">
-                            <div class="controls">
-                                <div class="c-btn" onclick="triggerFile(3)">📂</div>
-                                <div class="c-btn" onclick="adjustZoom(3, 0.1)">+</div>
-                                <div class="c-btn" onclick="adjustZoom(3, -0.1)">-</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="p-footer">قوتابخانەی گزنگی ئینگلیزی ناحکومی</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <input type="file" id="hiddenFile" style="display:none;" accept="image/*">
     
-    <input type="file" id="hiddenFileInput" accept="image/*" style="display:none;">
-
-    <div id="teacherModal" class="modal-overlay" style="z-index:9100; align-items:center; justify-content:center;">
-        <div class="glass-panel" style="background:white; padding:30px; width:90%; max-width:400px;">
-            <h3>زیادکردنی مامۆستا</h3>
-            <input id="newTeacherName" type="text" class="search-input" style="border:1px solid #ddd; margin:15px 0;" placeholder="ناوی مامۆستا">
-            <button onclick="saveNewTeacher()" class="btn-primary" style="width:100%; justify-content:center;">سەیڤ</button>
-            <button onclick="document.getElementById('teacherModal').style.display='none'" style="margin-top:10px; width:100%; padding:10px;">داخستن</button>
+    <div id="loginModal" class="modal" style="align-items:center;">
+        <div class="glass" style="padding:30px; background:white; border-radius:15px; width:300px; text-align:center;">
+            <h3>چوونەژوورەوەی ئەدمین</h3>
+            <input id="admEmail" placeholder="ئیمەیڵ" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:5px;">
+            <input id="admPass" type="password" placeholder="پاسۆرد" style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:5px;">
+            <button onclick="doLogin()" style="background:var(--primary); color:white; padding:10px; width:100%; border-radius:5px;">چوونەژوورەوە</button>
+            <button onclick="document.getElementById('loginModal').classList.remove('active')" style="margin-top:10px; color:#666;">داخستن</button>
         </div>
     </div>
-    
-    <div id="photoModal" class="modal-overlay" style="z-index:9100; align-items:center; justify-content:center;">
-        <div class="glass-panel" style="background:white; padding:30px; width:90%; max-width:400px;">
-            <input type="file" id="teacherPhotoInput" style="display:none;" onchange="handleTeacherPhotoSelect(this)">
-            <button onclick="document.getElementById('teacherPhotoInput').click()" class="btn-primary" style="width:100%; justify-content:center; margin-bottom:10px;">هەڵبژاردنی وێنە</button>
-            <button onclick="document.getElementById('photoModal').style.display='none'" style="width:100%;">داخستن</button>
+
+    <div id="newTModal" class="modal" style="align-items:center;">
+        <div class="glass" style="padding:20px; background:white; border-radius:15px; width:300px;">
+            <input id="newTName" placeholder="ناوی مامۆستا" style="width:100%; padding:10px; border:1px solid #ddd; margin-bottom:10px;">
+            <button onclick="addNewTeacher()" style="background:blue; color:white; width:100%; padding:10px;">زیادکردن</button>
+            <button onclick="document.getElementById('newTModal').classList.remove('active')" style="width:100%; margin-top:5px;">داخستن</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
-        // !!! کۆدی فایەربەیسەکەت لێرە دابنێ !!!
+        // !!! لێرە کۆدی فایەربەیس دابنێ !!!
         const firebaseConfig = {
             apiKey: "AIzaSyAr_JHCa5BbM5RJ9KCp0IBom1rdAgVX4CM",
             authDomain: "gzng-f4273.firebaseapp.com",
@@ -450,314 +329,215 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const activitiesRef = collection(db, "activities");
-        const teachersRef = collection(db, "teachers");
+        const actRef = collection(db, "activities");
+        const teachRef = collection(db, "teachers");
 
-        let allActivities = [];
-        let allTeachers = [];
-        window.localFiles = [null, null, null, null]; 
-        window.currentSlot = 0;
-        let teacherPhotoTarget = null;
-        let currentFilter = null;
-        let currentUser = null;
+        let acts=[], teachers=[], user=null, curSlot=0;
+        let imgState = {0:{s:1,x:0,y:0},1:{s:1,x:0,y:0},2:{s:1,x:0,y:0},3:{s:1,x:0,y:0}};
+        let localFiles = [null,null,null,null];
 
-        window.imgState = { 0: { s: 1, x: 0, y: 0 }, 1: { s: 1, x: 0, y: 0 }, 2: { s: 1, x: 0, y: 0 }, 3: { s: 1, x: 0, y: 0 } };
-
-        // --- THEME LOGIC ---
-        window.toggleTheme = () => {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            document.getElementById('themeIcon').innerText = next === 'dark' ? '☀️' : '🌙';
-        };
-        // Load theme
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        document.getElementById('themeIcon').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
+        // --- THEME ---
+        const setTheme=(t)=>{document.documentElement.setAttribute('data-theme',t); localStorage.setItem('theme',t); document.getElementById('themeIcon').innerText=t==='dark'?'☀️':'🌙';};
+        window.toggleTheme=()=>{const c=localStorage.getItem('theme')==='dark'?'light':'dark'; setTheme(c);};
+        setTheme(localStorage.getItem('theme')||'light');
 
         // --- AUTH ---
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            const btn = document.getElementById('adminBtn');
-            const addBtn = document.getElementById('btnAddActivity');
-            const saveBtn = document.getElementById('btnSaveArchive');
-            
-            if (user) {
-                btn.innerHTML = `⚙️ داشبۆرد`;
-                btn.style.background = "var(--primary)";
-                btn.style.color = "white";
-                btn.onclick = () => {
-                    document.getElementById('mainContent').style.display = 'none';
-                    document.getElementById('adminDashboard').style.display = 'block';
-                    renderAdminDashboard();
-                };
-                addBtn.style.display = 'flex';
-                saveBtn.style.display = 'inline-block';
-            } else {
-                btn.innerHTML = `🔑 ئەدمین`;
-                btn.style.background = "rgba(128,128,128,0.1)";
-                btn.style.color = "var(--text-main)";
-                btn.onclick = () => {
-                    document.getElementById('adminAuthModal').style.display = 'flex';
-                    document.getElementById('adminAuthModal').classList.add('active');
-                }
-                addBtn.style.display = 'none';
-                saveBtn.style.display = 'none';
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            document.getElementById('fabBtn').style.display = u ? 'flex' : 'none';
+            document.getElementById('btnSave').style.display = u ? 'inline-block' : 'none';
+            if(u && document.getElementById('loginModal').classList.contains('active')) {
+                document.getElementById('loginModal').classList.remove('active');
+                openAdmin();
             }
         });
-
-        window.loginAdmin = async () => {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPass').value;
-            try { await signInWithEmailAndPassword(auth, email, pass); document.getElementById('adminAuthModal').style.display = 'none'; }
-            catch (e) { alert("هەڵە: " + e.message); }
+        window.doLogin = async () => {
+            try { await signInWithEmailAndPassword(auth, document.getElementById('admEmail').value, document.getElementById('admPass').value); }
+            catch(e){ alert("هەڵە: "+e.message); }
         };
-        window.logoutAdmin = async () => { if(confirm("دەرچوون؟")) await signOut(auth); document.getElementById('adminDashboard').style.display='none'; document.getElementById('mainContent').style.display='block'; };
+        window.logoutAdmin = async () => { await signOut(auth); closeAdmin(); };
+        window.checkAdminAccess = () => { if(user) openAdmin(); else document.getElementById('loginModal').classList.add('active'); };
 
-        // --- DATA LOADING & RENDERING ---
-        onSnapshot(query(activitiesRef, orderBy("date", "desc")), (snapshot) => {
-            allActivities = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderApp();
-            if(document.getElementById('adminDashboard').style.display==='block') renderAdminDashboard();
-        });
-        onSnapshot(teachersRef, (snapshot) => {
-            allTeachers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            updateDropdown();
-            renderApp();
-            if(document.getElementById('adminDashboard').style.display==='block') renderAdminDashboard();
-        });
-
-        function updateDropdown() {
-            const s = document.getElementById('inpTeacher');
-            const v = s.value;
-            s.innerHTML = '<option value="">هەڵبژێرە...</option>';
-            allTeachers.forEach(t => {
-                const o = document.createElement('option');
-                o.value = t.name; o.text = t.name; s.appendChild(o);
-            });
-            s.value = v;
-        }
-
-        function renderApp() {
-            if(currentFilter) { renderFilter(); return; }
-            const term = document.getElementById('searchBox').value.toLowerCase();
-            const list = allActivities.filter(a => a.name.toLowerCase().includes(term) || a.teacher.toLowerCase().includes(term));
+        // --- NAVIGATION ---
+        window.switchView = (view) => {
+            document.getElementById('view-archive').style.display = view==='archive'?'grid':'none';
+            document.getElementById('view-teachers').style.display = view==='teachers'?'grid':'none';
+            document.getElementById('searchContainer').style.display = 'block';
             
-            document.getElementById('activitiesGrid').innerHTML = list.map(a => `
+            // Update Active Link
+            document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+            document.getElementById('link-'+view).classList.add('active');
+
+            if(view==='archive') {
+                document.getElementById('filterBar').style.display='none';
+                renderActs(acts);
+            }
+        };
+
+        window.openAdmin = () => { document.getElementById('adminDashboard').style.display = 'block'; renderAdmin(); };
+        window.closeAdmin = () => { document.getElementById('adminDashboard').style.display = 'none'; };
+
+        // --- DATA & RENDER ---
+        onSnapshot(query(actRef, orderBy("date", "desc")), (s) => {
+            acts = s.docs.map(d=>({id:d.id, ...d.data()}));
+            renderActs(acts); renderAdmin();
+        });
+        onSnapshot(teachRef, (s) => {
+            teachers = s.docs.map(d=>({id:d.id, ...d.data()}));
+            renderTeachers(); updateDropdown(); renderAdmin();
+        });
+
+        function renderActs(list) {
+            document.getElementById('view-archive').innerHTML = list.map(a => `
                 <div class="card">
-                    <div class="card-img-grid">
-                        ${(a.images||[]).slice(0,4).map(u => `<img src="${u}">`).join('')}
-                    </div>
+                    <div class="card-imgs">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
                     <div class="card-body">
                         <div class="card-title">${a.name}</div>
-                        <div class="card-info">👤 ${a.teacher}</div>
-                        <div class="card-info">📅 ${a.date}</div>
+                        <div class="card-meta">📅 ${a.date} | 👤 ${a.teacher}</div>
+                        <button class="btn-view" onclick="openReport('${a.id}')">📄 بینینی ڕاپۆرت</button>
                     </div>
-                    <div class="card-footer">
-                        <button class="btn-card" onclick="viewReport('${a.id}')">📄 بینینی ڕاپۆرت</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            // Render Teachers Grid
-            const tMap = {};
-            allActivities.forEach(a => tMap[a.teacher] = (tMap[a.teacher]||0)+1);
-            allTeachers.forEach(t => { if(!tMap[t.name]) tMap[t.name]=0; });
-            const sortedT = Object.keys(tMap).sort((a,b)=>tMap[b]-tMap[a]);
-            
-            document.getElementById('teachersGrid').innerHTML = sortedT.map(name => {
-                const meta = allTeachers.find(t=>t.name===name);
-                return `
-                <div class="teacher-item" onclick="filterT('${name}')">
-                    <img src="${(meta && meta.photo)?meta.photo:'https://via.placeholder.com/100?text=USER'}" class="avatar-lg">
-                    <div class="teacher-name">${name}</div>
-                    <span class="teacher-count">${tMap[name]} چالاکی</span>
-                </div>
-                `;
-            }).join('');
-        }
-
-        window.filterT = (name) => { currentFilter = name; switchView('archive'); };
-        function renderFilter() {
-            document.getElementById('archiveControls').style.display='none';
-            const head = document.getElementById('filterHeader');
-            head.style.display='flex';
-            document.getElementById('filterName').innerText = currentFilter;
-            const meta = allTeachers.find(t=>t.name===currentFilter);
-            document.getElementById('filterAvatarContainer').innerHTML = `<img src="${(meta&&meta.photo)?meta.photo:'https://via.placeholder.com/50'}" style="width:50px;height:50px;border-radius:50%;border:2px solid var(--primary);">`;
-            
-            const list = allActivities.filter(a=>a.teacher===currentFilter);
-            document.getElementById('activitiesGrid').innerHTML = list.map(a => `
-                <div class="card">
-                    <div class="card-img-grid">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
-                    <div class="card-body">
-                        <div class="card-title">${a.name}</div>
-                        <div class="card-info">📅 ${a.date}</div>
-                    </div>
-                    <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">📄 ڕاپۆرت</button></div>
                 </div>
             `).join('');
         }
 
-        window.clearFilter = () => { currentFilter=null; document.getElementById('filterHeader').style.display='none'; document.getElementById('archiveControls').style.display='block'; renderApp(); };
-        window.switchView = (v) => {
-            document.getElementById('activitiesGrid').style.display = v==='archive'?'grid':'none';
-            document.getElementById('teachersGrid').style.display = v==='teachers'?'grid':'none';
-            document.getElementById('btn-archive').classList.toggle('active', v==='archive');
-            document.getElementById('btn-teachers').classList.toggle('active', v==='teachers');
-            document.getElementById('archiveControls').style.display = (v==='archive' && !currentFilter)?'block':'none';
+        function renderTeachers() {
+            const counts = {}; acts.forEach(a=>counts[a.teacher]=(counts[a.teacher]||0)+1);
+            document.getElementById('view-teachers').innerHTML = teachers.map(t => `
+                <div class="t-card" onclick="filterByT('${t.name}')">
+                    <img src="${t.photo||'https://via.placeholder.com/70'}" class="t-avatar">
+                    <div style="font-weight:bold;">${t.name}</div>
+                    <div style="font-size:0.8em; color:gray;">${counts[t.name]||0} چالاکی</div>
+                </div>
+            `).join('');
         }
-        document.getElementById('searchBox').addEventListener('input', renderApp);
 
-        // --- ADMIN ---
-        window.renderAdminDashboard = () => {
-            if(!currentUser) return;
-            document.getElementById('statActivities').innerText = allActivities.length;
-            const ut = new Set(allActivities.map(a=>a.teacher));
-            document.getElementById('statTeachers').innerText = Math.max(ut.size, allTeachers.length);
+        window.filterByT = (name) => {
+            const list = acts.filter(a => a.teacher === name);
+            switchView('archive');
+            document.getElementById('searchContainer').style.display = 'none';
+            document.getElementById('filterBar').style.display = 'flex';
+            document.getElementById('filterTitle').innerText = `ئەرشیفی: ${name}`;
+            renderActs(list);
+        };
+        window.clearFilter = () => { switchView('archive'); };
+        
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const list = acts.filter(a => a.name.toLowerCase().includes(term) || a.teacher.toLowerCase().includes(term));
+            renderActs(list);
+        });
 
-            document.getElementById('adminActivitiesTable').innerHTML = allActivities.map(a => `
+        // --- ADMIN PANEL ---
+        function renderAdmin() {
+            if(!user) return;
+            document.getElementById('adminTableBody').innerHTML = acts.map(a => `
                 <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:15px;">${a.name}</td>
+                    <td style="padding:10px;">${a.name}</td>
                     <td>${a.teacher}</td>
-                    <td style="text-align:left;">
-                        <button onclick="viewReport('${a.id}')" style="background:#e0e7ff; color:blue; padding:5px 10px; border-radius:5px;">📄</button>
-                        <button onclick="delItem('${a.id}')" style="background:#fee2e2; color:red; padding:5px 10px; border-radius:5px;">🗑️</button>
-                    </td>
+                    <td><button onclick="delItem('${a.id}')" style="color:red;">🗑️</button></td>
                 </tr>
             `).join('');
-
-            // Admin Teachers Grid logic (simplified for brevity)
-            const tMap={}; allActivities.forEach(a=>tMap[a.teacher]=(tMap[a.teacher]||0)+1); allTeachers.forEach(t=>{if(!tMap[t.name])tMap[t.name]=0});
-            document.getElementById('adminTeachersGrid').innerHTML = Object.keys(tMap).map(n => {
-                const m = allTeachers.find(t=>t.name===n);
-                return `<div class="teacher-item">
-                    <img src="${(m&&m.photo)?m.photo:'https://via.placeholder.com/50'}" class="avatar-lg">
-                    <div>${n}</div>
-                    <div style="margin-top:10px;">
-                        <button onclick="editTName('${n}','${m?m.id:''}')">✏️</button>
-                        <button onclick="openPhotoModal('${n}')">📷</button>
-                        <button onclick="delTProfile('${n}')" style="color:red;">🗑️</button>
-                    </div>
-                </div>`;
-            }).join('');
-        };
-        window.switchAdminTab = (t) => {
-            document.getElementById('adminActivitiesView').style.display = t==='activities'?'block':'none';
-            document.getElementById('adminTeachersView').style.display = t==='teachers'?'block':'none';
-            document.getElementById('tab-admin-acts').classList.toggle('active', t==='activities');
-            document.getElementById('tab-admin-teach').classList.toggle('active', t==='teachers');
+            
+            document.getElementById('adminTeacherList').innerHTML = teachers.map(t => `
+                <div class="t-card">
+                    <div>${t.name}</div>
+                    <button onclick="delTeach('${t.id}')" style="color:red; margin-top:5px;">🗑️</button>
+                </div>
+            `).join('');
         }
+        window.delItem = async(id) => { if(confirm("سڕینەوە؟")) await deleteDoc(doc(db, "activities", id)); };
+        window.delTeach = async(id) => { if(confirm("سڕینەوە؟")) await deleteDoc(doc(db, "teachers", id)); };
+        window.openTeacherModal = () => document.getElementById('newTModal').classList.add('active');
+        window.addNewTeacher = async() => {
+            const n = document.getElementById('newTName').value;
+            if(n) await addDoc(teachRef, {name:n, photo:""});
+            document.getElementById('newTModal').classList.remove('active');
+        };
 
-        // --- EDITOR & LOGIC ---
+        // --- REPORT EDITOR ---
         window.openEditor = () => {
-            ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(id=>document.getElementById(id).value='');
-            document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
-            window.localFiles = [null,null,null,null];
-            for(let i=0; i<4; i++){
-                const img=document.getElementById('img'+i); img.src=''; img.parentElement.style.background='#f1f5f9';
-                window.imgState[i]={s:1,x:0,y:0}; img.style.transform='scale(1)';
-            }
-            updateDropdown();
-            enableEdit(true);
+            resetEditor();
             document.getElementById('editorModal').classList.add('active');
+            enableInputs(true);
         };
         window.closeEditor = () => document.getElementById('editorModal').classList.remove('active');
-        window.viewReport = (id) => {
-            const a = allActivities.find(x=>x.id===id); if(!a)return;
-            document.getElementById('editorModal').classList.add('active');
+        
+        window.openReport = (id) => {
+            resetEditor();
+            const a = acts.find(x=>x.id===id);
             document.getElementById('inpName').value = a.name;
             document.getElementById('inpComm').value = a.committee||'';
             document.getElementById('inpTeacher').value = a.teacher;
             document.getElementById('inpDate').value = a.date;
             document.getElementById('inpNotes').value = a.notes||'';
-            for(let i=0; i<4; i++){
-                const el=document.getElementById('img'+i); 
-                window.imgState[i]={s:1,x:0,y:0}; el.style.transform='scale(1)';
-                if(a.images && a.images[i]) el.src=a.images[i]; else el.src='';
+            for(let i=0; i<4; i++) {
+                if(a.images && a.images[i]) document.getElementById('img'+i).src = a.images[i];
             }
-            enableEdit(!!currentUser);
+            document.getElementById('editorModal').classList.add('active');
+            enableInputs(!!user);
         };
-        function enableEdit(ok){
+
+        function resetEditor() {
+            ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(id=>document.getElementById(id).value='');
+            document.getElementById('inpDate').value = new Date().toISOString().split('T')[0];
+            updateDropdown();
+            localFiles=[null,null,null,null];
+            
+            // Build Slots
+            document.getElementById('imgGrid').innerHTML = [0,1,2,3].map(i => `
+                <div class="slot" id="slot${i}" onmousedown="dragStart(event,${i})" ontouchstart="dragStart(event,${i})">
+                    <img id="img${i}">
+                    <div class="ctrls">
+                        <div class="c-btn" onclick="pickFile(${i})">📂</div>
+                        <div class="c-btn" onclick="zoom(${i},0.1)">+</div>
+                        <div class="c-btn" onclick="zoom(${i},-0.1)">-</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateDropdown(){
+            const s = document.getElementById('inpTeacher'); s.innerHTML='<option value="">هەڵبژێرە...</option>';
+            teachers.forEach(t => {const o=document.createElement('option'); o.value=t.name; o.text=t.name; s.appendChild(o)});
+        }
+        function enableInputs(ok) {
             ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(id=>document.getElementById(id).disabled=!ok);
-            document.getElementById('btnSaveArchive').style.display=ok?'inline-block':'none';
-            document.getElementById('layoutControls').style.display=ok?'flex':'none';
-            document.querySelectorAll('.controls').forEach(c=>c.style.display=ok?'flex':'none');
+            document.getElementById('btnSave').style.display = ok?'inline-block':'none';
+            document.querySelectorAll('.ctrls').forEach(c=>c.style.display=ok?'flex':'none');
         }
 
-        // --- IMAGE HANDLING (DRAG/ZOOM/UPLOAD) ---
-        // Keeps original logic but adapted to new UI
-        async function uploadToImgBB(file) {
-            const fd=new FormData(); fd.append("image",file);
-            const res=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:fd});
-            const d=await res.json(); return d.data.url;
-        }
+        // --- EDITOR ACTIONS (UPLOAD/DRAG) ---
+        async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
+        
         window.saveToArchive = async () => {
-            if(!currentUser) return;
-            const n=document.getElementById('inpName').value; const t=document.getElementById('inpTeacher').value;
-            if(!n || !t) { alert("زانیاری تەواو نییە"); return; }
+            const n = document.getElementById('inpName').value;
+            const t = document.getElementById('inpTeacher').value;
+            if(!n || !t) return alert("زانیاری کەمە");
             alert("چاوەڕێ بە...");
-            try {
-                let urls=[];
-                for(let i=0; i<4; i++){
-                    if(window.localFiles[i]) urls.push(await uploadToImgBB(window.localFiles[i]));
-                }
-                await addDoc(activitiesRef, {
-                    name:n, committee:document.getElementById('inpComm').value, teacher:t,
-                    date:document.getElementById('inpDate').value, notes:document.getElementById('inpNotes').value,
-                    images:urls, createdAt:new Date()
-                });
-                alert("✅ تەواو"); closeEditor();
-            } catch(e){ alert("هەڵە: "+e.message); }
+            const urls = [];
+            for(let i=0; i<4; i++) if(localFiles[i]) urls.push(await upload(localFiles[i]));
+            await addDoc(actRef, {
+                name:n, committee:document.getElementById('inpComm').value, teacher:t,
+                date:document.getElementById('inpDate').value, notes:document.getElementById('inpNotes').value,
+                images:urls, createdAt:new Date()
+            });
+            alert("تەواو"); closeEditor();
         };
 
-        window.triggerFile = (i) => { if(document.getElementById('inpName').disabled)return; window.currentSlot=i; document.getElementById('hiddenFileInput').click(); };
-        document.getElementById('hiddenFileInput').addEventListener('change', (e)=>{
-            const f=e.target.files[0]; if(f){ window.localFiles[window.currentSlot]=f; const r=new FileReader(); r.onload=ev=>document.getElementById('img'+window.currentSlot).src=ev.target.result; r.readAsDataURL(f); } e.target.value='';
+        window.pickFile = (i) => { if(document.getElementById('inpName').disabled)return; curSlot=i; document.getElementById('hiddenFile').click(); };
+        document.getElementById('hiddenFile').addEventListener('change', (e)=>{
+            const f=e.target.files[0]; if(f){ localFiles[curSlot]=f; const r=new FileReader(); r.onload=ev=>document.getElementById('img'+curSlot).src=ev.target.result; r.readAsDataURL(f); }
         });
 
-        // Drag/Zoom Logic (Minified for space, same functionality)
-        let isD=false, actI=0, sX=0, sY=0, iX=0, iY=0;
-        window.startDrag=(e,i)=>{ if(!document.getElementById('img'+i).src || document.getElementById('inpName').disabled)return; isD=true; actI=i; const c=e.touches?e.touches[0]:e; sX=c.clientX; sY=c.clientY; iX=window.imgState[i].x; iY=window.imgState[i].y; };
-        window.addEventListener('mousemove',e=>{if(!isD)return; e.preventDefault(); upd(e.clientX-sX, e.clientY-sY)});
-        window.addEventListener('touchmove',e=>{if(!isD)return; upd(e.touches[0].clientX-sX, e.touches[0].clientY-sY)},{passive:false});
+        // Minified Drag/Zoom
+        let isD=false,aI=0,sX=0,sY=0,iX=0,iY=0;
+        window.dragStart=(e,i)=>{if(document.getElementById('inpName').disabled)return; isD=true; aI=i; const c=e.touches?e.touches[0]:e; sX=c.clientX; sY=c.clientY; iX=imgState[i].x; iY=imgState[i].y;};
+        window.addEventListener('mousemove',e=>{if(!isD)return; e.preventDefault(); upD(e.clientX-sX,e.clientY-sY)});
+        window.addEventListener('touchmove',e=>{if(!isD)return; upD(e.touches[0].clientX-sX,e.touches[0].clientY-sY)},{passive:false});
         window.addEventListener('mouseup',()=>isD=false); window.addEventListener('touchend',()=>isD=false);
-        function upd(dx,dy){ const s=window.imgState[actI]; s.x=iX+dx; s.y=iY+dy; appl(actI); }
-        window.adjustZoom=(i,d)=>{ const s=window.imgState[i]; s.s=Math.max(0.1,s.s+d); appl(i); };
-        function appl(i){ const s=window.imgState[i]; document.getElementById('img'+i).style.transform=`translate(${s.x}px, ${s.y}px) scale(${s.s})`; }
-        
-        window.setLayout = (t) => { document.getElementById('imgContainer').className=`p-images ${t}`; };
-        window.delItem = async(id) => { if(confirm("دڵنیایت؟")) await deleteDoc(doc(db,"activities",id)); };
-        
-        // Admin Teacher Funcs
-        window.openAddTeacherModal=()=>document.getElementById('teacherModal').style.display='flex';
-        window.saveNewTeacher=async()=>{
-            const n=document.getElementById('newTeacherName').value; if(!n)return;
-            await addDoc(teachersRef,{name:n,photo:""}); document.getElementById('teacherModal').style.display='none';
-        };
-        window.openPhotoModal=(n)=>{teacherPhotoTarget=n; document.getElementById('photoModal').style.display='flex';};
-        window.handleTeacherPhotoSelect=async(input)=>{
-            const f=input.files[0]; if(!f)return;
-            const u=await uploadToImgBB(f); const m=allTeachers.find(t=>t.name===teacherPhotoTarget);
-            if(m) await updateDoc(doc(db,"teachers",m.id),{photo:u}); document.getElementById('photoModal').style.display='none';
-        }
-        window.delTProfile=async(n)=>{const m=allTeachers.find(t=>t.name===n); if(m && confirm("سڕینەوە؟")) await deleteDoc(doc(db,"teachers",m.id));}
-
-        window.renderApp = renderApp; window.renderAdminDashboard = renderAdminDashboard;
-    </script>
-    
-    <script>
-        function checkSitePassword(){ if(document.getElementById('sitePassword').value==="2526"){document.getElementById('securityOverlay').style.display='none'; document.getElementById('mainContent').style.display='block';}else{document.getElementById('errorMsg').style.display='block';} }
-        window.printReport=()=>{window.print();}
-        window.downloadAsImage=()=>{
-            document.querySelectorAll('.controls').forEach(c=>c.style.display='none');
-            html2canvas(document.getElementById('reportPaper'),{scale:2, useCORS:true, scrollY:-window.scrollY}).then(c=>{
-                const l=document.createElement('a'); l.download='Report.png'; l.href=c.toDataURL(); l.click();
-                if(document.getElementById('btnSaveArchive').style.display!=='none') document.querySelectorAll('.controls').forEach(c=>c.style.display='flex');
-            });
-        }
+        function upD(dx,dy){const s=imgState[aI]; s.x=iX+dx; s.y=iY+dy; tr(aI);}
+        window.zoom=(i,v)=>{imgState[i].s=Math.max(0.1,imgState[i].s+v); tr(i);}
+        function tr(i){const s=imgState[i]; document.getElementById('img'+i).style.transform=`translate(${s.x}px,${s.y}px) scale(${s.s})`;}
     </script>
 </body>
 </html>
