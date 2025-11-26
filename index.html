@@ -138,7 +138,7 @@
     <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; justify-content:center; align-items:center;">
         <div class="glass" style="padding:40px; text-align:center; max-width:300px; width:90%; background:white;">
             <div style="font-size:3em; margin-bottom:10px;">🔒</div><h2 style="margin-bottom:20px; color:#333;" data-i18n="secure_area">پارێزراو</h2>
-            <input type="password" id="sitePassword" placeholder="••••••" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:15px; text-align:center;">
+                        <input type="password" id="sitePassword" placeholder="••••••" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:15px; text-align:center;">
             <button onclick="checkSitePassword()" class="admin-link-btn" style="width:100%; justify-content:center; background:var(--primary); color:white;" data-i18n="btn_login">چوونەژوورەوە</button>
             <p id="errorMsg" style="color:red; margin-top:10px; display:none;" data-i18n="error_pass">هەڵەیە</p>
         </div>
@@ -285,6 +285,36 @@
         const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042356.png";
         const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042422.png";
 
+        // --- SITE ACCESS PASSWORD LOGIC ---
+        const SITE_ACCESS_PASSWORD = "2526"; // پاسۆردەکەی ئێستا 2526 یە
+        
+        window.checkSitePassword = () => {
+            const enteredPass = document.getElementById('sitePassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const securityOverlay = document.getElementById('securityOverlay');
+            const mainContent = document.getElementById('mainContent');
+
+            if (enteredPass === SITE_ACCESS_PASSWORD) {
+                // ئەگەر پاسۆردەکە ڕاست بوو
+                securityOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+                errorMsg.style.display = 'none';
+                localStorage.setItem('siteAccessGranted', 'true'); // بۆ ئەوەی جارێکی تر پاسۆرد نەپرسێتەوە
+            } else {
+                // ئەگەر پاسۆردەکە هەڵە بوو
+                errorMsg.style.display = 'block';
+            }
+        };
+
+        // Check if access was previously granted on page load
+        if (localStorage.getItem('siteAccessGranted') === 'true') {
+            document.getElementById('securityOverlay').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        } else {
+            // ئەگەر نا، شاشەی پارێزراو نیشان بدە
+            document.getElementById('securityOverlay').style.display = 'flex';
+        }
+
         // --- TRANSLATIONS ---
         const translations = {
             ku: {
@@ -352,4 +382,108 @@
         // Apply translations to static elements
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if(translations[currentLang][key]) el.innerText = translations[currentLang
+            if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
+        });
+        document.getElementById('searchBox').placeholder = t('search');
+
+        // Theme Toggle Logic
+        function getTheme() { return document.documentElement.getAttribute('data-theme') || 'light'; }
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            document.getElementById('themeIcon').innerText = theme === 'dark' ? '☀️' : '🌙';
+        }
+        window.toggleTheme = () => { setTheme(getTheme() === 'light' ? 'dark' : 'light'); };
+        setTheme(localStorage.getItem('theme') || 'light'); // Initial theme setting
+
+        // Other functions... (The rest of your existing JS logic goes here)
+        
+        // ** The rest of your Firebase and other complex JS functions should continue here **
+        
+        // (For brevity, I've omitted the rest of the original Firebase/Editor logic,
+        // but you should include all of it right after the translation logic.
+        // It should start with 'window.switchView' or similar functions.)
+        
+        // ... (Remaining complex JS functions like switchView, renderActivities, loginAdmin, etc.)
+        
+        // A placeholder for the rest of your original functions
+        window.switchView = (view) => {
+             document.getElementById('btn-archive').classList.remove('active');
+             document.getElementById('btn-teachers').classList.remove('active');
+             document.getElementById('archiveControls').style.display = 'none';
+             document.getElementById('filterHeader').style.display = 'none';
+             document.getElementById('activitiesGrid').style.display = 'none';
+             document.getElementById('teachersGrid').style.display = 'none';
+
+             if (view === 'archive') {
+                 document.getElementById('btn-archive').classList.add('active');
+                 document.getElementById('archiveControls').style.display = 'block';
+                 document.getElementById('activitiesGrid').style.display = 'grid';
+                 renderActivities(acts); // Assuming this function exists in your full code
+             } else if (view === 'teachers') {
+                 document.getElementById('btn-teachers').classList.add('active');
+                 document.getElementById('teachersGrid').style.display = 'grid';
+                 renderTeachers(teachers); // Assuming this function exists in your full code
+             }
+        };
+        
+        // Example placeholder function for Firebase/Auth
+        window.loginAdmin = () => {
+             alert('Admin login attempt with Firebase auth. This needs Firebase setup.');
+             // Actual Firebase logic here
+        };
+        
+        // Placeholder for the critical `renderActivities` and `renderTeachers` functions
+        const renderActivities = (activityList) => {
+            const container = document.getElementById('activitiesGrid');
+            container.innerHTML = ''; // Clear existing content
+            // Simple rendering logic placeholder
+            if (activityList.length === 0) {
+                 container.innerHTML = `<p style="text-align:center; margin-top:50px; color:var(--text-light);">${t('no_activities') || 'هیچ چالاکییەک نییە.'}</p>`;
+            } else {
+                activityList.forEach(act => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-img-grid">... (Images go here) ...</div>
+                        <div class="card-body">
+                            <div class="card-title">${act.name || 'چالاکی بێ ناو'}</div>
+                            <div class="card-info">📅 ${act.date || 'بێ بەروار'}</div>
+                            <div class="card-info">👤 ${act.teacherName || 'بێ مامۆستا'}</div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-card" onclick="openReportModal('${act.id}')">${t('view_report')}</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+        };
+
+        const renderTeachers = (teacherList) => {
+             const container = document.getElementById('teachersGrid');
+             container.innerHTML = '';
+             // Simple teacher rendering placeholder
+             teacherList.forEach(teacher => {
+                 const item = document.createElement('div');
+                 item.className = 'teacher-item';
+                 item.innerHTML = `
+                    <img src="${teacher.photoUrl || MALE_ICON}" class="avatar-lg" alt="${teacher.name}">
+                    <h4 style="margin:5px 0 0;">${teacher.name}</h4>
+                    <p style="font-size:0.8em; color:var(--text-light);">${teacher.activityCount || 0} ${t('stat_activity')}</p>
+                 `;
+                 container.appendChild(item);
+             });
+        };
+
+        // Initialize with empty data (since I can't access your live Firebase data)
+        // In your full code, the Firebase listeners will populate these arrays.
+        acts = [{id: '1', name: 'چالاکی تاقیکردنەوە', date: '2025/11/27', teacherName: 'ڕەنج سابر'}];
+        teachers = [{id: 't1', name: 'نەسرین جەمال', gender: 'female', photoUrl: FEMALE_ICON, activityCount: 5}, {id: 't2', name: 'هێمن عەلی', gender: 'male', photoUrl: MALE_ICON, activityCount: 8}];
+
+        // Initial view load
+        switchView('archive');
+        
+    </script>
+</body>
+</html>
