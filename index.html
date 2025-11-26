@@ -68,7 +68,11 @@
         .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
         .teacher-item { text-align: center; padding: 20px 10px; background: var(--bg-card); border-radius: 20px; transition: 0.3s; border: var(--border); cursor: pointer; box-shadow: var(--shadow); }
         .teacher-item:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: cover; border: 3px solid var(--primary); padding: 3px; background: var(--bg-body); }
+        
+        .avatar-lg { 
+            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: contain; 
+            border: 3px solid var(--primary); padding: 5px; background: var(--bg-body); 
+        }
 
         .admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none; }
         .admin-nav { position: sticky; top: 0; background: #1e293b; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
@@ -78,6 +82,7 @@
         
         .editor-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
         .editor-toolbar { background: #1e293b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        
         .paper-area { background: #334155; padding: 20px; border-radius: 15px; flex-grow: 1; overflow: auto; display: flex; justify-content: center; }
         .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 15mm; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .p-header { display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
@@ -214,7 +219,7 @@
 
             <label style="font-size:0.9em; color:gray;">وێنە</label>
             <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
-                <img id="editTeacherPreview" src="" style="width:50px; height:50px; border-radius:50%; border:1px solid #ddd; object-fit:cover; display:none;">
+                <img id="editTeacherPreview" src="" style="width:50px; height:50px; border-radius:50%; border:1px solid #ddd; object-fit:contain; display:none;">
                 <button onclick="document.getElementById('editTeacherFile').click()" class="admin-link-btn" style="background:#e0e7ff; color:blue;">📷 گۆڕین</button>
                 <button onclick="removeTeacherPhoto()" class="admin-link-btn" style="background:#fee2e2; color:red;">❌ سڕینەوەی وێنە</button>
                 <input type="file" id="editTeacherFile" style="display:none;" accept="image/*" onchange="previewTeacherImage(this)">
@@ -256,8 +261,8 @@
         let tempTeacherFile = null;
         let removePhotoFlag = false;
 
-        const MALE_ICON = "https://img.icons8.com/fluency/96/teacher.png";
-        const FEMALE_ICON = "https://img.icons8.com/fluency/96/teacher-female.png";
+        const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+        const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/847/847963.png";
 
         window.toggleTheme = () => {
             const html = document.documentElement;
@@ -296,7 +301,7 @@
         });
 
         function getTeacherImg(t) {
-            if(t.photo && typeof t.photo === 'string' && t.photo.length > 10) return t.photo;
+            if(t.photo && t.photo.length > 10) return t.photo;
             return t.gender === 'female' ? FEMALE_ICON : MALE_ICON;
         }
 
@@ -335,7 +340,7 @@
             document.getElementById('filterHeader').style.display='flex';
             document.getElementById('filterName').innerText=currentFilter;
             const m=teachers.find(t=>t.name===currentFilter);
-            document.getElementById('filterAvatarContainer').innerHTML=`<img src="${m?getTeacherImg(m):MALE_ICON}" style="width:50px;height:50px;border-radius:50%;">`;
+            document.getElementById('filterAvatarContainer').innerHTML=`<img src="${m?getTeacherImg(m):MALE_ICON}" style="width:50px;height:50px;border-radius:50%;object-fit:contain;">`;
             const list=acts.filter(a=>a.teacher===currentFilter);
             document.getElementById('activitiesGrid').innerHTML=list.map(a=>`
                 <div class="card">
