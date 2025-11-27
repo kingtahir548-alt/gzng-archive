@@ -503,16 +503,51 @@
 
         async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
 
+        // --- FIXED FUNCTION FOR EDITING TEACHER NAME ---
         window.saveTeacherChanges = async () => {
-            const id = document.getElementById('editTeacherId').value; const name = document.getElementById('editTeacherName').value; const gender = document.getElementById('editTeacherGender').value;
-            if(!name) return alert("Name Required"); document.getElementById('teacherEditModal').classList.remove('active'); 
-            let photoUrl = null; if(tempTeacherFile) { try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("Err"); } }
-            const data = { name: name, gender: gender }; if(photoUrl) data.photo = photoUrl; if(removePhotoFlag) data.photo = ""; 
+            const id = document.getElementById('editTeacherId').value; 
+            const name = document.getElementById('editTeacherName').value; 
+            const gender = document.getElementById('editTeacherGender').value;
+
+            if(!name) return alert("Name Required"); 
+            
+            // 1. Find Old Name BEFORE Updating
+            let oldName = "";
+            if(id){
+                const oldT = teachers.find(x => x.id === id);
+                if(oldT) oldName = oldT.name;
+            }
+
+            document.getElementById('teacherEditModal').classList.remove('active'); 
+            
+            let photoUrl = null; 
+            if(tempTeacherFile) { 
+                try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("Err"); } 
+            }
+
+            const data = { name: name, gender: gender }; 
+            if(photoUrl) data.photo = photoUrl; 
+            if(removePhotoFlag) data.photo = ""; 
+            
             if(id) {
-                const oldT = teachers.find(x => x.id === id); await updateDoc(doc(db, "teachers", id), data);
-                if(oldT.name !== name) { const q = query(actRef, where("teacher", "==", oldT.name)); const snap = await getDocs(q); const batch = writeBatch(db); snap.forEach(d => batch.update(d.ref, { teacher: name })); await batch.commit(); }
-            } else { if(!data.photo) data.photo = ""; await addDoc(teachRef, data); }
+                // 2. Update the Teacher Document
+                await updateDoc(doc(db, "teachers", id), data);
+
+                // 3. CRITICAL: Update all activities that had the old name
+                if(oldName && oldName !== name) { 
+                    const q = query(actRef, where("teacher", "==", oldName)); 
+                    const snap = await getDocs(q); 
+                    const batch = writeBatch(db); 
+                    snap.forEach(d => batch.update(d.ref, { teacher: name })); 
+                    await batch.commit(); 
+                    alert("Updated name in all past activities!");
+                }
+            } else { 
+                if(!data.photo) data.photo = ""; 
+                await addDoc(teachRef, data); 
+            }
         };
+
         window.delTProfile=async(n, id)=>{if(confirm("Delete?"))await deleteDoc(doc(db,"teachers",id));};
 
         window.openEditor=()=>{ ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(i=>document.getElementById(i).value=''); document.getElementById('inpDate').value=new Date().toISOString().split('T')[0]; window.localFiles=[null,null,null,null]; for(let i=0;i<4;i++){const el=document.getElementById('img'+i); el.src=''; window.imgState[i]={s:1,x:0,y:0}; el.style.transform='scale(1)';} enableEdit(true); document.getElementById('editorModal').classList.add('active'); };
