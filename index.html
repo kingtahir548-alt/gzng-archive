@@ -259,7 +259,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, writeBatch, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
         
         const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
@@ -503,50 +503,59 @@
 
         async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
 
-        // --- FIXED FUNCTION FOR EDITING TEACHER NAME ---
+        // --- NEW & ROBUST SAVE FUNCTION ---
         window.saveTeacherChanges = async () => {
-            const id = document.getElementById('editTeacherId').value; 
-            const name = document.getElementById('editTeacherName').value; 
-            const gender = document.getElementById('editTeacherGender').value;
+            try {
+                const id = document.getElementById('editTeacherId').value; 
+                const name = document.getElementById('editTeacherName').value; 
+                const gender = document.getElementById('editTeacherGender').value;
 
-            if(!name) return alert("Name Required"); 
-            
-            // 1. Find Old Name BEFORE Updating
-            let oldName = "";
-            if(id){
-                const oldT = teachers.find(x => x.id === id);
-                if(oldT) oldName = oldT.name;
-            }
-
-            document.getElementById('teacherEditModal').classList.remove('active'); 
-            
-            let photoUrl = null; 
-            if(tempTeacherFile) { 
-                try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("Err"); } 
-            }
-
-            const data = { name: name, gender: gender }; 
-            if(photoUrl) data.photo = photoUrl; 
-            if(removePhotoFlag) data.photo = ""; 
-            
-            if(id) {
-                // 2. Update the Teacher Document
-                await updateDoc(doc(db, "teachers", id), data);
-
-                // 3. CRITICAL: Update all activities that had the old name
-                if(oldName && oldName !== name) { 
-                    const q = query(actRef, where("teacher", "==", oldName)); 
-                    const snap = await getDocs(q); 
-                    const batch = writeBatch(db); 
-                    snap.forEach(d => batch.update(d.ref, { teacher: name })); 
-                    await batch.commit(); 
-                    alert("Updated name in all past activities!");
+                if(!name) return alert("Name Required");
+                
+                let oldName = "";
+                
+                // 1. Fetch REAL old name from Database to be sure
+                if(id) {
+                    const docSnap = await getDoc(doc(db, "teachers", id));
+                    if(docSnap.exists()) {
+                        oldName = docSnap.data().name;
+                    }
                 }
-            } else { 
-                if(!data.photo) data.photo = ""; 
-                await addDoc(teachRef, data); 
+
+                document.getElementById('teacherEditModal').classList.remove('active');
+
+                let photoUrl = null; 
+                if(tempTeacherFile) { 
+                    try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("Photo Upload Failed"); } 
+                }
+
+                const data = { name: name, gender: gender };
+                if(photoUrl) data.photo = photoUrl;
+                if(removePhotoFlag) data.photo = "";
+
+                if(id) {
+                    await updateDoc(doc(db, "teachers", id), data);
+
+                    // Update Activities if name changed
+                    if(oldName && oldName !== name) {
+                        const q = query(actRef, where("teacher", "==", oldName));
+                        const snap = await getDocs(q);
+                        if(!snap.empty) {
+                            const batch = writeBatch(db);
+                            snap.forEach(d => batch.update(d.ref, { teacher: name }));
+                            await batch.commit();
+                            alert("Updated " + snap.size + " activities with the new name!");
+                        }
+                    }
+                } else {
+                    if(!data.photo) data.photo = "";
+                    await addDoc(teachRef, data);
+                }
+            } catch(err) {
+                alert("Error: " + err.message);
+                console.error(err);
             }
-        };
+        }
 
         window.delTProfile=async(n, id)=>{if(confirm("Delete?"))await deleteDoc(doc(db,"teachers",id));};
 
