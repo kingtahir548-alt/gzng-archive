@@ -503,7 +503,7 @@
 
         async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
 
-        // --- NEW & ROBUST SAVE FUNCTION ---
+        // --- NEW & ROBUST SAVE FUNCTION WITH ALERTS ---
         window.saveTeacherChanges = async () => {
             try {
                 const id = document.getElementById('editTeacherId').value; 
@@ -512,6 +512,8 @@
 
                 if(!name) return alert("Name Required");
                 
+                alert("Please wait, updating..."); // STEP 1
+                
                 let oldName = "";
                 
                 // 1. Fetch REAL old name from Database to be sure
@@ -519,6 +521,9 @@
                     const docSnap = await getDoc(doc(db, "teachers", id));
                     if(docSnap.exists()) {
                         oldName = docSnap.data().name;
+                        alert("Old name found in DB: " + oldName); // STEP 2
+                    } else {
+                         alert("Could not find teacher in DB!");
                     }
                 }
 
@@ -540,11 +545,15 @@
                     if(oldName && oldName !== name) {
                         const q = query(actRef, where("teacher", "==", oldName));
                         const snap = await getDocs(q);
-                        if(!snap.empty) {
+                        
+                        if(snap.empty) {
+                            alert("No activities found with the name: " + oldName); // STEP 3 (Empty)
+                        } else {
+                            alert("Found " + snap.size + " activities to update. Processing..."); // STEP 3 (Found)
                             const batch = writeBatch(db);
                             snap.forEach(d => batch.update(d.ref, { teacher: name }));
                             await batch.commit();
-                            alert("Updated " + snap.size + " activities with the new name!");
+                            alert("Success! All activities updated from " + oldName + " to " + name); // STEP 4
                         }
                     }
                 } else {
