@@ -1,805 +1,548 @@
 <!DOCTYPE html>
 <html lang="ku" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <style>
-        /* --- گۆڕانکاری بۆ گونجاندنی نوتیفیکەیشن --- */
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #818cf8;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-gray: #64748b;
-            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-            --radius: 20px;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- دیزاینی گشتی و مۆدێرن --- */
+        :root {
+            --primary: #4f46e5; /* ڕەنگی سەرەکی - شینی تۆخ */
+            --primary-light: #818cf8;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+            --radius: 20px;
+        }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Noto Sans Arabic', sans-serif;
-            background-color: var(--bg-color);
-            background-image:
-                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text-dark);
-        }
+        body {
+            font-family: 'Noto Sans Arabic', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-dark);
+        }
 
-        .container { max-width: 1200px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .container { max-width: 1200px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- سەرپەڕ (Header) --- */
-        header {
-            background: var(--card-bg);
-            padding: 40px 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, var(--primary), #ec4899);
-        }
+        /* --- سەرپەڕ (Header) --- */
+        header {
+            background: var(--card-bg);
+            padding: 40px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, var(--primary), #ec4899);
+        }
 
-        h1 { 
-            color: var(--text-dark); 
-            font-size: 2.5em; 
-            margin-bottom: 10px; 
-            font-weight: 900;
-            letter-spacing: -1px;
-        }
-        .subtitle { color: var(--text-gray); font-size: 1.1em; font-weight: 500; }
+        h1 { 
+            color: var(--text-dark); 
+            font-size: 2.5em; 
+            margin-bottom: 10px; 
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        .subtitle { color: var(--text-gray); font-size: 1.1em; font-weight: 500; }
 
-        /* --- دوگمەکانی گۆڕین (Tabs) --- */
-        .nav-tabs {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;
-            background: white; padding: 8px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            flex-wrap: wrap; /* بۆ موبایل */
-        }
-        .tab-btn {
-            background: transparent; color: var(--text-gray); border: none;
-            padding: 10px 20px; border-radius: 40px; font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: all 0.3s ease;
-            font-family: 'Noto Sans Arabic', sans-serif;
-            white-space: nowrap; /* بۆ گرتنی نووسینەکە بە یەک هێڵ */
-        }
-        .tab-btn.active {
-            background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-        .tab-btn:hover:not(.active) { background: #f1f5f9; color: var(--text-dark); }
+        /* --- دوگمەکانی گۆڕین (Tabs) --- */
+        .nav-tabs {
+            display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;
+            background: white; padding: 8px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .tab-btn {
+            background: transparent; color: var(--text-gray); border: none;
+            padding: 10px 30px; border-radius: 40px; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        .tab-btn.active {
+            background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .tab-btn:hover:not(.active) { background: #f1f5f9; color: var(--text-dark); }
 
-        /* --- بەشی گەڕان و زیادکردن --- */
-        .controls {
-            background: white; padding: 10px; border-radius: 16px; margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; flex-wrap: wrap;
-            align-items: center;
-        }
-        .search-box {
-            flex: 1; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; 
-            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s;
-            background: #f8fafc;
-        }
-        .search-box:focus { border-color: var(--primary); background: white; outline: none; }
-        
-        .add-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
-            color: white; border: none; padding: 12px 25px;
-            border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; 
-            transition: all 0.3s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-            display: flex; align-items: center; gap: 8px; font-family: 'Noto Sans Arabic', sans-serif;
-        }
-        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
+        /* --- بەشی گەڕان و زیادکردن --- */
+        .controls {
+            background: white; padding: 10px; border-radius: 16px; margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; 
+            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s;
+            background: #f8fafc;
+        }
+        .search-box:focus { border-color: var(--primary); background: white; outline: none; }
+        
+        .add-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+            color: white; border: none; padding: 12px 25px;
+            border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; 
+            transition: all 0.3s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+            display: flex; align-items: center; gap: 8px; font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
 
-        /* --- کارتەکانی چالاکی (هەمان دیزاینی پێشوو) --- */
-        .activities-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
-        }
-        .activity-card {
-            background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column;
-        }
-        .activity-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); }
-        
-        .activity-header { padding: 20px; background: white; }
-        .activity-header h3 { font-size: 1.4em; color: var(--text-dark); margin-bottom: 8px; }
-        .activity-meta { display: flex; justify-content: space-between; font-size: 0.9em; color: var(--text-gray); }
-        
-        .images-container {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
-            height: 240px; overflow: hidden; background: #f1f5f9;
-        }
-        .activity-image {
-            width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: 0.3s;
-        }
-        .activity-notes { 
-            padding: 20px; color: #475569; font-size: 0.95em; line-height: 1.7; 
-            background: #fcfcfc; flex-grow: 1; border-top: 1px solid #f1f5f9;
-        }
-        
-        .card-footer {
-            padding: 15px 20px; background: white; border-top: 1px solid #f1f5f9; text-align: right;
-        }
-        .delete-btn {
-            background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em; 
-            transition: 0.2s; font-family: 'Noto Sans Arabic', sans-serif;
-        }
-        .delete-btn:hover { background: #fecaca; }
+        /* --- کارتەکانی چالاکی --- */
+        .activities-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
+        }
+        .activity-card {
+            background: var(--card-bg); border-radius: 24px; overflow: hidden;
+            box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column;
+        }
+        .activity-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); }
+        
+        .activity-header {
+            padding: 20px; background: white;
+        }
+        .activity-header h3 { font-size: 1.4em; color: var(--text-dark); margin-bottom: 8px; }
+        .activity-meta { display: flex; justify-content: space-between; font-size: 0.9em; color: var(--text-gray); }
+        
+        .images-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
+            height: 240px; overflow: hidden; background: #f1f5f9;
+        }
+        .activity-image {
+            width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: 0.3s;
+        }
+        .activity-image:hover { opacity: 0.9; }
+        
+        .activity-notes { 
+            padding: 20px; color: #475569; font-size: 0.95em; line-height: 1.7; 
+            background: #fcfcfc; flex-grow: 1; border-top: 1px solid #f1f5f9;
+        }
+        
+        .card-footer {
+            padding: 15px 20px; background: white; border-top: 1px solid #f1f5f9; text-align: right;
+        }
+        .delete-btn {
+            background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em; 
+            transition: 0.2s; font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        .delete-btn:hover { background: #fecaca; }
 
-        /* --- لیستی مامۆستایان (هەمان دیزاینی پێشوو) --- */
-        .teachers-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; display: none;
-        }
-        
-        /* --- فۆرم و مۆداڵ --- */
-        .modal, .image-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal.active, .image-modal.active { display: flex; animation: zoomIn 0.3s ease; }
-        
-        .modal-content {
-            background: white; border-radius: 24px; padding: 35px; max-width: 550px; width: 100%;
-            max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .modal-content h2 { margin-bottom: 25px; color: var(--text-dark); font-weight: 900; text-align: center; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #475569; font-size: 0.95em; }
-        .form-group input, .form-group textarea, .form-group select { /* زیادکردنی سێلێکت */
-            width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px;
-            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s; background: #f8fafc;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); background: white; outline: none; }
-        
-        .save-btn {
-            background: var(--primary); color: white; border: none; padding: 15px; 
-            border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; 
-            width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic', sans-serif;
-            transition: 0.3s;
-        }
-        .save-btn:hover { background: #4338ca; }
+        /* --- لیستی مامۆستایان --- */
+        .teachers-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; display: none;
+        }
+        .teacher-card {
+            background: white; padding: 30px 20px; border-radius: 24px; text-align: center;
+            box-shadow: var(--shadow); cursor: pointer; transition: 0.3s;
+            border: 2px solid transparent; position: relative; overflow: hidden;
+        }
+        .teacher-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: var(--primary); opacity: 0; transition: 0.3s;
+        }
+        .teacher-card:hover { transform: translateY(-5px); border-color: rgba(79, 70, 229, 0.1); }
+        .teacher-card:hover::before { opacity: 1; }
+        
+        .teacher-avatar {
+            width: 80px; height: 80px; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 50%; margin: 0 auto 15px; color: var(--primary);
+            display: flex; align-items: center; justify-content: center; font-size: 32px;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+        }
+        .teacher-name { font-weight: 800; font-size: 1.1em; color: var(--text-dark); margin-bottom: 8px; }
+        .stat-badge {
+            background: #f1f5f9; color: #64748b; padding: 6px 14px; border-radius: 20px;
+            font-size: 0.85em; font-weight: bold; display: inline-block;
+        }
 
-        /* --- نۆتیفیکەیشن --- */
-        #notificationContainer {
-            position: fixed; top: 20px; right: 20px; z-index: 1001;
-        }
-        .toast {
-            background-color: #333; color: white; padding: 15px 25px; border-radius: 10px;
-            margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); opacity: 0;
-            transition: opacity 0.5s, transform 0.5s; transform: translateX(100%);
-            display: flex; align-items: center; gap: 10px; font-weight: bold;
-        }
-        .toast.show { opacity: 1; transform: translateX(0); }
-        .toast.success { background-color: #10b981; }
-        .toast.error { background-color: #ef4444; }
+        /* --- فۆرم و مۆداڵ --- */
+        .modal, .image-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
+            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal.active, .image-modal.active { display: flex; animation: zoomIn 0.3s ease; }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        
+        .modal-content {
+            background: white; border-radius: 24px; padding: 35px; max-width: 550px; width: 100%;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .modal-content h2 { margin-bottom: 25px; color: var(--text-dark); font-weight: 900; text-align: center; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #475569; font-size: 0.95em; }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px;
+            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s; background: #f8fafc;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); background: white; outline: none; }
+        
+        .save-btn {
+            background: var(--primary); color: white; border: none; padding: 15px; 
+            border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; 
+            width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic', sans-serif;
+            transition: 0.3s;
+        }
+        .save-btn:hover { background: #4338ca; }
 
-        /* --- قوفڵی پارێزەری (هەمان دیزاینی پێشوو) --- */
-        #securityOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            z-index: 10000; display: flex; justify-content: center; align-items: center; flex-direction: column;
-        }
-        /* Loading & other styles unchanged */
-        #globalLoader {
-            position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            color: var(--primary); font-weight: bold; font-family: 'Noto Sans Arabic';
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Custom Confirmation Modal (Replaces window.confirm) */
-        .confirm-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); z-index: 2000; justify-content: center; align-items: center;
-        }
-        .confirm-content {
-            background: white; padding: 30px; border-radius: 15px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: 350px; width: 90%;
-        }
-        .confirm-content h3 { color: #ef4444; margin-bottom: 20px; font-weight: 800; }
-        .confirm-buttons button {
-            padding: 10px 20px; border: none; border-radius: 10px; margin: 0 10px;
-            cursor: pointer; font-weight: bold; font-family: 'Noto Sans Arabic', sans-serif;
-            transition: 0.3s;
-        }
-        .confirm-yes { background: #ef4444; color: white; }
-        .confirm-no { background: #e5e7eb; color: #4b5563; }
-        .confirm-yes:hover { background: #dc2626; }
-        .confirm-no:hover { background: #d1d5db; }
-    </style>
+        #globalLoader {
+            position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            color: var(--primary); font-weight: bold; font-family: 'Noto Sans Arabic';
+        }
+
+        /* --- قوفڵی پارێزەری --- */
+        #securityOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            z-index: 10000; display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .security-box {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            padding: 50px 40px; border-radius: 30px; text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%;
+        }
+        .security-box h2 { color: white; margin-bottom: 10px; }
+        .security-box p { color: #94a3b8; margin-bottom: 20px; }
+        .security-input { 
+            width: 100%; padding: 15px; margin: 10px 0 20px; border: 2px solid rgba(255,255,255,0.2); 
+            border-radius: 15px; font-size: 18px; text-align: center; background: rgba(0,0,0,0.2); color: white;
+        }
+        .security-btn { 
+            background: #6366f1; color: white; border: none; padding: 15px 40px; 
+            border-radius: 15px; font-size: 18px; cursor: pointer; width: 100%; font-weight: bold;
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
+    </style>
 </head>
 <body>
-    <!-- قوفڵی پارێزەری -->
-    <div id="securityOverlay">
-        <div class="security-box">
-            <h2>🔒 ناوچەی پارێزراو</h2>
-            <p>تکایە وشەی نهێنی بنووسە</p>
-            <input type="password" id="sitePassword" class="security-input" placeholder="••••••">
-            <button onclick="checkPassword()" class="security-btn">چوونەژوورەوە</button>
-            <p id="errorMsg" style="color:#ef4444; margin-top:15px; display:none; font-weight:bold;">وشەی نهێنی هەڵەیە!</p>
-        </div>
-    </div>
+    <!-- قوفڵ -->
+    <div id="securityOverlay">
+        <div class="security-box">
+            <h2>🔒 ناوچەی پارێزراو</h2>
+            <p>تکایە وشەی نهێنی بنووسە</p>
+            <input type="password" id="sitePassword" class="security-input" placeholder="••••••">
+            <button onclick="checkPassword()" class="security-btn">چوونەژوورەوە</button>
+            <p id="errorMsg" style="color:#ef4444; margin-top:15px; display:none; font-weight:bold;">وشەی نهێنی هەڵەیە!</p>
+        </div>
+    </div>
 
-    <!-- مۆداڵی لۆدکردن -->
-    <div id="globalLoader">
-        <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
-        لە لۆدکردندایە...
-    </div>
+    <div id="globalLoader">
+        <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
+        جاری دەکرێت...
+        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    </div>
 
-    <!-- شوێنی نۆتیفیکەیشنەکان -->
-    <div id="notificationContainer"></div>
+    <div class="container" id="mainContent">
+        <header>
+            <h1>🏫 قوتابخانەی گزنگ</h1>
+            <p class="subtitle">سیستەمی پێشکەوتووی ئەرشیفی چالاکیەکان</p>
+        </header>
 
-    <!-- مۆداڵی دڵنیابوونەوەی سڕینەوە -->
-    <div id="customConfirmModal" class="confirm-modal">
-        <div class="confirm-content">
-            <h3>ئاگاداری!</h3>
-            <p id="confirmMessage">دڵنیایت لە سڕینەوەی ئەم بابەتە؟</p>
-            <div class="confirm-buttons" style="margin-top:20px;">
-                <button class="confirm-yes" onclick="handleConfirm(true)">بەڵێ، بیسڕەوە</button>
-                <button class="confirm-no" onclick="handleConfirm(false)">نەخێر، پاشگەز بەوە</button>
-            </div>
-        </div>
-    </div>
+        <!-- دوگمەکانی گۆڕینی بەش -->
+        <div class="nav-tabs">
+            <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">🏠 هەموو ئەرشیف</button>
+            <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">👨‍🏫 لیستی مامۆستایان</button>
+        </div>
 
-    <div class="container" id="mainContent">
-        <header>
-            <h1>🏫 قوتابخانەی گزنگ</h1>
-            <p class="subtitle">سیستەمی پێشکەوتووی ئەرشیفی چالاکیەکان</p>
-            <p id="currentUserId" style="font-size: 0.8em; color: #94a3b8; margin-top: 5px;">ناسنامەی بەکارهێنەر: چاوەڕێی سێربەر دەکات...</p>
-        </header>
+        <!-- بەشی گەڕان و زیادکردن -->
+        <div class="controls" id="archiveControls">
+            <input type="text" class="search-box" id="searchBox" placeholder="گەڕان بەپێی ناو، مامۆستا، یان بەروار...">
+            <button class="add-btn" onclick="openAddModal()">
+                <span>زیادکردنی چالاکی</span> <span>+</span>
+            </button>
+        </div>
 
-        <!-- دوگمەکانی گۆڕینی بەش (دوگمەی نوێ زیادکرا) -->
-        <div class="nav-tabs">
-            <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">🏠 هەموو ئەرشیف</button>
-            <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">👨‍🏫 لیستی مامۆستایان</button>
-            <button onclick="openTeacherActivityModal()" class="tab-btn" id="btn-record">📝 چالاکی مامۆستا</button>
-        </div>
+        <!-- ناونیشانی لاوەکی (فلتەر) -->
+        <div id="filterHeader" style="display:none; margin-bottom:25px; text-align:center;">
+            <div style="display:inline-flex; align-items:center; background:white; padding:8px 20px; border-radius:50px; box-shadow: var(--shadow);">
+                <span style="color:#64748b; margin-left:10px;">ئەرشیفی مامۆستا:</span>
+                <span id="filterTeacherName" style="font-weight:900; color:var(--primary); font-size:1.1em;"></span>
+                <button onclick="clearFilter()" style="background:#fee2e2; color:#ef4444; border:none; width:30px; height:30px; border-radius:50%; margin-right:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;">✕</button>
+            </div>
+        </div>
 
-        <!-- بەشی گەڕان و زیادکردن -->
-        <div class="controls" id="archiveControls">
-            <input type="text" class="search-box" id="searchBox" placeholder="گەڕان بەپێی ناو، مامۆستا، یان بەروار...">
-            <!-- ئەم دوگمەیە مۆداڵی کۆنی زیادکردنی چالاکی گشتی دەکاتەوە -->
-            <button class="add-btn" onclick="openGeneralAddModal()">
-                <span>زیادکردنی چالاکی گشتی</span> <span>+</span>
-            </button>
-        </div>
+        <!-- شوێنی چالاکییەکان -->
+        <div class="activities-grid" id="activitiesGrid"></div>
 
-        <!-- ناونیشانی لاوەکی (فلتەر) -->
-        <div id="filterHeader" style="display:none; margin-bottom:25px; text-align:center;">
-            <div style="display:inline-flex; align-items:center; background:white; padding:8px 20px; border-radius:50px; box-shadow: var(--shadow);">
-                <span style="color:#64748b; margin-left:10px;">ئەرشیفی مامۆستا:</span>
-                <span id="filterTeacherName" style="font-weight:900; color:var(--primary); font-size:1.1em;"></span>
-                <button onclick="clearFilter()" style="background:#fee2e2; color:#ef4444; border:none; width:30px; height:30px; border-radius:50%; margin-right:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;">✕</button>
-            </div>
-        </div>
+        <!-- شوێنی لیستی مامۆستایان -->
+        <div class="teachers-grid" id="teachersGrid"></div>
+    </div>
 
-        <!-- شوێنی چالاکییەکان -->
-        <div class="activities-grid" id="activitiesGrid"></div>
+    <!-- مۆداڵی زیادکردن -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h2>زیادکردنی چالاکی نوێ</h2>
+            <form id="activityForm">
+                <div class="form-group"><label>ناوی چالاکی</label><input type="text" id="activityName" required placeholder="مەسەلەن: سیمیناری زانستی..."></div>
+                <div class="form-group"><label>ناوی مامۆستا</label><input type="text" id="teacherName" required placeholder="ناوی سیانی مامۆستا..."></div>
+                <div class="form-group"><label>بەروار</label><input type="date" id="activityDate" required></div>
+                <div class="form-group">
+                    <label>وێنەکان (ماکس ٤)</label>
+                    <div style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('imageInput').click()">
+                        📷 وێنەکان هەڵبژێرە
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display:none">
+                    <div id="uploadStatus" style="color: var(--primary); margin-top:10px; font-size:0.9em; font-weight:bold;"></div>
+                </div>
+                <div class="form-group"><label>تێبینی</label><textarea id="activityNotes" placeholder="وردەکاری چالاکیەکە..." rows="3"></textarea></div>
+                <button type="submit" class="save-btn" id="saveBtn">💾 پاشەکەوتکردن</button>
+                <button type="button" onclick="closeAddModal()" style="width:100%; background:transparent; color:#64748b; border:none; padding:10px; margin-top:5px; cursor:pointer;">پاشگەزبوونەوە</button>
+            </form>
+        </div>
+    </div>
 
-        <!-- شوێنی لیستی مامۆستایان -->
-        <div class="teachers-grid" id="teachersGrid"></div>
-    </div>
+    <div class="image-modal" id="imageModal" onclick="this.classList.remove('active')"><img id="modalImage" src=""></div>
 
-    <!-- مۆداڵی زیادکردنی چالاکی گشتی (کۆن) -->
-    <div class="modal" id="generalActivityModal">
-        <div class="modal-content">
-            <h2>زیادکردنی چالاکی گشتی نوێ</h2>
-            <form id="generalActivityForm">
-                <div class="form-group"><label>ناوی چالاکی</label><input type="text" id="generalActivityName" required placeholder="مەسەلەن: سیمیناری زانستی..."></div>
-                <div class="form-group"><label>ناوی مامۆستا</label><input type="text" id="generalTeacherName" required placeholder="ناوی سیانی مامۆستا..."></div>
-                <div class="form-group"><label>بەروار</label><input type="date" id="generalActivityDate" required></div>
-                <div class="form-group">
-                    <label>وێنەکان (ماکس ٤)</label>
-                    <div style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('generalImageInput').click()">
-                        📷 وێنەکان هەڵبژێرە
-                    </div>
-                    <input type="file" id="generalImageInput" accept="image/*" multiple style="display:none">
-                    <div id="generalUploadStatus" style="color: var(--primary); margin-top:10px; font-size:0.9em; font-weight:bold;"></div>
-                </div>
-                <div class="form-group"><label>تێبینی</label><textarea id="generalActivityNotes" placeholder="وردەکاری چالاکیەکە..." rows="3"></textarea></div>
-                <button type="submit" class="save-btn" id="generalSaveBtn">💾 پاشەکەوتکردن</button>
-                <button type="button" onclick="closeGeneralAddModal()" style="width:100%; background:transparent; color:#64748b; border:none; padding:10px; margin-top:5px; cursor:pointer;">پاشگەزبوونەوە</button>
-            </form>
-        </div>
-    </div>
+    <!-- Firebase Code -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
 
-    <!-- مۆداڵی چالاکی مامۆستا (نوێ) -->
-    <div class="modal" id="teacherActivityModal">
-        <div class="modal-content">
-            <h2>📝 تۆمارکردنی چالاکی تایبەتی مامۆستا</h2>
-            <form id="teacherActivityForm">
-                <div class="form-group"><label>ناوی مامۆستا</label><input type="text" id="teacherRecordName" required placeholder="ناوی سیانی مامۆستا..."></div>
-                <div class="form-group"><label>ناوی چالاکی/جۆر</label><input type="text" id="teacherRecordActivityType" required placeholder="مەسەلەن: تاقیکردنەوەی خێرا، پڕۆژەی دەستی..."></div>
-                
-                <div class="form-group">
-                    <label>ناوی دەرس</label>
-                    <select id="teacherRecordCourse" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="کوردی">کوردی</option>
-                        <option value="بیرکاری">بیرکاری</option>
-                        <option value="زانست">زانست</option>
-                        <option value="کۆمەڵایەتی">کۆمەڵایەتی</option>
-                        <option value="پەروەردەی ئیسلامی">پەروەردەی ئیسلامی</option>
-                        <option value="هونەر">هونەر</option>
-                        <option value="وەرزش">وەرزش</option>
-                    </select>
-                </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAr_JHCa5BbM5RJ9KCp0IBom1rdAgVX4CM",
+            authDomain: "gzng-f4273.firebaseapp.com",
+            projectId: "gzng-f4273",
+            storageBucket: "gzng-f4273.firebasestorage.app",
+            messagingSenderId: "417779309632",
+            appId: "1:417779309632:web:6ed119d26baa35822cd3a5",
+            measurementId: "G-B6V0CHGQV6"
+        };
 
-                <div class="form-group">
-                    <label>رۆژی هەفتە</label>
-                    <select id="teacherRecordDay" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="شەمە">شەمە</option>
-                        <option value="یەکشەمە">یەکشەمە</option>
-                        <option value="دووشەمە">دووشەمە</option>
-                        <option value="سێشەمە">سێشەمە</option>
-                        <option value="چوارشەمە">چوارشەمە</option>
-                        <option value="پێنجشەمە">پێنجشەمە</option>
-                        <option value="جومعە">جومعە</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>ژمارەی دەرس (کاتژمێر)</label>
-                    <select id="teacherRecordLesson" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="دەسی یەکەم">دەسی یەکەم</option>
-                        <option value="دەسی دووەم">دەسی دووەم</option>
-                        <option value="دەسی سێیەم">دەسی سێیەم</option>
-                        <option value="دەسی چوارەم">دەسی چوارەم</option>
-                        <option value="دەسی پێنجەم">دەسی پێنجەم</option>
-                        <option value="دەسی شەشەم">دەسی شەشەم</option>
-                    </select>
-                </div>
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const activitiesRef = collection(db, "activities");
 
-                <div class="form-group"><label>بەروار</label><input type="date" id="teacherRecordDate" required></div>
-                <div class="form-group">
-                    <label>وێنەکان (ماکس ٤)</label>
-                    <div style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('teacherRecordImageInput').click()">
-                        📷 وێنەکان هەڵبژێرە
-                    </div>
-                    <input type="file" id="teacherRecordImageInput" accept="image/*" multiple style="display:none">
-                    <div id="teacherRecordUploadStatus" style="color: var(--primary); margin-top:10px; font-size:0.9em; font-weight:bold;"></div>
-                </div>
-                <div class="form-group"><label>تێبینی</label><textarea id="teacherRecordNotes" placeholder="وردەکاری چالاکیەکە..." rows="3"></textarea></div>
-                <button type="submit" class="save-btn" id="teacherRecordSaveBtn">💾 تۆمارکردن</button>
-                <button type="button" onclick="closeTeacherActivityModal()" style="width:100%; background:transparent; color:#64748b; border:none; padding:10px; margin-top:5px; cursor:pointer;">پاشگەزبوونەوە</button>
-            </form>
-        </div>
-    </div>
+        let allActivities = [];
+        let currentFilter = null;
 
-    <!-- مۆداڵی گەورەکردنی وێنە (هەمان دیزاینی پێشوو) -->
-    <div class="image-modal" id="imageModal" onclick="this.classList.remove('active')"><img id="modalImage" src=""></div>
+        const q = query(activitiesRef, orderBy("date", "desc"));
+        onSnapshot(q, (snapshot) => {
+            allActivities = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            renderApp(); 
+            document.getElementById('globalLoader').style.display = 'none';
+        });
 
-    <!-- Firebase & Custom JS Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, where, getDocs, orderBy, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        function renderApp() {
+            const grid = document.getElementById('activitiesGrid');
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            let displayList = allActivities;
 
-        // setLogLevel('Debug');
+            if (currentFilter) {
+                displayList = displayList.filter(a => a.teacher === currentFilter);
+                document.getElementById('filterHeader').style.display = 'block';
+                document.getElementById('filterTeacherName').textContent = currentFilter;
+            } else {
+                document.getElementById('filterHeader').style.display = 'none';
+            }
 
-        // Global Firebase Variables (Mandatory for Canvas Environment)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { /* Fallback */ };
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-gzng-app-id';
+            displayList = displayList.filter(a => 
+                a.name.toLowerCase().includes(searchTerm) || 
+                a.teacher.toLowerCase().includes(searchTerm) ||
+                a.date.includes(searchTerm)
+            );
 
-        let app, db, auth, storage, activitiesRef;
-        let authReady = false;
-        let currentUserId = null;
+            grid.innerHTML = displayList.map(act => `
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3>${act.name}</h3>
+                        <div class="activity-meta">
+                            <span>👤 ${act.teacher}</span>
+                            <span>📅 ${act.date}</span>
+                        </div>
+                    </div>
+                    <div class="images-container">
+                        ${act.images ? act.images.map(url => `<img src="${url}" class="activity-image" onclick="openImg('${url}')">`).join('') : ''}
+                    </div>
+                    ${act.notes ? `<div class="activity-notes">${act.notes}</div>` : ''}
+                    <div class="card-footer">
+                        <button class="delete-btn" onclick="deleteItem('${act.id}')">🗑 سڕینەوە</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            if(displayList.length === 0) grid.innerHTML = '<p style="color:var(--text-gray); grid-column:1/-1; text-align:center; font-weight:bold; font-size:1.2em; margin-top:20px;">هیچ چالاکییەک نەدۆزرایەوە.</p>';
 
-        // --- Custom Notification & Confirm Logic ---
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('notificationContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = (type === 'success' ? '✅ ' : '❌ ') + message;
-            container.appendChild(toast);
+            renderTeachersList();
+        }
 
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10); // Tiny delay to trigger CSS transition
+        function renderTeachersList() {
+            const teachersGrid = document.getElementById('teachersGrid');
+            const teachersMap = {};
+            allActivities.forEach(act => {
+                const tName = act.teacher.trim();
+                if (!teachersMap[tName]) teachersMap[tName] = 0;
+                teachersMap[tName]++;
+            });
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
-            }, 5000);
-        }
+            const sortedTeachers = Object.keys(teachersMap).sort((a, b) => teachersMap[b] - teachersMap[a]);
 
-        let confirmCallback = null;
-        window.customConfirm = (message) => {
-            return new Promise((resolve) => {
-                document.getElementById('confirmMessage').textContent = message;
-                document.getElementById('customConfirmModal').style.display = 'flex';
-                confirmCallback = resolve;
-            });
-        };
+            teachersGrid.innerHTML = sortedTeachers.map(tName => `
+                <div class="teacher-card" onclick="filterByTeacher('${tName}')">
+                    <div class="teacher-avatar">👤</div>
+                    <div class="teacher-name">${tName}</div>
+                    <div class="stat-badge">📊 ${teachersMap[tName]} چالاکی</div>
+                </div>
+            `).join('');
+        }
 
-        window.handleConfirm = (result) => {
-            document.getElementById('customConfirmModal').style.display = 'none';
-            if (confirmCallback) {
-                confirmCallback(result);
-                confirmCallback = null;
-            }
-        };
-        // End of Custom Notification & Confirm Logic
+        window.switchView = (view) => {
+            if (view === 'archive') {
+                document.getElementById('activitiesGrid').style.display = 'grid';
+                document.getElementById('archiveControls').style.display = 'flex';
+                document.getElementById('teachersGrid').style.display = 'none';
+                document.getElementById('btn-archive').classList.add('active');
+                document.getElementById('btn-teachers').classList.remove('active');
+                currentFilter = null;
+                renderApp();
+            } else {
+                document.getElementById('activitiesGrid').style.display = 'none';
+                document.getElementById('archiveControls').style.display = 'none';
+                document.getElementById('filterHeader').style.display = 'none';
+                document.getElementById('teachersGrid').style.display = 'grid';
+                document.getElementById('btn-teachers').classList.add('active');
+                document.getElementById('btn-archive').classList.remove('active');
+            }
+        };
 
-        async function initializeFirebase() {
-            try {
-                if (Object.keys(firebaseConfig).length === 0) {
-                    throw new Error("پێکهاتەی فایەربەیس نەدۆزرایەوە.");
-                }
+        window.filterByTeacher = (tName) => {
+            currentFilter = tName;
+            switchView('archive');
+        };
 
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                storage = getStorage(app);
+        window.clearFilter = () => {
+            currentFilter = null;
+            renderApp();
+        };
 
-                // Firestore Collection Path - Public Data is assumed for a school archive
-                activitiesRef = collection(db, 'artifacts', appId, 'public', 'data', 'activities');
-                
-                // Authentication
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+        window.renderApp = renderApp;
+        document.getElementById('searchBox').addEventListener('input', renderApp);
 
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        document.getElementById('currentUserId').textContent = `ناسنامەی بەکارهێنەر: ${currentUserId}`;
-                        authReady = true;
-                        startListeningForActivities();
-                    } else {
-                        currentUserId = null;
-                        document.getElementById('currentUserId').textContent = `ناسنامەی بەکارهێنەر: چوونەژوورەوە نەکراوە`;
-                    }
-                });
+        // --- IMAGE COMPRESSION FUNCTION ---
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1024; // Max width for compression
+                        const scaleSize = MAX_WIDTH / img.width;
+                        // If image is smaller than 1024, keep original size, else resize
+                        if (img.width > MAX_WIDTH) {
+                            canvas.width = MAX_WIDTH;
+                            canvas.height = img.height * scaleSize;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Convert to blob (JPEG, 70% quality)
+                        canvas.toBlob((blob) => {
+                            resolve(blob); 
+                        }, 'image/jpeg', 0.7); 
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
 
-            } catch (error) {
-                console.error("هەڵەی پەیوەندی بە فایەربەیسەوە:", error);
-                showToast("هەڵە لە پەیوەندی بە داتابەیس: " + error.message, 'error');
-                document.getElementById('globalLoader').style.display = 'none';
-            }
-        }
+        async function uploadImage(file) {
+            // Compress before uploading
+            const compressedBlob = await compressImage(file);
+            const storageRef = ref(storage, 'images/' + Date.now() + '-' + file.name);
+            await uploadBytes(storageRef, compressedBlob);
+            return await getDownloadURL(storageRef);
+        }
 
-        let allActivities = [];
-        let currentFilter = null;
+        document.getElementById('activityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveBtn');
+            const statusDiv = document.getElementById('uploadStatus');
+            saveBtn.disabled = true;
+            saveBtn.textContent = '⏳ چاوەڕێبە...';
+            
+            try {
+                const imageFiles = document.getElementById('imageInput').files;
+                if(imageFiles.length > 4) throw new Error("تەنها ٤ وێنە ڕێگەپێدراوە");
 
-        function startListeningForActivities() {
-            if (!authReady || !db) return;
+                let imageUrls = [];
+                for(let i=0; i<imageFiles.length; i++) {
+                    statusDiv.textContent = `بارکردنی وێنەی ${i+1} (دەپەستێورێتەوە)...`;
+                    const url = await uploadImage(imageFiles[i]);
+                    imageUrls.push(url);
+                }
+                
+                await addDoc(activitiesRef, {
+                    name: document.getElementById('activityName').value,
+                    teacher: document.getElementById('teacherName').value.trim(),
+                    date: document.getElementById('activityDate').value,
+                    notes: document.getElementById('activityNotes').value,
+                    images: imageUrls,
+                    createdAt: new Date()
+                });
 
-            const q = query(activitiesRef, orderBy("date", "desc"));
-            onSnapshot(q, (snapshot) => {
-                allActivities = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                renderApp();
-                document.getElementById('globalLoader').style.display = 'none';
-            }, (error) => {
-                console.error("هەڵەی وەرگرتنی داتا لە فایەربەیس:", error);
-                showToast("هەڵە لە وەرگرتنی چالاکییەکان.", 'error');
-            });
-        }
+                closeAddModal();
+                alert("✅ چالاکی تۆمارکرا!");
+            } catch (error) {
+                alert("هەڵە: " + error.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 پاشەکەوتکردن';
+                statusDiv.textContent = '';
+            }
+        });
 
-        function renderApp() {
-            const grid = document.getElementById('activitiesGrid');
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
-            let displayList = allActivities;
+        window.openAddModal = () => document.getElementById('addModal').classList.add('active');
+        window.closeAddModal = () => { document.getElementById('addModal').classList.remove('active'); document.getElementById('activityForm').reset(); };
+        window.openImg = (url) => { document.getElementById('modalImage').src = url; document.getElementById('imageModal').classList.add('active'); };
+        window.deleteItem = async (id) => {
+            if(confirm("دڵنیایت لە سڕینەوەی؟")) {
+                await deleteDoc(doc(db, "activities", id));
+            }
+        };
+    </script>
 
-            if (currentFilter) {
-                displayList = displayList.filter(a => a.teacher && a.teacher.toLowerCase() === currentFilter.toLowerCase());
-                document.getElementById('filterHeader').style.display = 'block';
-                document.getElementById('filterTeacherName').textContent = currentFilter;
-            } else {
-                document.getElementById('filterHeader').style.display = 'none';
-            }
-
-            displayList = displayList.filter(a => 
-                (a.name && a.name.toLowerCase().includes(searchTerm)) || 
-                (a.teacher && a.teacher.toLowerCase().includes(searchTerm)) ||
-                (a.date && a.date.includes(searchTerm)) ||
-                (a.course && a.course.toLowerCase().includes(searchTerm))
-            );
-
-            grid.innerHTML = displayList.map(act => `
-                <div class="activity-card">
-                    <div class="activity-header">
-                        <h3>${act.name}</h3>
-                        <div class="activity-meta">
-                            <span>👤 ${act.teacher || 'نەزانراو'}</span>
-                            <span>📅 ${act.date}</span>
-                        </div>
-                        ${act.course ? `<div style="font-size:0.9em; color:${act.day ? '#10b981' : '#4f46e5'}; font-weight:700; margin-top:5px;">${act.course} ${act.day ? ` - ${act.day}, ${act.lesson || ''}` : ''}</div>` : ''}
-                    </div>
-                    <div class="images-container">
-                        ${act.images ? act.images.map(url => `<img src="${url}" class="activity-image" onclick="openImg('${url}')" onerror="this.onerror=null;this.src='https://placehold.co/500x300/e0e7ff/4f46e5?text=وێنە+نییە';">`).join('') : ''}
-                    </div>
-                    ${act.notes ? `<div class="activity-notes">${act.notes}</div>` : ''}
-                    <div class="card-footer">
-                        <button class="delete-btn" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            if(displayList.length === 0) grid.innerHTML = '<p style="color:var(--text-gray); grid-column:1/-1; text-align:center; font-weight:bold; font-size:1.2em; margin-top:20px;">هیچ چالاکییەک نەدۆزرایەوە.</p>';
-
-            renderTeachersList();
-        }
-
-        function renderTeachersList() {
-            const teachersGrid = document.getElementById('teachersGrid');
-            const teachersMap = {};
-            allActivities.forEach(act => {
-                const tName = act.teacher ? act.teacher.trim() : 'مامۆستای نەناسراو';
-                if (!teachersMap[tName]) teachersMap[tName] = 0;
-                teachersMap[tName]++;
-            });
-
-            const sortedTeachers = Object.keys(teachersMap).sort((a, b) => teachersMap[b] - teachersMap[a]);
-
-            teachersGrid.innerHTML = sortedTeachers.map(tName => `
-                <div class="teacher-card" onclick="filterByTeacher('${tName}')">
-                    <div class="teacher-avatar">👤</div>
-                    <div class="teacher-name">${tName}</div>
-                    <div class="stat-badge">📊 ${teachersMap[tName]} چالاکی</div>
-                </div>
-            `).join('');
-        }
-
-        window.switchView = (view) => {
-            // Hide all content containers first
-            document.getElementById('activitiesGrid').style.display = 'none';
-            document.getElementById('archiveControls').style.display = 'none';
-            document.getElementById('filterHeader').style.display = 'none';
-            document.getElementById('teachersGrid').style.display = 'none';
-            
-            // Remove active class from all buttons
-            document.getElementById('btn-archive').classList.remove('active');
-            document.getElementById('btn-teachers').classList.remove('active');
-            document.getElementById('btn-record').classList.remove('active');
-
-            if (view === 'archive') {
-                document.getElementById('activitiesGrid').style.display = 'grid';
-                document.getElementById('archiveControls').style.display = 'flex';
-                document.getElementById('btn-archive').classList.add('active');
-                currentFilter = null;
-                renderApp();
-            } else if (view === 'teachers') {
-                document.getElementById('teachersGrid').style.display = 'grid';
-                document.getElementById('btn-teachers').classList.add('active');
-            } else if (view === 'record') {
-                // The 'record' button will open a modal, so we don't need a dedicated view container
-                // but we should make sure the archive view is primary
-                switchView('archive'); // Fallback to archive view
-                openTeacherActivityModal(); // Open the modal
-            }
-        };
-
-        window.filterByTeacher = (tName) => {
-            currentFilter = tName;
-            window.switchView('archive');
-        };
-
-        window.clearFilter = () => {
-            currentFilter = null;
-            renderApp();
-        };
-
-        window.renderApp = renderApp;
-        document.getElementById('searchBox').addEventListener('input', renderApp);
-
-        // --- IMAGE HANDLING ---
-        function compressImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1024;
-                        const scaleSize = MAX_WIDTH / img.width;
-                        
-                        if (img.width > MAX_WIDTH) {
-                            canvas.width = MAX_WIDTH;
-                            canvas.height = img.height * scaleSize;
-                        } else {
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                        }
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        canvas.toBlob((blob) => {
-                            resolve(blob);
-                        }, 'image/jpeg', 0.7);
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
-        }
-
-        async function uploadImage(file, statusDiv) {
-            statusDiv.textContent = `بارکردنی وێنە (دەپەستێورێتەوە)...`;
-            try {
-                const compressedBlob = await compressImage(file);
-                const storagePath = `images/${currentUserId}/${Date.now()}-${file.name}`;
-                const storageRef = ref(storage, storagePath);
-                await uploadBytes(storageRef, compressedBlob);
-                return await getDownloadURL(storageRef);
-            } catch (error) {
-                console.error("هەڵە لە بارکردنی وێنە:", error);
-                throw new Error("هەڵە لە بارکردنی وێنە.");
-            }
-        }
-
-        // --- MODAL & FORM LOGIC ---
-
-        // General Activity Modal (Original functionality)
-        window.openGeneralAddModal = () => document.getElementById('generalActivityModal').classList.add('active');
-        window.closeGeneralAddModal = () => { 
-            document.getElementById('generalActivityModal').classList.remove('active'); 
-            document.getElementById('generalActivityForm').reset();
-            document.getElementById('generalUploadStatus').textContent = '';
-        };
-
-        // Teacher Activity Modal (New functionality)
-        window.openTeacherActivityModal = () => {
-            document.getElementById('teacherActivityModal').classList.add('active');
-        }
-        window.closeTeacherActivityModal = () => {
-            document.getElementById('teacherActivityModal').classList.remove('active');
-            document.getElementById('teacherActivityForm').reset();
-            document.getElementById('teacherRecordUploadStatus').textContent = '';
-        }
-
-        window.openImg = (url) => { 
-            document.getElementById('modalImage').src = url; 
-            document.getElementById('imageModal').classList.add('active'); 
-        };
-
-        window.deleteItem = async (id) => {
-            const confirmed = await customConfirm("دڵنیایت لە سڕینەوەی ئەم چالاکییە؟ ئەم کردارە ناتوانرێت هەڵبوەشێنرێتەوە.");
-            
-            if (confirmed) {
-                try {
-                    await deleteDoc(doc(db, "artifacts", appId, "public", "data", "activities", id));
-                    showToast("✅ چالاکی بە سەرکەوتوویی سڕایەوە.");
-                } catch (error) {
-                    showToast("❌ هەڵە لە سڕینەوەی چالاکی: " + error.message, 'error');
-                }
-            }
-        };
-
-
-        // --- SUBMIT HANDLERS ---
-
-        // 1. General Activity Submit Handler
-        document.getElementById('generalActivityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('generalSaveBtn');
-            const statusDiv = document.getElementById('generalUploadStatus');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '⏳ چاوەڕێبە...';
-            
-            try {
-                const imageFiles = document.getElementById('generalImageInput').files;
-                if(imageFiles.length > 4) throw new Error("تەنها ٤ وێنە ڕێگەپێدراوە");
-
-                let imageUrls = [];
-                for(let i=0; i<imageFiles.length; i++) {
-                    statusDiv.textContent = `بارکردنی وێنەی ${i+1} لە ${imageFiles.length} (دەپەستێورێتەوە)...`;
-                    const url = await uploadImage(imageFiles[i], statusDiv);
-                    imageUrls.push(url);
-                }
-                
-                await addDoc(activitiesRef, {
-                    name: document.getElementById('generalActivityName').value,
-                    teacher: document.getElementById('generalTeacherName').value.trim(),
-                    date: document.getElementById('generalActivityDate').value,
-                    notes: document.getElementById('generalActivityNotes').value,
-                    images: imageUrls,
-                    isTeacherRecord: false,
-                    createdAt: new Date()
-                });
-
-                closeGeneralAddModal();
-                showToast("✅ چالاکی گشتی بە سەرکەوتوویی تۆمارکرا!");
-            } catch (error) {
-                showToast("❌ هەڵە لە تۆمارکردن: " + error.message, 'error');
-                console.error(error);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 پاشەکەوتکردن';
-                statusDiv.textContent = '';
-            }
-        });
-
-        // 2. Teacher Activity Submit Handler (NEW)
-        document.getElementById('teacherActivityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('teacherRecordSaveBtn');
-            const statusDiv = document.getElementById('teacherRecordUploadStatus');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '⏳ چاوەڕێبە...';
-            
-            try {
-                const imageFiles = document.getElementById('teacherRecordImageInput').files;
-                if(imageFiles.length > 4) throw new Error("تەنها ٤ وێنە ڕێگەپێدراوە");
-
-                let imageUrls = [];
-                for(let i=0; i<imageFiles.length; i++) {
-                    statusDiv.textContent = `بارکردنی وێنەی ${i+1} لە ${imageFiles.length} (دەپەستێورێتەوە)...`;
-                    const url = await uploadImage(imageFiles[i], statusDiv);
-                    imageUrls.push(url);
-                }
-                
-                await addDoc(activitiesRef, {
-                    name: document.getElementById('teacherRecordActivityType').value,
-                    teacher: document.getElementById('teacherRecordName').value.trim(),
-                    date: document.getElementById('teacherRecordDate').value,
-                    notes: document.getElementById('teacherRecordNotes').value,
-                    course: document.getElementById('teacherRecordCourse').value,
-                    day: document.getElementById('teacherRecordDay').value,
-                    lesson: document.getElementById('teacherRecordLesson').value,
-                    images: imageUrls,
-                    isTeacherRecord: true,
-                    createdAt: new Date()
-                });
-
-                closeTeacherActivityModal();
-                showToast("✅ چالاکی مامۆستا بە سەرکەوتوویی تۆمارکرا!");
-            } catch (error) {
-                showToast("❌ هەڵە لە تۆمارکردن: " + error.message, 'error');
-                console.error(error);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 تۆمارکردن';
-                statusDiv.textContent = '';
-            }
-        });
-
-        // --- Initial Load ---
-        document.addEventListener('DOMContentLoaded', initializeFirebase);
-        
-    </script>
-
-    <script>
-        // Old password check function remains to unlock the app UI
-        function checkPassword() {
-            var input = document.getElementById('sitePassword').value;
-            if(input === "2526") { 
-                document.getElementById('securityOverlay').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            } else {
-                document.getElementById('errorMsg').style.display = 'block';
-            }
-        }
-        document.getElementById('sitePassword').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPassword();
-        });
-    </script>
+    <script>
+        function checkPassword() {
+            var input = document.getElementById('sitePassword').value;
+            if(input === "2526") { 
+                document.getElementById('securityOverlay').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+        document.getElementById('sitePassword').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+    </script>
 </body>
 </html>
