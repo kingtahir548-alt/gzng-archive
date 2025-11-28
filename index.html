@@ -1,388 +1,267 @@
 <!DOCTYPE html>
-<html lang="ku" dir="rtl">
+<html lang="ku" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئەرشیفی چالاکیەکانی قوتابخانەی گزنگ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gzng Archive System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rudaw:wght@400;700;900&family=Noto+Sans+Arabic:wght@300;400;700;800&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* --- دیزاینی گشتی و مۆدێرن --- */
         :root {
-            --primary: #4f46e5; /* ڕەنگی سەرەکی - شینی تۆخ */
-            --primary-light: #818cf8;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-dark: #1e293b;
-            --text-gray: #64748b;
-            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-            --radius: 20px;
+            --bg-body: #f0f2f5; --bg-glass: rgba(255, 255, 255, 0.95); --bg-nav: rgba(255, 255, 255, 0.9);
+            --bg-card: #ffffff; --text-main: #1e293b; --text-light: #64748b;
+            --primary: #6366f1; --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08); --border: 1px solid rgba(0, 0, 0, 0.05); --radius: 16px;
+            --font-main: 'Noto Sans Arabic', 'Rudaw', sans-serif;
         }
+        [data-theme="dark"] {
+            --bg-body: #0f172a; --bg-glass: rgba(30, 41, 59, 0.9); --bg-nav: rgba(15, 23, 42, 0.9);
+            --bg-card: #1e293b; --text-main: #f1f5f9; --text-light: #94a3b8;
+            --primary: #818cf8; --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3); --border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        html[lang="en"] { --font-main: 'Roboto', sans-serif; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { font-family: var(--font-main); background-color: var(--bg-body); min-height: 100vh; color: var(--text-main); overflow-x: hidden; padding-top: 80px; padding-bottom: 40px; transition: background-color 0.3s ease; }
+        
+        .glass { background: var(--bg-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+        button { cursor: pointer; font-family: inherit; border: none; background: none; }
 
-        body {
-            font-family: 'Noto Sans Arabic', sans-serif;
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--text-dark);
-        }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: var(--bg-nav); backdrop-filter: blur(15px); border-bottom: var(--border); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-brand { font-size: 1.3em; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; }
+        .nav-logo-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; object-fit: contain; background: transparent; }
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+        
+        .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; transition: 0.3s; color: var(--text-main); font-weight: bold; border: 1px solid transparent; }
+        .icon-btn:hover { background: rgba(128,128,128,0.1); border-color: var(--border); }
 
-        .container { max-width: 1200px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .lang-dropdown { position: relative; }
+        .lang-menu {
+            position: absolute; top: 120%; left: -10px; background: var(--bg-card); border: var(--border); border-radius: 12px;
+            box-shadow: var(--shadow); width: 160px; display: none; flex-direction: column; overflow: hidden; z-index: 2000;
+        }
+        html[dir="ltr"] .lang-menu { right: -10px; left: auto; }
+        .lang-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+        .lang-item { padding: 12px 15px; text-align: start; cursor: pointer; transition: 0.2s; font-size: 0.95em; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        .lang-item:hover { background: rgba(128,128,128,0.1); color: var(--primary); }
 
-        /* --- سەرپەڕ (Header) --- */
-        header {
-            background: var(--card-bg);
-            padding: 40px 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
-            background: linear-gradient(90deg, var(--primary), #ec4899);
-        }
+        .admin-link-btn { background: rgba(128,128,128,0.1); color: var(--text-main); padding: 8px 15px; border-radius: 50px; font-weight: bold; font-size: 0.9em; display: flex; align-items: center; gap: 6px; transition: 0.3s; }
+        .admin-link-btn:hover { background: var(--primary); color: white; }
 
-        h1 { 
-            color: var(--text-dark); 
-            font-size: 2.5em; 
-            margin-bottom: 10px; 
-            font-weight: 900;
-            letter-spacing: -1px;
-        }
-        .subtitle { color: var(--text-gray); font-size: 1.1em; font-weight: 500; }
+        .container { max-width: 1200px; margin: 0 auto; width: 95%; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- دوگمەکانی گۆڕین (Tabs) --- */
-        .nav-tabs {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;
-            background: white; padding: 8px; border-radius: 50px; width: fit-content; margin-left: auto; margin-right: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .tab-btn {
-            background: transparent; color: var(--text-gray); border: none;
-            padding: 10px 30px; border-radius: 40px; font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: all 0.3s ease;
-            font-family: 'Noto Sans Arabic', sans-serif;
-        }
-        .tab-btn.active {
-            background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-        }
-        .tab-btn:hover:not(.active) { background: #f1f5f9; color: var(--text-dark); }
-        
-        /* نوێ بۆ دوگمەی چالاکی (New Activity Button) */
-        #btn-new-activity {
-            background: #10b981; /* سەوز */
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        #btn-new-activity:hover:not(.active) {
-            background: #059669;
-            color: white;
-        }
+        .nav-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; margin-top: 10px; flex-wrap: wrap; }
+        .pill { padding: 10px 25px; border-radius: 50px; font-weight: bold; color: var(--text-light); background: var(--bg-card); border: var(--border); transition: 0.3s; display: flex; align-items: center; gap: 5px;}
+        .pill.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transform: scale(1.05); border-color: transparent; }
 
-        /* --- بەشی گەڕان و زیادکردن --- */
-        .controls {
-            background: white; padding: 10px; border-radius: 16px; margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; gap: 10px; flex-wrap: wrap;
-            align-items: center;
-        }
-        .search-box {
-            flex: 1; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 12px; 
-            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s;
-            background: #f8fafc;
-        }
-        .search-box:focus { border-color: var(--primary); background: white; outline: none; }
+        .search-area { max-width: 600px; margin: 0 auto 20px; position: relative; }
+        .search-input { width: 100%; padding: 15px 20px; border-radius: 50px; border: var(--border); background: var(--bg-card); color: var(--text-main); font-size: 1em; box-shadow: var(--shadow); transition: 0.3s; font-family: var(--font-main); }
+        .search-input:focus { transform: scale(1.01); border-color: var(--primary); }
         
-        .add-btn {
-            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
-            color: white; border: none; padding: 12px 25px;
-            border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; 
-            transition: all 0.3s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-            display: flex; align-items: center; gap: 8px; font-family: 'Noto Sans Arabic', sans-serif;
-        }
-        .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3); }
+        .add-activity-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--primary-gradient); color: white; padding: 12px 25px; border-radius: 50px; font-weight: bold; margin: 0 auto 30px; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); transition: 0.3s; width: fit-content; }
+        .add-activity-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
 
-        /* --- کارتەکانی چالاکی --- */
-        .activities-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px;
-        }
-        .activity-card {
-            background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: var(--shadow); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(0,0,0,0.03); position: relative; display: flex; flex-direction: column;
-        }
-        .activity-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); }
-        
-        .activity-header {
-            padding: 20px; background: white;
-        }
-        .activity-header h3 { font-size: 1.4em; color: var(--text-dark); margin-bottom: 8px; }
-        .activity-meta { display: flex; justify-content: space-between; font-size: 0.9em; color: var(--text-gray); }
-        
-        .images-container {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; 
-            height: 240px; overflow: hidden; background: #f1f5f9;
-        }
-        .activity-image {
-            width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; transition: 0.3s;
-        }
-        .activity-image:hover { opacity: 0.9; }
-        
-        .activity-notes { 
-            padding: 20px; color: #475569; font-size: 0.95em; line-height: 1.7; 
-            background: #fcfcfc; flex-grow: 1; border-top: 1px solid #f1f5f9;
-        }
-        
-        .card-footer {
-            padding: 15px 20px; background: white; border-top: 1px solid #f1f5f9; text-align: right;
-        }
-        .delete-btn {
-            background: #fee2e2; color: #ef4444; border: none; padding: 8px 15px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em; 
-            transition: 0.2s; font-family: 'Noto Sans Arabic', sans-serif;
-        }
-        .delete-btn:hover { background: #fecaca; }
+        .filter-header { display: none; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 25px; background: var(--bg-card); border-radius: 15px; border: var(--border); }
 
-        /* --- لیستی مامۆستایان --- */
-        .teachers-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; display: none;
-        }
-        .teacher-card {
-            background: white; padding: 30px 20px; border-radius: 24px; text-align: center;
-            box-shadow: var(--shadow); cursor: pointer; transition: 0.3s;
-            border: 2px solid transparent; position: relative; overflow: hidden;
-        }
-        .teacher-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
-            background: var(--primary); opacity: 0; transition: 0.3s;
-        }
-        .teacher-card:hover { transform: translateY(-5px); border-color: rgba(79, 70, 229, 0.1); }
-        .teacher-card:hover::before { opacity: 1; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: var(--bg-card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); border: var(--border); display: flex; flex-direction: column; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
         
-        .teacher-avatar {
-            width: 80px; height: 80px; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
-            border-radius: 50%; margin: 0 auto 15px; color: var(--primary);
-            display: flex; align-items: center; justify-content: center; font-size: 32px;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
-        }
-        .teacher-name { font-weight: 800; font-size: 1.1em; color: var(--text-dark); margin-bottom: 8px; }
-        .stat-badge {
-            background: #f1f5f9; color: #64748b; padding: 6px 14px; border-radius: 20px;
-            font-size: 0.85em; font-weight: bold; display: inline-block;
-        }
+        .card-img-grid { display: grid; grid-template-columns: 1fr 1fr; height: 180px; width: 100%; gap: 1px; background: #e2e8f0; flex-shrink: 0; }
+        .card-img-grid img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .card-body { padding: 15px; flex-grow: 1; background: var(--bg-card); position: relative; z-index: 2; }
+        .card-title { font-weight: 800; font-size: 1.1em; margin-bottom: 8px; color: var(--text-main); }
+        .card-info { font-size: 0.85em; color: var(--text-light); display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .card-footer { padding: 12px 15px; background: rgba(128,128,128,0.03); border-top: 1px solid rgba(128,128,128,0.05); }
+        .btn-card { width: 100%; padding: 10px; border-radius: 10px; background: rgba(99, 102, 241, 0.1); color: var(--primary); font-weight: bold; transition: 0.2s; }
+        .btn-card:hover { background: var(--primary); color: white; }
 
-        /* --- فۆرم و مۆداڵ --- */
-        .modal, .image-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
-            z-index: 1000; justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal.active, .image-modal.active { display: flex; animation: zoomIn 0.3s ease; }
-        @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        
-        .modal-content {
-            background: white; border-radius: 24px; padding: 35px; max-width: 550px; width: 100%;
-            max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .modal-content h2 { margin-bottom: 25px; color: var(--text-dark); font-weight: 900; text-align: center; }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #475569; font-size: 0.95em; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px;
-            font-size: 15px; font-family: 'Noto Sans Arabic', sans-serif; transition: 0.3s; background: #f8fafc;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary); background: white; outline: none; }
-        
-        .save-btn {
-            background: var(--primary); color: white; border: none; padding: 15px; 
-            border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; 
-            width: 100%; margin-top: 10px; font-family: 'Noto Sans Arabic', sans-serif;
-            transition: 0.3s;
-        }
-        .save-btn:hover { background: #4338ca; }
+        .teacher-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .teacher-item { text-align: center; padding: 20px 10px; background: var(--bg-card); border-radius: 20px; transition: 0.3s; border: var(--border); cursor: pointer; box-shadow: var(--shadow); }
+        .teacher-item:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .avatar-lg { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; object-fit: contain; border: 3px solid var(--primary); padding: 10px; background: var(--bg-body); }
 
-        #globalLoader {
-            position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            color: var(--primary); font-weight: bold; font-family: 'Noto Sans Arabic';
-        }
+        .admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 2000; overflow-y: auto; display: none; }
+        .admin-nav { position: sticky; top: 0; background: #1e293b; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* --- قوفڵی پارێزەری --- */
-        #securityOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            z-index: 10000; display: flex; justify-content: center; align-items: center; flex-direction: column;
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 3000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.2s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        
+        .editor-container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
+        .editor-toolbar { background: #1e293b; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .paper-area { background: #334155; padding: 20px; border-radius: 15px; flex-grow: 1; overflow: auto; display: flex; justify-content: center; }
+        .a4-page { width: 210mm; min-height: 297mm; background: white; padding: 15mm; color: black; direction: rtl; text-align: right; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        
+        html[dir="ltr"] .a4-page { text-align: left; direction: ltr; }
+        
+        .p-header { display: flex; justify-content: space-between; border-bottom: 3px solid black; padding-bottom: 15px; margin-bottom: 20px; }
+        .p-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8fafc; padding: 15px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .p-input { width: 100%; border: none; border-bottom: 1px dashed #cbd5e1; background: transparent; font-weight: bold; padding: 2px; font-family: inherit; }
+        .p-images { display: grid; gap: 10px; margin-top: 20px; }
+        .p-images.landscape { grid-template-columns: 1fr 1fr; } .p-images.landscape .slot { height: 180px; }
+        .p-images.portrait { grid-template-columns: 1fr 1fr; } .p-images.portrait .slot { height: 280px; }
+        .slot { background: #f1f5f9; border: 2px dashed #cbd5e1; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .slot img { width: 100%; height: 100%; object-fit: contain; }
+        .controls { position: absolute; bottom: 5px; display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 20px; opacity: 0; transition: 0.2s; }
+        .slot:hover .controls { opacity: 1; }
+        .c-btn { width: 25px; height: 25px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        @media print {
+            body * { visibility: hidden; } .a4-page, .a4-page * { visibility: visible; }
+            .a4-page { position: absolute; left: 0; top: 0; margin: 0; padding: 10mm; width: 210mm; height: 297mm; }
+            .controls, .editor-toolbar, .modal-overlay { display: none !important; }
         }
-        .security-box {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            padding: 50px 40px; border-radius: 30px; text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-width: 400px; width: 90%;
-        }
-        .security-box h2 { color: white; margin-bottom: 10px; }
-        .security-box p { color: #94a3b8; margin-bottom: 20px; }
-        .security-input { 
-            width: 100%; padding: 15px; margin: 10px 0 20px; border: 2px solid rgba(255,255,255,0.2); 
-            border-radius: 15px; font-size: 18px; text-align: center; background: rgba(0,0,0,0.2); color: white;
-        }
-        .security-btn { 
-            background: #6366f1; color: white; border: none; padding: 15px 40px; 
-            border-radius: 15px; font-size: 18px; cursor: pointer; width: 100%; font-weight: bold;
-            font-family: 'Noto Sans Arabic', sans-serif;
-        }
+        @media (max-width: 768px) { .nav-brand span { font-size: 0.9em; } .a4-page { width: 100%; height: auto; aspect-ratio: 210/297; padding: 5mm; } .p-images.landscape .slot { height: 120px; } }
     </style>
 </head>
 <body>
-    <div id="securityOverlay">
-        <div class="security-box">
-            <h2>🔒 ناوچەی پارێزراو</h2>
-            <p>تکایە وشەی نهێنی بنووسە</p>
-            <input type="password" id="sitePassword" class="security-input" placeholder="••••••">
-            <button onclick="checkPassword()" class="security-btn">چوونەژوورەوە</button>
-            <p id="errorMsg" style="color:#ef4444; margin-top:15px; display:none; font-weight:bold;">وشەی نهێنی هەڵەیە!</p>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="https://i.ibb.co/5hgx3xgZ/logo-gzng.png" class="nav-logo-icon">
+            <span data-i18n="app_title">ئەرشیفی گزنگ</span>
+        </div>
+        <div class="nav-right">
+            <div class="lang-dropdown">
+                <button onclick="toggleLangMenu()" class="icon-btn">🌐</button>
+                <div id="langMenu" class="lang-menu">
+                    <div class="lang-item" onclick="setLang('ku')"><span>🏳️</span> کوردی</div>
+                    <div class="lang-item" onclick="setLang('en')"><span>🇺🇸</span> English</div>
+                    <div class="lang-item" onclick="setLang('ar')"><span>🇮🇶</span> عربي</div>
+                </div>
+            </div>
+            <button onclick="toggleTheme()" class="icon-btn" id="themeIcon">🌙</button>
+            <button id="adminBtn" class="admin-link-btn"><span>🔑</span> <span data-i18n="btn_admin" style="font-size:0.9em;">ئەدمین</span></button>
+        </div>
+    </nav>
+
+    <div id="securityOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <div class="glass" style="padding:40px; text-align:center; max-width:300px; width:90%; background:white;">
+            <div style="font-size:3em; margin-bottom:10px;">🔒</div><h2 style="margin-bottom:20px; color:#333;" data-i18n="secure_area">پارێزراو</h2>
+            <input type="password" id="sitePassword" placeholder="••••••" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; margin-bottom:15px; text-align:center;">
+            <button onclick="checkSitePassword()" class="admin-link-btn" style="width:100%; justify-content:center; background:var(--primary); color:white;" data-i18n="btn_login">چوونەژوورەوە</button>
+            <p id="errorMsg" style="color:red; margin-top:10px; display:none;" data-i18n="error_pass">هەڵەیە</p>
         </div>
     </div>
 
-    <div id="globalLoader">
-        <div style="width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
-        جاری دەکرێت...
-        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    <div id="adminAuthModal" class="modal-overlay" style="z-index:9000;">
+        <div class="glass" style="background:white; padding:30px; width:90%; max-width:350px; text-align:center;">
+            <h3 data-i18n="admin_login_title">بەڕێوەبەر</h3>
+            <input type="email" id="adminEmail" placeholder="Email" class="search-input" style="margin:15px 0 10px; border:1px solid #ddd;">
+            <input type="password" id="adminPass" placeholder="Password" class="search-input" style="margin-bottom:20px; border:1px solid #ddd;">
+            <button onclick="loginAdmin()" class="admin-link-btn" style="width:100%; justify-content:center; background:var(--primary); color:white;" data-i18n="btn_login">چوونەژوورەوە</button>
+            <button onclick="document.getElementById('adminAuthModal').classList.remove('active')" style="margin-top:15px; color:#666;" data-i18n="btn_close">داخستن</button>
+        </div>
     </div>
 
-    <div class="container" id="mainContent">
-        <header>
-            <h1>🏫 قوتابخانەی گزنگ</h1>
-            <p class="subtitle">سیستەمی پێشکەوتووی ئەرشیفی چالاکیەکان</p>
-        </header>
-
-        <div class="nav-tabs">
-            <button onclick="switchView('archive')" class="tab-btn active" id="btn-archive">🏠 هەموو ئەرشیف</button>
-            <button onclick="switchView('teachers')" class="tab-btn" id="btn-teachers">👨‍🏫 لیستی مامۆستایان</button>
-            <button onclick="openNewActivityModal()" class="tab-btn" id="btn-new-activity">➕ تۆمارکردنی چالاکی</button> 
+    <div id="mainContent" style="display:none;">
+        <div class="container">
+            <div class="nav-pills">
+                <button onclick="switchView('archive')" class="pill active" id="btn-archive" data-i18n="tab_archive">ئەرشیف</button>
+                <button onclick="switchView('teachers')" class="pill" id="btn-teachers" data-i18n="tab_teachers">مامۆستایان</button>
+                <button onclick="window.open('https://gzng-school.vercel.app/', '_blank')" class="pill" style="background: #ecfdf5; color: #059669; border-color: #10b981;">
+                    📅 <span data-i18n="btn_schedule">خشتەی ڕۆژانە</span>
+                </button>
+            </div>
+            
+            <div id="archiveControls">
+                <div class="search-area"><input type="text" class="search-input" id="searchBox" placeholder="گەڕان..."></div>
+                <div style="text-align:center;"><button onclick="openEditor()" class="add-activity-btn" id="btnAddActivity"><span style="margin:0 5px;">➕</span> <span data-i18n="btn_add_activity">زیادکردنی چالاکی نوێ</span></button></div>
+            </div>
+            <div id="filterHeader" class="filter-header">
+                <div style="display:flex; align-items:center; gap:15px;"><div id="filterAvatarContainer"></div><h2 id="filterName" style="font-size:1.2em; margin:0;"></h2></div>
+                <button onclick="clearFilter()" style="color:#ef4444; background:rgba(239, 68, 68, 0.1); padding:8px 15px; border-radius:10px;" data-i18n="btn_back">❌ گەڕانەوە</button>
+            </div>
+            <div id="activitiesGrid" class="grid"></div>
+            <div id="teachersGrid" class="teacher-grid" style="display:none;"></div>
         </div>
+    </div>
 
-        <div class="controls" id="archiveControls">
-            <input type="text" class="search-box" id="searchBox" placeholder="گەڕان بەپێی ناو، مامۆستا، یان بەروار...">
-            <button class="add-btn" onclick="openAddModal()">
-                <span>زیادکردنی وێنە/تێبینی</span> <span>+</span>
-            </button> 
+    <div id="adminDashboard" class="admin-dashboard">
+        <div class="admin-nav">
+            <h2 style="display:flex; align-items:center; gap:10px;">⚙️ <span data-i18n="dashboard">داشبۆرد</span> <span style="font-size:0.6em; background:#334155; padding:2px 8px; border-radius:10px;" data-i18n="btn_admin">بەڕێوەبەر</span></h2>
+            <div style="display:flex; gap:10px;"><button onclick="closeAdminDashboard()" style="background:#3b82f6; color:white; padding:8px 15px; border-radius:8px;" data-i18n="btn_back_site">🔙 گەڕانەوە</button><button onclick="logoutAdmin()" style="background:#ef4444; color:white; padding:8px 15px; border-radius:8px;" data-i18n="btn_logout">دەرچوون</button></div>
         </div>
+        <div class="container" style="padding-top:30px;">
+            <div class="grid" style="margin-bottom:30px;">
+                <div class="card" style="padding:20px; text-align:center;"><div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statActivities">0</div><p data-i18n="stat_activity">چالاکی</p></div>
+                <div class="card" style="padding:20px; text-align:center;"><div style="font-size:2.5em; font-weight:900; color:var(--primary);" id="statTeachers">0</div><p data-i18n="stat_teacher">مامۆستا</p></div>
+            </div>
+            <div class="nav-pills">
+                <button onclick="switchAdminTab('activities')" id="tab-admin-acts" class="pill active" data-i18n="manage_activities">بەڕێوەبردنی چالاکییەکان</button>
+                <button onclick="switchAdminTab('teachers')" id="tab-admin-teach" class="pill" data-i18n="manage_teachers">بەڕێوەبردنی مامۆستایان</button>
+            </div>
+            <div id="adminActivitiesView" class="glass" style="padding:20px; background:var(--bg-card);"><table style="width:100%; border-collapse:collapse;"><thead><tr style="text-align:inherit; border-bottom:2px solid #eee;"><th data-i18n="lbl_subject">بابەت</th><th data-i18n="lbl_teacher">مامۆستا</th><th data-i18n="lbl_action">کردار</th></tr></thead><tbody id="adminActivitiesTable"></tbody></table></div>
+            <div id="adminTeachersView" class="glass" style="padding:20px; display:none; background:var(--bg-card);"><button onclick="openAddTeacherModal()" class="admin-link-btn" style="background:var(--primary); color:white; margin-bottom:20px;">➕ <span data-i18n="btn_add_teacher">زیادکردنی مامۆستا</span></button><div id="adminTeachersGrid" class="teacher-grid"></div></div>
+        </div>
+    </div>
 
-        <div id="filterHeader" style="display:none; margin-bottom:25px; text-align:center;">
-            <div style="display:inline-flex; align-items:center; background:white; padding:8px 20px; border-radius:50px; box-shadow: var(--shadow);">
-                <span style="color:#64748b; margin-left:10px;">ئەرشیفی مامۆستا:</span>
-                <span id="filterTeacherName" style="font-weight:900; color:var(--primary); font-size:1.1em;"></span>
-                <button onclick="clearFilter()" style="background:#fee2e2; color:#ef4444; border:none; width:30px; height:30px; border-radius:50%; margin-right:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px;">✕</button>
+    <div id="editorModal" class="modal-overlay">
+        <div class="editor-container">
+            <div class="editor-toolbar">
+                <button onclick="closeEditor()" style="color:#ef4444; font-weight:bold;" data-i18n="btn_close">داخستن</button>
+                <div style="display:flex; gap:10px;"><button onclick="setLayout('landscape')" style="background:#334155; padding:5px 10px; border-radius:5px;" data-i18n="layout_landscape">وێنەی پان</button><button onclick="setLayout('portrait')" style="background:#334155; padding:5px 10px; border-radius:5px;" data-i18n="layout_portrait">وێنەی درێژ</button></div>
+                <div style="display:flex; gap:10px;"><button onclick="window.print()" style="background:white; color:black; padding:5px 10px; border-radius:5px;">🖨️</button><button onclick="saveToArchive()" id="btnSaveArchive" style="background:var(--primary); color:white; padding:5px 15px; border-radius:5px;" data-i18n="btn_save">💾 سەیڤ</button></div>
+            </div>
+            <div class="paper-area">
+                <div class="a4-page" id="reportPaper">
+                    <div class="p-header">
+                        <div><h1 style="font-size:24px; color:black; margin:0;" data-i18n="school_name">قوتابخانەی گزنگ</h1><p style="color:#666; margin-top:5px;" data-i18n="report_form">فۆرمی ڕاپۆرتی چالاکی</p></div>
+                        <img src="https://i.ibb.co/5hgx3xgZ/logo-gzng.png" style="width:80px; height:80px; object-fit:contain;">
+                    </div>
+                    <div class="p-form">
+                        <div><label style="font-size:12px; color:#666;" data-i18n="lbl_subject">بابەت</label><input id="inpName" class="p-input"></div>
+                        <div><label style="font-size:12px; color:#666;" data-i18n="lbl_committee">لیژنە</label><input id="inpComm" class="p-input"></div>
+                        <div><label style="font-size:12px; color:#666;" data-i18n="lbl_teacher">مامۆستا</label><select id="inpTeacher" class="p-input" style="background:white;"><option value="">...</option></select></div>
+                        <div><label style="font-size:12px; color:#666;" data-i18n="lbl_date">بەروار</label><input id="inpDate" type="date" class="p-input"></div>
+                    </div>
+                    <textarea id="inpNotes" style="width:100%; height:120px; border:1px solid #ddd; padding:10px; resize:none; font-family:inherit; margin-bottom:10px;" placeholder="..."></textarea>
+                    <div id="imgContainer" class="p-images landscape">
+                        <div class="slot" id="slot0" onmousedown="startDrag(event, 0)" ontouchstart="startDrag(event, 0)"><img id="img0"><div class="controls"><div class="c-btn" onclick="triggerFile(0)">📂</div><div class="c-btn" onclick="adjustZoom(0, 0.1)">+</div><div class="c-btn" onclick="adjustZoom(0, -0.1)">-</div></div></div>
+                        <div class="slot" id="slot1" onmousedown="startDrag(event, 1)" ontouchstart="startDrag(event, 1)"><img id="img1"><div class="controls"><div class="c-btn" onclick="triggerFile(1)">📂</div><div class="c-btn" onclick="adjustZoom(1, 0.1)">+</div><div class="c-btn" onclick="adjustZoom(1, -0.1)">-</div></div></div>
+                        <div class="slot" id="slot2" onmousedown="startDrag(event, 2)" ontouchstart="startDrag(event, 2)"><img id="img2"><div class="controls"><div class="c-btn" onclick="triggerFile(2)">📂</div><div class="c-btn" onclick="adjustZoom(2, 0.1)">+</div><div class="c-btn" onclick="adjustZoom(2, -0.1)">-</div></div></div>
+                        <div class="slot" id="slot3" onmousedown="startDrag(event, 3)" ontouchstart="startDrag(event, 3)"><img id="img3"><div class="controls"><div class="c-btn" onclick="triggerFile(3)">📂</div><div class="c-btn" onclick="adjustZoom(3, 0.1)">+</div><div class="c-btn" onclick="adjustZoom(3, -0.1)">-</div></div></div>
+                    </div>
+                    <div style="margin-top:auto; text-align:center; font-size:12px; color:#999; border-top:1px solid #eee; padding-top:10px;" data-i18n="school_footer">قوتابخانەی گزنگی ئینگلیزی ناحکومی</div>
+                </div>
             </div>
         </div>
-
-        <div class="activities-grid" id="activitiesGrid"></div>
-
-        <div class="teachers-grid" id="teachersGrid"></div>
     </div>
 
-    <div class="modal" id="newActivityModal">
-        <div class="modal-content">
-            <h2>تۆمارکردنی چالاکی نوێی مامۆستا 📝</h2>
-            <form id="newActivityForm">
-                <div class="form-group">
-                    <label for="newTeacherName">ناوی مامۆستا</label>
-                    <input type="text" id="newTeacherName" required placeholder="ناوی سیانی مامۆستا...">
-                </div>
-                <div class="form-group">
-                    <label for="newSubjectName">ناوی دەرس</label>
-                    <input type="text" id="newSubjectName" required placeholder="مەسەلەن: زانست، بیرکاری...">
-                </div>
-                <div class="form-group">
-                    <label for="activityDay">ڕۆژ</label>
-                    <select id="activityDay" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="شەممە">شەممە</option>
-                        <option value="یەکشەممە">یەکشەممە</option>
-                        <option value="دووشەممە">دووشەممە</option>
-                        <option value="سێشەممە">سێشەممە</option>
-                        <option value="چوارشەممە">چوارشەممە</option>
-                        <option value="پێنجشەممە">پێنجشەممە</option>
-                        <option value="هەینی">هەینی</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="activityLesson">دەرسی ژمارە</label>
-                    <select id="activityLesson" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="دەرسی یەکەم">دەرسی یەکەم</option>
-                        <option value="دەرسی دووەم">دەرسی دووەم</option>
-                        <option value="دەرسی سێیەم">دەرسی سێیەم</option>
-                        <option value="دەرسی چوارەم">دەرسی چوارەم</option>
-                        <option value="دەرسی پێنجەم">دەرسی پێنجەم</option>
-                        <option value="دەرسی شەشەم">دەرسی شەشەم</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="newActivityDate">بەروار</label>
-                    <input type="date" id="newActivityDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="newActivityType">جۆری چالاکی</label>
-                    <select id="newActivityType" required>
-                        <option value="">هەڵبژێرە</option>
-                        <option value="تاقیکردنەوە">تاقیکردنەوە</option>
-                        <option value="پڕۆژە">پڕۆژە</option>
-                        <option value="سیمینار">سیمینار</option>
-                        <option value="چالاکی گرووپی">چالاکی گرووپی</option>
-                        <option value="پێشانگا">پێشانگا</option>
-                        <option value="ئەوانی تر">ئەوانی تر</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="newActivityDetails">تێبینی / وردەکاری</label>
-                    <textarea id="newActivityDetails" placeholder="ڕوونکردنەوەی زیاتر..." rows="3"></textarea>
-                </div>
+    <input type="file" id="hiddenFileInput" accept="image/*" style="display:none;">
 
-                <button type="submit" class="save-btn" id="saveNewActivityBtn">💾 تۆمارکردنی چالاکی</button>
-                <button type="button" onclick="closeNewActivityModal()" style="width:100%; background:transparent; color:#64748b; border:none; padding:10px; margin-top:5px; cursor:pointer;">پاشگەزبوونەوە</button>
-            </form>
+    <div id="teacherEditModal" class="modal-overlay" style="z-index:9200;">
+        <div class="glass" style="background:white; padding:30px; width:90%; max-width:400px; border-radius:20px;">
+            <h3 style="margin-bottom:20px;" id="teacherModalTitle" data-i18n="teacher_info">زانیاری مامۆستا</h3>
+            <input type="hidden" id="editTeacherId">
+            <label style="font-size:0.9em; color:gray;" data-i18n="lbl_name">ناو</label>
+            <input id="editTeacherName" type="text" class="search-input" style="border:1px solid #ddd; margin:5px 0 15px; padding:10px;">
+            <label style="font-size:0.9em; color:gray;" data-i18n="lbl_gender">ڕەگەز</label>
+            <select id="editTeacherGender" class="search-input" style="border:1px solid #ddd; margin:5px 0 15px; padding:10px;">
+                <option value="male">👨‍🏫 Male</option>
+                <option value="female">👩‍🏫 Female</option>
+            </select>
+            <label style="font-size:0.9em; color:gray;" data-i18n="lbl_photo">وێنە</label>
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
+                <img id="editTeacherPreview" src="" style="width:50px; height:50px; border-radius:50%; border:1px solid #ddd; object-fit:contain; display:none;">
+                <button onclick="document.getElementById('editTeacherFile').click()" class="admin-link-btn" style="background:#e0e7ff; color:blue;" data-i18n="btn_change">📷 گۆڕین</button>
+                <button onclick="removeTeacherPhoto()" class="admin-link-btn" style="background:#fee2e2; color:red;" data-i18n="btn_remove_photo">❌ سڕینەوە</button>
+                <input type="file" id="editTeacherFile" style="display:none;" accept="image/*" onchange="previewTeacherImage(this)">
+            </div>
+            <button onclick="saveTeacherChanges()" class="admin-link-btn" style="width:100%; justify-content:center; background:var(--primary); color:white; padding:12px;" data-i18n="btn_save">سەیڤکردن</button>
+            <button onclick="document.getElementById('teacherEditModal').classList.remove('active')" style="margin-top:10px; width:100%; color:#666;" data-i18n="btn_close">داخستن</button>
         </div>
     </div>
-
-
-    <div class="modal" id="addModal">
-        <div class="modal-content">
-            <h2>زیادکردنی وێنە و تێبینی (لەسەر چالاکیەک)</h2>
-            <form id="activityForm">
-                <div class="form-group"><label>ناوی چالاکی</label><input type="text" id="activityName" required placeholder="مەسەلەن: سیمیناری زانستی..."></div>
-                <div class="form-group"><label>ناوی مامۆستا</label><input type="text" id="teacherName" required placeholder="ناوی سیانی مامۆستا..."></div>
-                <div class="form-group"><label>بەروار</label><input type="date" id="activityDate" required></div>
-                <div class="form-group">
-                    <label>وێنەکان (ماکس ٤)</label>
-                    <div style="border: 2px dashed #cbd5e1; padding: 20px; text-align: center; border-radius: 12px; background: #f8fafc; cursor: pointer;" onclick="document.getElementById('imageInput').click()">
-                        📷 وێنەکان هەڵبژێرە
-                    </div>
-                    <input type="file" id="imageInput" accept="image/*" multiple style="display:none">
-                    <div id="uploadStatus" style="color: var(--primary); margin-top:10px; font-size:0.9em; font-weight:bold;"></div>
-                </div>
-                <div class="form-group"><label>تێبینی</label><textarea id="activityNotes" placeholder="وردەکاری چالاکیەکە..." rows="3"></textarea></div>
-                <button type="submit" class="save-btn" id="saveBtn">💾 پاشەکەوتکردن</button>
-                <button type="button" onclick="closeAddModal()" style="width:100%; background:transparent; color:#64748b; border:none; padding:10px; margin-top:5px; cursor:pointer;">پاشگەزبوونەوە</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="image-modal" id="imageModal" onclick="this.classList.remove('active')"><img id="modalImage" src=""></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, updateDoc, where, writeBatch, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        
+        const IMGBB_API_KEY = "0792200cd18a10eadeeccf373d03e4f7"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyAr_JHCa5BbM5RJ9KCp0IBom1rdAgVX4CM",
@@ -395,286 +274,330 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
-        const activitiesRef = collection(db, "activities");
+        const actRef = collection(db, "activities");
+        const teachRef = collection(db, "teachers");
 
-        let allActivities = [];
-        let currentFilter = null;
+        let acts=[], teachers=[], user=null;
+        window.localFiles=[null,null,null,null]; window.currentSlot=0;
+        window.imgState={0:{s:1,x:0,y:0},1:{s:1,x:0,y:0},2:{s:1,x:0,y:0},3:{s:1,x:0,y:0}};
+        let currentFilter=null, tempTeacherFile = null, removePhotoFlag = false;
 
-        const q = query(activitiesRef, orderBy("date", "desc"));
-        onSnapshot(q, (snapshot) => {
-            allActivities = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            renderApp(); 
-            document.getElementById('globalLoader').style.display = 'none';
-        });
+        // NEW CLEAN VECTOR ICONS
+        const MALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042356.png";
+        const FEMALE_ICON = "https://cdn-icons-png.flaticon.com/512/4042/4042422.png";
 
-        function renderApp() {
-            const grid = document.getElementById('activitiesGrid');
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
-            let displayList = allActivities;
-
-            if (currentFilter) {
-                displayList = displayList.filter(a => a.teacher === currentFilter);
-                document.getElementById('filterHeader').style.display = 'block';
-                document.getElementById('filterTeacherName').textContent = currentFilter;
-            } else {
-                document.getElementById('filterHeader').style.display = 'none';
-            }
-
-            displayList = displayList.filter(a => 
-                a.name.toLowerCase().includes(searchTerm) || 
-                a.teacher.toLowerCase().includes(searchTerm) ||
-                a.date.includes(searchTerm) ||
-                (a.day && a.day.toLowerCase().includes(searchTerm)) || // نوێ
-                (a.subject && a.subject.toLowerCase().includes(searchTerm)) || // نوێ
-                (a.lesson && a.lesson.toLowerCase().includes(searchTerm)) // نوێ
-            );
-
-            grid.innerHTML = displayList.map(act => `
-                <div class="activity-card">
-                    <div class="activity-header">
-                        <h3>${act.name}</h3>
-                        <div class="activity-meta">
-                            <span>👤 ${act.teacher}</span>
-                            <span>📅 ${act.date}</span>
-                        </div>
-                    </div>
-                    ${act.day || act.lesson || act.subject || act.activityType ? `
-                        <div style="padding: 15px 20px; background: #f8fafc; border-top: 1px solid #f1f5f9; font-size: 0.9em;">
-                            ${act.subject ? `<strong>📚 دەرس:</strong> ${act.subject}<br>` : ''}
-                            ${act.day ? `<strong>🗓️ ڕۆژ:</strong> ${act.day}<br>` : ''}
-                            ${act.lesson ? `<strong>🕐 دەرس:</strong> ${act.lesson}<br>` : ''}
-                            ${act.activityType ? `<strong>💡 جۆر:</strong> ${act.activityType}<br>` : ''}
-                        </div>
-                    ` : ''}
-                    <div class="images-container">
-                        ${act.images ? act.images.map(url => `<img src="${url}" class="activity-image" onclick="openImg('${url}')">`).join('') : ''}
-                    </div>
-                    ${act.notes ? `<div class="activity-notes">${act.notes}</div>` : ''}
-                    <div class="card-footer">
-                        <button class="delete-btn" onclick="deleteItem('${act.id}')">🗑️ سڕینەوە</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            if(displayList.length === 0) grid.innerHTML = '<p style="color:var(--text-gray); grid-column:1/-1; text-align:center; font-weight:bold; font-size:1.2em; margin-top:20px;">هیچ چالاکییەک نەدۆزرایەوە.</p>';
-
-            renderTeachersList();
-        }
-
-        function renderTeachersList() {
-            const teachersGrid = document.getElementById('teachersGrid');
-            const teachersMap = {};
-            allActivities.forEach(act => {
-                const tName = act.teacher.trim();
-                if (!teachersMap[tName]) teachersMap[tName] = 0;
-                teachersMap[tName]++;
-            });
-
-            const sortedTeachers = Object.keys(teachersMap).sort((a, b) => teachersMap[b] - teachersMap[a]);
-
-            teachersGrid.innerHTML = sortedTeachers.map(tName => `
-                <div class="teacher-card" onclick="filterByTeacher('${tName}')">
-                    <div class="teacher-avatar">👤</div>
-                    <div class="teacher-name">${tName}</div>
-                    <div class="stat-badge">📊 ${teachersMap[tName]} چالاکی</div>
-                </div>
-            `).join('');
-        }
-
-        window.switchView = (view) => {
-            document.getElementById('btn-new-activity').classList.remove('active'); // لابردنی چالاکی لەسەر دوگمەی چالاکی نوێ
-            if (view === 'archive') {
-                document.getElementById('activitiesGrid').style.display = 'grid';
-                document.getElementById('archiveControls').style.display = 'flex';
-                document.getElementById('teachersGrid').style.display = 'none';
-                document.getElementById('btn-archive').classList.add('active');
-                document.getElementById('btn-teachers').classList.remove('active');
-                currentFilter = null;
-                renderApp();
-            } else {
-                document.getElementById('activitiesGrid').style.display = 'none';
-                document.getElementById('archiveControls').style.display = 'none';
-                document.getElementById('filterHeader').style.display = 'none';
-                document.getElementById('teachersGrid').style.display = 'grid';
-                document.getElementById('btn-teachers').classList.add('active');
-                document.getElementById('btn-archive').classList.remove('active');
+        // --- TRANSLATIONS ---
+        const translations = {
+            ku: {
+                app_title: "ئەرشیفی گزنگ", btn_admin: "ئەدمین", tab_archive: "ئەرشیف", tab_teachers: "مامۆستایان", btn_schedule: "خشتەی ڕۆژانە",
+                btn_add_activity: "زیادکردنی چالاکی نوێ", btn_back: "گەڕانەوە", dashboard: "داشبۆرد",
+                stat_activity: "چالاکی", stat_teacher: "مامۆستا", manage_activities: "بەڕێوەبردنی چالاکییەکان",
+                manage_teachers: "بەڕێوەبردنی مامۆستایان", lbl_subject: "بابەت", lbl_teacher: "مامۆستا", lbl_action: "کردار",
+                btn_add_teacher: "زیادکردنی مامۆستا", btn_back_site: "گەڕانەوە بۆ سایت", btn_logout: "دەرچوون",
+                btn_close: "داخستن", btn_save: "سەیڤ", layout_landscape: "وێنەی پان", layout_portrait: "وێنەی درێژ",
+                school_name: "قوتابخانەی گزنگ", report_form: "فۆرمی ڕاپۆرتی چالاکی", lbl_committee: "لیژنە", lbl_date: "بەروار",
+                school_footer: "قوتابخانەی گزنگی ئینگلیزی ناحکومی", teacher_info: "زانیاری مامۆستا", lbl_name: "ناو", lbl_gender: "ڕەگەز",
+                lbl_photo: "وێنە", btn_change: "گۆڕین", btn_remove_photo: "سڕینەوەی وێنە", view_report: "بینینی ڕاپۆرت",
+                secure_area: "ناوچەی پارێزراو", btn_login: "چوونەژوورەوە", error_pass: "پاسۆرد هەڵەیە", admin_login_title: "چوونەژوورەوەی ئەدمین", search: "گەڕان..."
+            },
+            en: {
+                app_title: "Gzng Archive", btn_admin: "Admin", tab_archive: "Archive", tab_teachers: "Teachers", btn_schedule: "Daily Schedule",
+                btn_add_activity: "Add New Activity", btn_back: "Back", dashboard: "Dashboard",
+                stat_activity: "Activities", stat_teacher: "Teachers", manage_activities: "Manage Activities",
+                manage_teachers: "Manage Teachers", lbl_subject: "Subject", lbl_teacher: "Teacher", lbl_action: "Action",
+                btn_add_teacher: "Add Teacher", btn_back_site: "Back to Site", btn_logout: "Logout",
+                btn_close: "Close", btn_save: "Save", layout_landscape: "Landscape", layout_portrait: "Portrait",
+                school_name: "Gzng School", report_form: "Activity Report Form", lbl_committee: "Committee", lbl_date: "Date",
+                school_footer: "Gzng Non-Governmental English School", teacher_info: "Teacher Info", lbl_name: "Name", lbl_gender: "Gender",
+                lbl_photo: "Photo", btn_change: "Change", btn_remove_photo: "Remove Photo", view_report: "View Report",
+                secure_area: "Restricted Area", btn_login: "Login", error_pass: "Wrong Password", admin_login_title: "Admin Login", search: "Search..."
+            },
+            ar: {
+                app_title: "أرشيف غزنگ", btn_admin: "إدارة", tab_archive: "الأرشيف", tab_teachers: "المدرسين", btn_schedule: "الجدول اليومي",
+                btn_add_activity: "إضافة نشاط جديد", btn_back: "رجوع", dashboard: "لوحة التحكم",
+                stat_activity: "أنشطة", stat_teacher: "مدرسين", manage_activities: "إدارة الأنشطة",
+                manage_teachers: "إدارة المدرسين", lbl_subject: "الموضوع", lbl_teacher: "المدرس", lbl_action: "إجراء",
+                btn_add_teacher: "إضافة مدرس", btn_back_site: "رجوع للموقع", btn_logout: "خروج",
+                btn_close: "إغلاق", btn_save: "حفظ", layout_landscape: "عرضي", layout_portrait: "طولي",
+                school_name: "مدرسة غزنگ", report_form: "نموذج تقرير نشاط", lbl_committee: "اللجنة", lbl_date: "التاريخ",
+                school_footer: "مدرسة غزنگ الإنجليزية الأهلية", teacher_info: "معلومات المدرس", lbl_name: "الاسم", lbl_gender: "الجنس",
+                lbl_photo: "صورة", btn_change: "تغيير", btn_remove_photo: "حذف الصورة", view_report: "عرض التقرير",
+                secure_area: "منطقة محمية", btn_login: "دخول", error_pass: "كلمة المرور خطأ", admin_login_title: "دخول المشرف", search: "بحث..."
             }
         };
+
+        // Language Logic
+        window.toggleLangMenu = () => {
+            const menu = document.getElementById('langMenu');
+            menu.classList.toggle('show');
+        };
+        // Close menu when clicking outside
+        window.onclick = (e) => {
+            if (!e.target.matches('.icon-btn') && !e.target.matches('.icon-btn *')) {
+                const menu = document.getElementById('langMenu');
+                if (menu.classList.contains('show')) menu.classList.remove('show');
+            }
+        };
+
+        window.setLang = (lang) => {
+            localStorage.setItem('lang', lang);
+            location.reload(); // Simplest way to re-render everything with new lang
+        };
+
+        // Init Lang
+        let currentLang = localStorage.getItem('lang') || 'ku';
+        document.documentElement.setAttribute('lang', currentLang);
+        document.documentElement.setAttribute('dir', currentLang === 'en' ? 'ltr' : 'rtl');
+        function t(key) { return translations[currentLang][key] || key; }
         
-        // --- تابعی نوێ بۆ کردنەوە و داخستنی فۆرمی چالاکی نوێ (بەشێوەی هەڵبژاردن) ---
-        window.openNewActivityModal = () => {
-            document.getElementById('newActivityModal').classList.add('active');
-            document.getElementById('btn-new-activity').classList.add('active');
-            document.getElementById('btn-archive').classList.remove('active');
-            document.getElementById('btn-teachers').classList.remove('active');
+        // Apply translations to static elements
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(translations[currentLang][key]) el.innerText = translations[currentLang][key];
+        });
+        if(document.getElementById('searchBox')) document.getElementById('searchBox').placeholder = t('search');
+
+
+        // --- THEME & SETUP ---
+        window.toggleTheme = () => {
+            const html = document.documentElement;
+            const next = html.getAttribute('data-theme')==='dark'?'light':'dark';
+            html.setAttribute('data-theme',next); localStorage.setItem('theme',next);
+            document.getElementById('themeIcon').innerText = next==='dark'?'☀️':'🌙';
         };
-        window.closeNewActivityModal = () => {
-            document.getElementById('newActivityModal').classList.remove('active');
-            document.getElementById('newActivityForm').reset();
-            // دوگمەکە بگەڕێنەوە بۆ دۆخی ئاسایی ئەگەر کرایەوە
-            document.getElementById('btn-new-activity').classList.remove('active');
-            document.getElementById('btn-archive').classList.add('active');
-        };
+        const saved = localStorage.getItem('theme')||'light';
+        document.documentElement.setAttribute('data-theme',saved);
+        document.getElementById('themeIcon').innerText = saved==='dark'?'☀️':'🌙';
 
-        // --- تابعی تۆمارکردنی چالاکی نوێ (بۆ فۆرمی هەڵبژاردن) ---
-        document.getElementById('newActivityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('saveNewActivityBtn');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '⏳ چاوەڕێبە...';
-
-            try {
-                const activityData = {
-                    name: `چالاکی بۆ دەرسی ${document.getElementById('newSubjectName').value} (${document.getElementById('newActivityType').value})`, // ناوی چالاکیەکە لەسەر بنەمای دەرس و جۆرەکە دانرا
-                    teacher: document.getElementById('newTeacherName').value.trim(),
-                    date: document.getElementById('newActivityDate').value,
-                    day: document.getElementById('activityDay').value,
-                    lesson: document.getElementById('activityLesson').value,
-                    subject: document.getElementById('newSubjectName').value,
-                    activityType: document.getElementById('newActivityType').value,
-                    notes: document.getElementById('newActivityDetails').value,
-                    images: [], // ئەم چالاکیە نوێیە وێنەی نییە لە ئێستادا، دواتر لە مۆداڵی 'addModal' زیاد دەکرێت
-                    createdAt: new Date()
-                };
-
-                await addDoc(activitiesRef, activityData);
-
-                closeNewActivityModal();
-                alert("✅ چالاکی بە سەرکەوتوویی تۆمارکرا!");
-                switchView('archive');
-            } catch (error) {
-                alert("هەڵە: " + error.message);
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 تۆمارکردنی چالاکی';
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            const btn = document.getElementById('adminBtn');
+            if(u){
+                btn.innerHTML=`<span>⚙️</span> <span data-i18n="dashboard">${t('dashboard')}</span>`; 
+                btn.style.background="var(--primary)"; btn.style.color="white"; btn.onclick=openAdminDashboard;
+            } else {
+                btn.innerHTML=`<span>🔑</span> <span data-i18n="btn_admin">${t('btn_admin')}</span>`; 
+                btn.style.background="rgba(128,128,128,0.1)"; btn.style.color="var(--text-main)"; btn.onclick=()=>document.getElementById('adminAuthModal').classList.add('active');
             }
         });
-        // --- کۆتایی تابعی نوێ ---
+        window.loginAdmin=async()=>{try{await signInWithEmailAndPassword(auth,document.getElementById('adminEmail').value,document.getElementById('adminPass').value); document.getElementById('adminAuthModal').classList.remove('active');}catch(e){alert(e.message);}};
+        window.logoutAdmin=async()=>{if(confirm("Are you sure?")){await signOut(auth); closeAdminDashboard();}};
 
+        onSnapshot(query(actRef, orderBy("date", "desc")), (s) => { acts = s.docs.map(d=>({id:d.id, ...d.data()})); renderApp(); renderAdminContent(); });
+        onSnapshot(teachRef, (s) => { teachers = s.docs.map(d=>({id:d.id, ...d.data()})); updateDropdown(); renderApp(); renderAdminContent(); });
 
-        window.filterByTeacher = (tName) => {
-            currentFilter = tName;
-            switchView('archive');
-        };
-
-        window.clearFilter = () => {
-            currentFilter = null;
-            renderApp();
-        };
-
-        window.renderApp = renderApp;
-        document.getElementById('searchBox').addEventListener('input', renderApp);
-
-        // --- IMAGE COMPRESSION FUNCTION ---
-        function compressImage(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 1024; // Max width for compression
-                        const scaleSize = MAX_WIDTH / img.width;
-                        // If image is smaller than 1024, keep original size, else resize
-                        if (img.width > MAX_WIDTH) {
-                            canvas.width = MAX_WIDTH;
-                            canvas.height = img.height * scaleSize;
-                        } else {
-                            canvas.width = img.width;
-                            canvas.height = img.height;
-                        }
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        
-                        // Convert to blob (JPEG, 70% quality)
-                        canvas.toBlob((blob) => {
-                            resolve(blob); 
-                        }, 'image/jpeg', 0.7); 
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
+        function getTeacherImg(t) { if(t.photo && t.photo.length > 10) return t.photo; return t.gender === 'female' ? FEMALE_ICON : MALE_ICON; }
+        function updateDropdown(){
+            const s=document.getElementById('inpTeacher'); const v=s.value; s.innerHTML='<option value="">...</option>';
+            teachers.forEach(t=>{const o=document.createElement('option'); o.value=t.name; o.text=t.name; s.appendChild(o)}); s.value=v;
         }
 
-        async function uploadImage(file) {
-            // Compress before uploading
-            const compressedBlob = await compressImage(file);
-            const storageRef = ref(storage, 'images/' + Date.now() + '-' + file.name);
-            await uploadBytes(storageRef, compressedBlob);
-            return await getDownloadURL(storageRef);
-        }
-
-        document.getElementById('activityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const saveBtn = document.getElementById('saveBtn');
-            const statusDiv = document.getElementById('uploadStatus');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '⏳ چاوەڕێبە...';
+        function renderApp(){
+            if(currentFilter) { renderFilter(); return; }
+            const term = document.getElementById('searchBox').value.toLowerCase();
+            const list = acts.filter(a=>a.name.toLowerCase().includes(term)||a.teacher.toLowerCase().includes(term));
+            document.getElementById('activitiesGrid').innerHTML = list.map(a => `
+                <div class="card">
+                    <div class="card-img-grid">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
+                    <div class="card-body"><div class="card-title">${a.name}</div><div class="card-info">📅 ${a.date} | 👤 ${a.teacher}</div></div>
+                    <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">${t('view_report')}</button></div>
+                </div>
+            `).join('');
             
-            try {
-                const imageFiles = document.getElementById('imageInput').files;
-                if(imageFiles.length > 4) throw new Error("تەنها ٤ وێنە ڕێگەپێدراوە");
+            // MERGE LOGIC: Teachers + Activities
+            const tMap = {};
+            acts.forEach(a => tMap[a.teacher] = (tMap[a.teacher] || 0) + 1);
+            const profileNames = teachers.map(t => t.name);
+            const allNames = [...new Set([...Object.keys(tMap), ...profileNames])];
 
-                let imageUrls = [];
-                for(let i=0; i<imageFiles.length; i++) {
-                    statusDiv.textContent = `بارکردنی وێنەی ${i+1} (دەپەستێورێتەوە)...`;
-                    const url = await uploadImage(imageFiles[i]);
-                    imageUrls.push(url);
+            document.getElementById('teachersGrid').innerHTML = allNames.map(name => {
+                const profile = teachers.find(t => t.name === name);
+                let img = MALE_ICON;
+                if (profile) {
+                    if (profile.photo && profile.photo.length > 10) img = profile.photo;
+                    else if (profile.gender === 'female') img = FEMALE_ICON;
+                }
+                return `
+                <div class="teacher-item" onclick="filterT('${name}')">
+                    <img src="${img}" class="avatar-lg">
+                    <div style="font-weight:bold;">${name}</div>
+                    <div style="color:gray; font-size:0.8em;">${tMap[name]||0} ${t('stat_activity')}</div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.filterT=(n)=>{currentFilter=n; switchView('archive');};
+        function renderFilter(){
+            document.getElementById('archiveControls').style.display='none'; document.getElementById('filterHeader').style.display='flex';
+            document.getElementById('filterName').innerText=currentFilter;
+            const m=teachers.find(t=>t.name===currentFilter);
+            document.getElementById('filterAvatarContainer').innerHTML=`<img src="${m?getTeacherImg(m):MALE_ICON}" style="width:50px;height:50px;border-radius:50%;object-fit:contain;">`;
+            const list=acts.filter(a=>a.teacher===currentFilter);
+            document.getElementById('activitiesGrid').innerHTML=list.map(a=>`
+                <div class="card">
+                    <div class="card-img-grid">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
+                    <div class="card-body"><div class="card-title">${a.name}</div><div class="card-info">📅 ${a.date}</div></div>
+                    <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">${t('view_report')}</button></div>
+                </div>
+            `).join('');
+        }
+        window.clearFilter=()=>{currentFilter=null; document.getElementById('filterHeader').style.display='none'; document.getElementById('archiveControls').style.display='block'; renderApp();}
+        window.switchView=(v)=>{
+            document.getElementById('activitiesGrid').style.display=v==='archive'?'grid':'none';
+            document.getElementById('teachersGrid').style.display=v==='teachers'?'grid':'none';
+            document.getElementById('btn-archive').classList.toggle('active',v==='archive');
+            document.getElementById('btn-teachers').classList.toggle('active',v==='teachers');
+            document.getElementById('archiveControls').style.display=(v==='archive'&&!currentFilter)?'block':'none';
+        };
+        document.getElementById('searchBox').addEventListener('input',renderApp);
+
+        window.openAdminDashboard=()=>{document.getElementById('adminDashboard').style.display='block'; renderAdminContent();};
+        window.closeAdminDashboard=()=>{document.getElementById('adminDashboard').style.display='none';};
+        
+        function renderAdminContent(){
+            if(!user) return;
+            document.getElementById('statActivities').innerText=acts.length; document.getElementById('statTeachers').innerText=teachers.length;
+            document.getElementById('adminActivitiesTable').innerHTML=acts.map(a=>`
+                <tr style="border-bottom:1px solid #eee;">
+                    <td style="padding:15px;">${a.name}</td><td>${a.teacher}</td>
+                    <td><button onclick="viewReport('${a.id}')" style="color:blue;">📄</button><button onclick="delItem('${a.id}')" style="color:red; margin-right:10px;">🗑️</button></td>
+                </tr>
+            `).join('');
+            document.getElementById('adminTeachersGrid').innerHTML=teachers.map(t=>`
+                <div class="teacher-item" style="cursor:default;">
+                    <img src="${getTeacherImg(t)}" class="avatar-lg">
+                    <div>${t.name}</div>
+                    <div style="margin-top:10px;"><button onclick="openEditTeacher('${t.id}')">✏️</button><button onclick="delTProfile('${t.name}','${t.id}')" style="color:red;">🗑️</button></div>
+                </div>
+            `).join('');
+        }
+        window.switchAdminTab=(t)=>{
+            document.getElementById('adminActivitiesView').style.display=t==='activities'?'block':'none';
+            document.getElementById('adminTeachersView').style.display=t==='teachers'?'block':'none';
+            document.getElementById('tab-admin-acts').classList.toggle('active',t==='activities');
+            document.getElementById('tab-admin-teach').classList.toggle('active',t==='teachers');
+        }
+
+        window.openAddTeacherModal = () => {
+            document.getElementById('teacherModalTitle').innerText = t('teacher_info');
+            document.getElementById('editTeacherId').value = ""; document.getElementById('editTeacherName').value = "";
+            document.getElementById('editTeacherGender').value = "male"; document.getElementById('editTeacherPreview').style.display = 'none';
+            tempTeacherFile = null; removePhotoFlag = false; document.getElementById('teacherEditModal').classList.add('active');
+        };
+        window.openEditTeacher = (id) => {
+            const t = teachers.find(x => x.id === id); if(!t) return;
+            document.getElementById('teacherModalTitle').innerText = t('teacher_info');
+            document.getElementById('editTeacherId').value = id; document.getElementById('editTeacherName').value = t.name;
+            document.getElementById('editTeacherGender').value = t.gender || "male";
+            const img = document.getElementById('editTeacherPreview');
+            if(t.photo && t.photo.length > 5) { img.src = t.photo; img.style.display = 'block'; } else { img.style.display = 'none'; }
+            tempTeacherFile = null; removePhotoFlag = false; document.getElementById('teacherEditModal').classList.add('active');
+        };
+        window.previewTeacherImage = (input) => {
+            if(input.files && input.files[0]) { tempTeacherFile = input.files[0]; removePhotoFlag = false; const img = document.getElementById('editTeacherPreview'); img.src = URL.createObjectURL(tempTeacherFile); img.style.display = 'block'; }
+        };
+        window.removeTeacherPhoto = () => { removePhotoFlag = true; tempTeacherFile = null; document.getElementById('editTeacherPreview').style.display = 'none'; };
+
+        async function upload(f){const d=new FormData();d.append("image",f); const r=await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,{method:"POST",body:d}); const j=await r.json(); return j.data.url;}
+
+        // --- FIXED SAVE FUNCTION ---
+        window.saveTeacherChanges = async () => {
+            const btn = document.querySelector('#teacherEditModal button[onclick="saveTeacherChanges()"]');
+            const originalText = btn.innerText;
+            btn.innerText = "چاوەڕوان بە..."; btn.disabled = true;
+
+            try {
+                const id = document.getElementById('editTeacherId').value; 
+                const name = document.getElementById('editTeacherName').value; 
+                const gender = document.getElementById('editTeacherGender').value;
+
+                if(!name) { alert("Name Required"); btn.innerText = originalText; btn.disabled = false; return; }
+                
+                // Get old data ONLY if editing
+                let oldName = "";
+                if(id) {
+                    try {
+                        const docSnap = await getDoc(doc(db, "teachers", id));
+                        if(docSnap.exists()) oldName = docSnap.data().name;
+                    } catch(e) { console.log("Could not get old data, continuing..."); }
+                }
+
+                // Prepare Photo
+                let photoUrl = null; 
+                if(tempTeacherFile) { 
+                    try { photoUrl = await upload(tempTeacherFile); } catch(e) { alert("Photo Upload Failed"); } 
+                }
+
+                const data = { name: name, gender: gender };
+                if(photoUrl) data.photo = photoUrl;
+                if(removePhotoFlag) data.photo = "";
+
+                if(id) {
+                    // Update Teacher Profile
+                    await updateDoc(doc(db, "teachers", id), data);
+
+                    // Update Activities (If name changed)
+                    if(oldName && oldName !== name) {
+                        try {
+                            const q = query(actRef, where("teacher", "==", oldName));
+                            const snap = await getDocs(q);
+                            if(!snap.empty) {
+                                const batch = writeBatch(db);
+                                snap.forEach(d => batch.update(d.ref, { teacher: name }));
+                                await batch.commit();
+                            }
+                        } catch(err) { console.error("Could not update activities", err); }
+                    }
+                } else {
+                    if(!data.photo) data.photo = "";
+                    await addDoc(teachRef, data);
                 }
                 
-                await addDoc(activitiesRef, {
-                    name: document.getElementById('activityName').value,
-                    teacher: document.getElementById('teacherName').value.trim(),
-                    date: document.getElementById('activityDate').value,
-                    notes: document.getElementById('activityNotes').value,
-                    images: imageUrls,
-                    createdAt: new Date()
-                });
+                alert("Done!");
+                document.getElementById('teacherEditModal').classList.remove('active');
 
-                closeAddModal();
-                alert("✅ چالاکی تۆمارکرا!");
-            } catch (error) {
-                alert("هەڵە: " + error.message);
+            } catch(err) {
+                alert("Error: " + err.message);
+                console.error(err);
             } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '💾 پاشەکەوتکردن';
-                statusDiv.textContent = '';
-            }
-        });
-
-        window.openAddModal = () => document.getElementById('addModal').classList.add('active');
-        window.closeAddModal = () => { document.getElementById('addModal').classList.remove('active'); document.getElementById('activityForm').reset(); };
-        window.openImg = (url) => { document.getElementById('modalImage').src = url; document.getElementById('imageModal').classList.add('active'); };
-        window.deleteItem = async (id) => {
-            if(confirm("دڵنیایت لە سڕینەوەی؟")) {
-                await deleteDoc(doc(db, "activities", id));
-            }
-        };
-    </script>
-
-    <script>
-        function checkPassword() {
-            var input = document.getElementById('sitePassword').value;
-            if(input === "2526") { 
-                document.getElementById('securityOverlay').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-            } else {
-                document.getElementById('errorMsg').style.display = 'block';
+                btn.innerText = originalText; btn.disabled = false;
             }
         }
-        document.getElementById('sitePassword').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPassword();
-        });
+
+        window.delTProfile=async(n, id)=>{if(confirm("Delete?"))await deleteDoc(doc(db,"teachers",id));};
+
+        window.openEditor=()=>{ ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(i=>document.getElementById(i).value=''); document.getElementById('inpDate').value=new Date().toISOString().split('T')[0]; window.localFiles=[null,null,null,null]; for(let i=0;i<4;i++){const el=document.getElementById('img'+i); el.src=''; window.imgState[i]={s:1,x:0,y:0}; el.style.transform='scale(1)';} enableEdit(true); document.getElementById('editorModal').classList.add('active'); };
+        window.closeEditor=()=>document.getElementById('editorModal').classList.remove('active');
+        window.viewReport=(id)=>{
+            const a=acts.find(x=>x.id===id); if(!a)return;
+            document.getElementById('editorModal').classList.add('active'); document.getElementById('inpName').value=a.name; document.getElementById('inpComm').value=a.committee||''; document.getElementById('inpTeacher').value=a.teacher; document.getElementById('inpDate').value=a.date; document.getElementById('inpNotes').value=a.notes||'';
+            for(let i=0;i<4;i++){ const el=document.getElementById('img'+i); window.imgState[i]={s:1,x:0,y:0}; el.style.transform='scale(1)'; if(a.images&&a.images[i])el.src=a.images[i]; else el.src=''; }
+            enableEdit(!!user);
+        }
+        function enableEdit(ok){ ['inpName','inpComm','inpTeacher','inpDate','inpNotes'].forEach(i=>document.getElementById(i).disabled=!ok); document.getElementById('btnSaveArchive').style.display=ok?'inline-block':'none'; document.querySelectorAll('.controls').forEach(c=>c.style.display=ok?'flex':'none'); }
+
+        window.saveToArchive=async()=>{
+            const n=document.getElementById('inpName').value; const t=document.getElementById('inpTeacher').value; if(!n||!t){alert("Info missing");return;}
+            alert("Uploading..."); try{ let u=[]; for(let i=0;i<4;i++)if(window.localFiles[i])u.push(await upload(window.localFiles[i])); await addDoc(actRef,{name:n,committee:document.getElementById('inpComm').value,teacher:t,date:document.getElementById('inpDate').value,notes:document.getElementById('inpNotes').value,images:u,createdAt:new Date()}); alert("Done"); closeEditor(); }catch(e){alert("Error: "+e.message);}
+        }
+        
+        window.triggerFile=(i)=>{if(document.getElementById('inpName').disabled)return; window.currentSlot=i; document.getElementById('hiddenFileInput').click();}
+        document.getElementById('hiddenFileInput').addEventListener('change',e=>{const f=e.target.files[0]; if(f){window.localFiles[window.currentSlot]=f; const r=new FileReader(); r.onload=ev=>document.getElementById('img'+window.currentSlot).src=ev.target.result; r.readAsDataURL(f);} e.target.value='';});
+        
+        let isD=false,aI=0,sX=0,sY=0,iX=0,iY=0;
+        window.startDrag=(e,i)=>{if(document.getElementById('inpName').disabled)return; isD=true; aI=i; const c=e.touches?e.touches[0]:e; sX=c.clientX; sY=c.clientY; iX=imgState[i].x; iY=imgState[i].y;};
+        window.addEventListener('mousemove',e=>{if(!isD)return; e.preventDefault(); upD(e.clientX-sX,e.clientY-sY)});
+        window.addEventListener('touchmove',e=>{if(!isD)return; upD(e.touches[0].clientX-sX,e.touches[0].clientY-sY)},{passive:false});
+        window.addEventListener('mouseup',()=>isD=false); window.addEventListener('touchend',()=>isD=false);
+        function upD(dx,dy){const s=imgState[aI]; s.x=iX+dx; s.y=iY+dy; tr(aI);}
+        window.adjustZoom=(i,v)=>{imgState[i].s=Math.max(0.1,imgState[i].s+v); tr(i);}
+        function tr(i){const s=imgState[i]; document.getElementById('img'+i).style.transform=`translate(${s.x}px,${s.y}px) scale(${s.s})`;}
+        window.setLayout=(t)=>document.getElementById('imgContainer').className=`p-images ${t}`;
+        window.delItem=async(id)=>{if(confirm("Delete?"))await deleteDoc(doc(db,"activities",id));};
     </script>
+    <script>function checkSitePassword(){if(document.getElementById('sitePassword').value==="2526"){document.getElementById('securityOverlay').style.display='none'; document.getElementById('mainContent').style.display='block';}else{document.getElementById('errorMsg').style.display='block';}}</script>
 </body>
 </html>
