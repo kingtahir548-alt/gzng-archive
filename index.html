@@ -718,25 +718,48 @@
                 windowWidth: paper.scrollWidth,
                 windowHeight: paper.scrollHeight
                 // ------------------------------------------
-            }).then(canvas => {
-                const imgDataURL = canvas.toDataURL('image/jpeg', 0.95); 
-                
-                const link = document.createElement('a');
-                // وەرگرتنی ناوی خاوەن ڕاپۆرت بۆ ناوی فایلەکە
-                const subject = document.getElementById('inpName')?.value || 'Report';
-                const date = document.getElementById('inpDate')?.value || new Date().toISOString().split('T')[0];
-                
-                link.download = `${subject}_${date}.jpeg`;
-                link.href = imgDataURL;
-                
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
+           }).then(canvas => {
+    const imgDataURL = canvas.toDataURL('image/jpeg', 0.95); 
+    
+    // ناسینەوەی ئەوەی ئایا ئامێرەکە مۆبایلە یان کۆمپیوتەر
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const subject = document.getElementById('inpName')?.value || 'Report';
+    const date = document.getElementById('inpDate')?.value || new Date().toISOString().split('T')[0];
+    const fileName = `${subject}_${date}.jpeg`;
+
+    if (isMobile) {
+        // --- چارەسەر بۆ مۆبایل ---
+        // وێنەکە لە لاپەڕەیەکی نوێدا دەکاتەوە
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+            newWindow.document.write(`
+                <html>
+                    <head><title>داگرتنی ڕاپۆرت</title></head>
+                    <body style="margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#333; color:white; font-family:sans-serif;">
+                        <p style="margin:20px;">دەست لەسەر وێنەکە دابگرە بۆ پاشەکەوتکردن (Save Image)</p>
+                        <img src="${imgDataURL}" style="max-width:100%; border:2px solid white;">
+                        <button onclick="window.close()" style="margin-top:20px; padding:10px 20px; cursor:pointer;">داخستن</button>
+                    </body>
+                </html>
+            `);
+        } else {
+            alert("تکایە ڕێگە بدە بە (Pop-ups) بۆ ئەوەی وێنەکە ببینی و پاشەکەوتی بکەیت");
+        }
+    } else {
+        // --- چارەسەر بۆ کۆمپیوتەر (وەک خۆی) ---
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = imgDataURL;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+});
         };
     </script>
 </body>
 </html>
+
 
 
 
