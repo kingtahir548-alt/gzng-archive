@@ -718,37 +718,31 @@
                 windowWidth: paper.scrollWidth,
                 windowHeight: paper.scrollHeight
                 // ------------------------------------------
-           }).then(canvas => {
+          }).then(canvas => {
     const imgDataURL = canvas.toDataURL('image/jpeg', 0.95); 
-    
-    // ناسینەوەی ئەوەی ئایا ئامێرەکە مۆبایلە یان کۆمپیوتەر
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const subject = document.getElementById('inpName')?.value || 'Report';
-    const date = document.getElementById('inpDate')?.value || new Date().toISOString().split('T')[0];
-    const fileName = `${subject}_${date}.jpeg`;
 
     if (isMobile) {
-        // --- چارەسەر بۆ مۆبایل ---
-        // وێنەکە لە لاپەڕەیەکی نوێدا دەکاتەوە
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-            newWindow.document.write(`
-                <html>
-                    <head><title>داگرتنی ڕاپۆرت</title></head>
-                    <body style="margin:0; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#333; color:white; font-family:sans-serif;">
-                        <p style="margin:20px;">دەست لەسەر وێنەکە دابگرە بۆ پاشەکەوتکردن (Save Image)</p>
-                        <img src="${imgDataURL}" style="max-width:100%; border:2px solid white;">
-                        <button onclick="window.close()" style="margin-top:20px; padding:10px 20px; cursor:pointer;">داخستن</button>
-                    </body>
-                </html>
-            `);
-        } else {
-            alert("تکایە ڕێگە بدە بە (Pop-ups) بۆ ئەوەی وێنەکە ببینی و پاشەکەوتی بکەیت");
-        }
+        // دروستکردنی پەنجەرەیەکی کاتی لە ناو خودی سایتەکە
+        const previewDiv = document.createElement('div');
+        previewDiv.id = 'mobileDownloadPreview';
+        previewDiv.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; font-family:sans-serif; padding:20px; box-sizing:border-box;";
+        
+        previewDiv.innerHTML = `
+            <div style="text-align:center; margin-bottom:15px;">
+                <h3 style="margin:0;">ڕاپۆرتەکە ئامادەیە</h3>
+                <p style="font-size:14px; color:#ccc;">دەست لەسەر وێنەکە دابگرە و Save Image هەڵبژێرە</p>
+            </div>
+            <img src="${imgDataURL}" style="max-width:100%; max-height:70vh; border:2px solid white; border-radius:8px;">
+            <button onclick="document.body.removeChild(this.parentElement)" style="margin-top:20px; background:#ff4444; color:white; border:none; padding:12px 30px; border-radius:25px; font-weight:bold; cursor:pointer;">داخستن</button>
+        `;
+        
+        document.body.appendChild(previewDiv);
     } else {
-        // --- چارەسەر بۆ کۆمپیوتەر (وەک خۆی) ---
+        // بۆ کۆمپیوتەر وەک خۆی (داگرتنی ڕاستەوخۆ)
         const link = document.createElement('a');
-        link.download = fileName;
+        const subject = document.getElementById('inpName')?.value || 'Report';
+        link.download = `${subject}.jpeg`;
         link.href = imgDataURL;
         document.body.appendChild(link);
         link.click();
@@ -759,6 +753,7 @@
     </script>
 </body>
 </html>
+
 
 
 
