@@ -132,6 +132,20 @@
             .controls, .editor-toolbar, .modal-overlay { display: none !important; }
         }
         @media (max-width: 768px) { .nav-brand span { font-size: 0.9em; } .a4-page { width: 100%; height: auto; aspect-ratio: 210/297; padding: 5mm; } .p-images.landscape .slot { height: 120px; } }
+        /* --- چاککردنی قەبارە و شێوەی لۆگۆ --- */
+.p-header img {
+    height: 110px !important;    /* لۆگۆکە گەورە دەکات */
+    width: auto !important;      /* ناهێڵێت پان ببێتەوە */
+    object-fit: contain !important; /* وێنەکە وەک خۆی دەهێڵێتەوە */
+    max-width: 250px !important; 
+    display: block !important;
+}
+
+.p-header {
+    display: flex !important;
+    align-items: center !important; /* لۆگۆ و نووسینەکە دەخاتە یەک ئاست */
+    justify-content: space-between !important;
+}
     </style>
 </head>
 <body>
@@ -697,5 +711,6 @@
     </script>
 </body>
 </html>
+
 
 
