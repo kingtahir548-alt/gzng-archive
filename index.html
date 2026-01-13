@@ -146,6 +146,32 @@
     align-items: center !important; /* لۆگۆ و نووسینەکە دەخاتە یەک ئاست */
     justify-content: space-between !important;
 }
+ /* --- ستایل بۆ دوگمەی بینینی ڕاپۆرت لە ناو لیستەکە --- */
+.btn-card {
+    background-color: #2563eb !important; /* ڕەنگی شین */
+    color: white !important;              /* ڕەنگی نووسین */
+    padding: 10px 20px !important;        /* کەمێک گەورەتر بۆ ئەوەی جوان بێت */
+    border-radius: 8px !important;        /* خڕکردنی گۆشەکان */
+    border: none !important;
+    font-family: 'Rudaw', sans-serif !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2) !important; /* سێبەرێکی شین */
+    width: 100% !important; /* بۆ ئەوەی پانی کارتەکە بگرێت */
+    margin-top: 10px !important;
+}
+
+.btn-card:hover {
+    background-color: #1d4ed8 !important; /* ڕەنگەکە تۆختر دەبێت لە کاتی هۆڤەر */
+    transform: translateY(-2px) !important; /* کەمێک بەرز دەبێتەوە */
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3) !important;
+}
     </style>
 </head>
 <body>
@@ -471,7 +497,7 @@
                 <div class="card">
                     <div class="card-img-grid">${(a.images||[]).slice(0,4).map(u=>`<img src="${u}">`).join('')}</div>
                     <div class="card-body"><div class="card-title">${a.name}</div><div class="card-info">📅 ${a.date}</div></div>
-                    <div class="card-footer"><button class="btn-card" onclick="viewReport('${a.id}')">${t('view_report')}</button></div>
+                   <button class="action-btn view" onclick="viewReport('${a.id}')">${t('view_report')}</button>
                 </div>
             `).join('');
         }
